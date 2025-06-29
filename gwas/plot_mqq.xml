@@ -1,0 +1,12 @@
+<tool id="gwaslab_plot_mqq" name="Plot Manhattan & QQ" version="1.0.0">
+  <command>
+    python $__tool_directory__/plot_mqq.py $input_file $output_manhattan $output_qq
+  </command>
+  <inputs>
+    <param name="input_file" type="data" format="tabular" label="Checked Summary Statistics"/>
+  </inputs>
+  <outputs>
+    <data name="output_manhattan" format="png" label="Manhattan Plot"/>
+    <data name="output_qq" format="png" label="Q-Q Plot"/>
+  </outputs>
+</tool>
