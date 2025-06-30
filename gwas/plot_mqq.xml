@@ -32,7 +32,7 @@
 
 
 <tool id="plot_mqq" name="Manhattan and QQ Plot" version="1.0">
-    <description>Generate Manhattan and QQ plot from GWAS summary statistics</description>
+    <!-- <description>Generate Manhattan and QQ plot from GWAS summary statistics</description> -->
     <command><![CDATA[
         python3 $__tool_directory__/plot_mqq.py '$input_file' '$manhattan_output' '$qq_output'
     ]]></command>
@@ -45,7 +45,6 @@
         <data name="manhattan_output" format="png" label="Manhattan Plot"/>
         <data name="qq_output" format="png" label="QQ Plot"/>
     </outputs>
-
     <!-- <requirements>
         <requirement type="package">python</requirement>
         <requirement type="package">matplotlib</requirement>

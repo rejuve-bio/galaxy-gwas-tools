@@ -300,6 +300,11 @@ def create_manhattan_plot(df, output_file):
         x_labels.append(int(name))
         x_labels_pos.append((group['ind'].iloc[-1] + group['ind'].iloc[0]) / 2)
 
+        # Add horizontal genome-wide significance line
+    sig_threshold = -np.log10(5e-8)
+    ax.axhline(y=sig_threshold, color='red', linestyle='--', linewidth=1)
+    ax.text(df['ind'].max(), sig_threshold + 0.2, 'p = 5e-8', color='red', ha='right')
+
     ax.set_xticks(x_labels_pos)
     ax.set_xticklabels(x_labels)
     ax.set_xlabel('Chromosome')
