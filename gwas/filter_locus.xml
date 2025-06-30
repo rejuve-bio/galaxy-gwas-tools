@@ -1,0 +1,25 @@
+<tool id="filter_locus" name="Filter Locus" version="0.1.0">
+    <description>Filter GWAS summary statistics by chromosome and position</description>
+    <command detect_errors="exit_code">
+        <![CDATA[
+        python3 filter_locus.py 
+            "$input" 
+            "$chr" 
+            "$start" 
+            "$end" 
+            "$output"
+        ]]>
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="GWAS summary statistics"/>
+        <param name="chr" type="integer" label="Chromosome"/>
+        <param name="start" type="integer" label="Start Position"/>
+        <param name="end" type="integer" label="End Position"/>
+    </inputs>
+    <outputs>
+        <data name="output" format="tabular" label="Filtered Summary Stats"/>
+    </outputs>
+    <help>
+        Filter GWAS data by chromosome and base pair range using gwaslab.
+    </help>
+</tool>
