@@ -12,7 +12,7 @@ def main():
     output_file = sys.argv[5]
 
     # Load the input using gwaslab
-    sumstats = gl.Sumstats(input_file, fmt="plink2")
+    sumstats = gl.Sumstats(input_file, fmt="auto")
     
     # Filter by chromosome and position
     query = f"CHR=={chr_value} & POS>{start_pos} & POS<{end_pos}"
