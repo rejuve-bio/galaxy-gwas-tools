@@ -2,7 +2,7 @@
     <description>Reverses the contents of a text file</description>
     <command>
         <![CDATA[
-        python3 reverse_text.py '$input' '$output'
+        python3 $__tool_directory__/reverse_text.py '$input' '$output'
         ]]>
     </command>
 
