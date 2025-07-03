@@ -1,0 +1,6 @@
+name: reverse_text
+owner: ofge-gel_2019.   # Use your actual ToolShed username
+description: A simple Galaxy tool that reverses text
+homepage_url: https://github.com/YOUR_USERNAME/reverse_text_tool
+remote_repository_url: https://github.com/YOUR_USERNAME/reverse_text_tool
+type: unrestricted
