@@ -1,0 +1,11 @@
+<tool id="gwaslab_load_sumstats" name="Load Sumstats" version="1.0.0">
+  <command>
+    python $__tool_directory__/load_sumstats.py $input_file $output_file
+  </command>
+  <inputs>
+    <param name="input_file" type="data" format="txt,tabular,tsv,csv,gz" label="Input .glm.firth.gz"/>
+  </inputs>
+  <outputs>
+    <data name="output_file" format="tabular" label="Formatted Sumstats"/>
+  </outputs>
+</tool>
