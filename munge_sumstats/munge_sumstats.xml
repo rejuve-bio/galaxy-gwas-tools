@@ -1,0 +1,50 @@
+<tool id="munge_sumstats" name="Munge Sumstats" version="0.1.0">
+  <description>Format GWAS sumstats using MungeSumstats</description>
+
+  <command><![CDATA[
+    python3 $__tool_directory__/munge_sumstats.py --input '$input' --output '$output'
+  ]]></command>
+
+  <inputs>
+    <param name="input" type="data" format="txt" label="Raw Summary Stats"/>
+  </inputs>
+
+  <outputs>
+    <data name="output" format="txt" label="Munged Summary Stats"/>
+  </outputs>
+
+  <requirements>
+    <requirement type="package">r-mungesumstats</requirement>
+  </requirements>
+
+  <help>
+    This tool uses the MungeSumstats R package to format GWAS summary statistics.
+  </help>
+</tool>
+
+
+
+
+
+
+<!-- <tool id="munge_sumstats" name="Munge Sumstats" version="0.1.0">
+  <description>Format GWAS sumstats using MungeSumstats</description>
+  <command>
+    python3 $__tool_directory__/munge_sumstats.py --input '$input' --output '$output'
+  </command>
+  <inputs>
+    <param name="input" type="data" format="txt" label="Raw Summary Stats"/>
+  </inputs>
+  <outputs>
+    <data name="output" format="txt" label="Munged Summary Stats"/>
+  </outputs>
+  <requirements>
+    <requirement type="package">r-mungesumstats</requirement>
+  </requirements>
+</tool> 
+
+
+ -->
+
+
+
