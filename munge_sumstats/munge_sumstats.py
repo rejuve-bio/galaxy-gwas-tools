@@ -1,49 +1,59 @@
-# import argparse
-# import rpy2.robjects as ro
-# from rpy2.robjects.packages import importr
-
-# parser = argparse.ArgumentParser()
-# parser.add_argument('--input', required=True)
-# parser.add_argument('--output', required=True)
-# args = parser.parse_args()
-
-# mungesumstats = importr('MungeSumstats')
-# mungesumstats.format_sumstats(
-#     path=args.input,
-#     ref_genome="GRCh37",
-#     save_path=args.output,
-#     drop_indels=True,
-#     save_format="LDSC"
-# )
-
-
-
+#!/usr/bin/env python3
 
 import argparse
-import rpy2.robjects as ro
-from rpy2.robjects.packages import importr
 import os
-import tempfile
-import shutil
+import sys
+from rpy2.robjects.packages import importr
+import rpy2.robjects as ro
 
-# Parse Galaxy paths
-parser = argparse.ArgumentParser()
-parser.add_argument('--input', required=True)
-parser.add_argument('--output', required=True)
-args = parser.parse_args()
 
-# Generate a temp file with valid extension for MungeSumstats
-tmp_output = tempfile.NamedTemporaryFile(suffix=".txt", delete=False).name
+def parse_arguments():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Format GWAS summary statistics using the MungeSumstats R package"
+    )
+    parser.add_argument(
+        '--input', required=True, help='Path to the input GWAS summary statistics file'
+    )
+    parser.add_argument(
+        '--output', required=True, help='Path to the output file (TSV format expected by Galaxy)'
+    )
+    return parser.parse_args()
 
-# Run MungeSumstats using the temporary path
-mungesumstats = importr('MungeSumstats')
-mungesumstats.format_sumstats(
-    path=args.input,
-    ref_genome="GRCh37",
-    save_path=tmp_output,
-    drop_indels=True,
-    save_format="LDSC"
-)
 
-# Move temp output to Galaxy's final destination
-shutil.move(tmp_output, args.output)
+def main():
+    args = parse_arguments()
+
+    input_path = args.input
+    output_path = args.output
+    final_output_path = output_path
+
+    # MungeSumstats appends ".tsv" even if you pass a name without it
+    if not output_path.endswith(".tsv"):
+        output_path += ".tsv"
+
+    try:
+        # Import MungeSumstats R package
+        mungesumstats = importr("MungeSumstats")
+
+        # Format the summary statistics
+        mungesumstats.format_sumstats(
+            path=input_path,
+            ref_genome="GRCh37",
+            save_path=output_path,
+            drop_indels=True,
+            save_format="LDSC",
+            force_new=True
+        )
+
+        # Rename if MungeSumstats appended ".tsv"
+        if output_path != final_output_path and os.path.exists(output_path):
+            os.rename(output_path, final_output_path)
+
+    except Exception as e:
+        print(f"[ERROR] Failed to format summary statistics: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
