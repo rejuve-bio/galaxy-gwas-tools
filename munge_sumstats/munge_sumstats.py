@@ -17,7 +17,7 @@ def parse_arguments():
     )
     parser.add_argument(
         '--output', required=True, help='Path to the output file (TSV format expected by Galaxy)'
-    )of
+    )
     return parser.parse_args()
 
 
