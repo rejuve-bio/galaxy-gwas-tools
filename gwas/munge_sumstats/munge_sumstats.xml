@@ -1,47 +1,37 @@
-<tool id="munge_sumstats" name="Munge Sumstats" version="0.1.1">
-  <description>Format GWAS summary statistics using MungeSumstats</description>
+<tool id="munge_sumstats" name="MungeSumstats Formatter" version="0.1.0">
+    <description>Format raw GWAS summary statistics using MungeSumstats (Bioconductor)</description>
 
-  <command detect_errors="exit_code">
-    <![CDATA[
-    python3 $__tool_directory__/munge_sumstats.py \
-      --input '$input' \
-      --output '$output'
-    ]]>
-  </command>
+    <command detect_errors="exit_code">
+        <![CDATA[
+        python3 '$__tool_directory__/munge_sumstats.py'
+            --input '$input'
+            --output 'formatted_output.txt'
+            --ref_genome '$ref_genome'
+        ]]>
+    </command>
 
-  <inputs>
-    <param name="input" type="data" format="txt" label="GWAS Summary Statistics"
-           help="Raw GWAS summary statistics file (plain text format)."/>
-  </inputs>
 
-  <outputs>
-    <data name="output" format="tsv" label="Formatted Summary Statistics (Munged)"/>
-  </outputs>
+    <inputs>
+        <param name="input" type="data" format="tabular,txt,tsv,bgz" label="Raw GWAS Sumstats"/>
+        <param name="ref_genome" type="select" label="Reference Genome">
+            <option value="GRCh37" selected="true">GRCh37</option>
+            <option value="GRCh38">GRCh38</option>
+        </param>
+    </inputs>
 
-  <requirements>
-    <requirement type="package" version="2.2.7">r-mungesumstats</requirement>
-    <requirement type="package">r-base</requirement>
-    <requirement type="package">rpy2</requirement>
-  </requirements>
+    <outputs>
+        <data name="output" format="txt" from_work_dir="formatted_output.txt"/>
+    </outputs>
 
-  <help><![CDATA[
-This tool uses the **[MungeSumstats](https://bioconductor.org/packages/MungeSumstats/)** R package 
-to format and harmonize GWAS summary statistics for downstream applications such as 
-**LDSC (LD Score Regression)**.
 
-### Inputs
-- **GWAS Summary Statistics:** Plain text file with raw summary statistics.
+    <!-- <requirements>
+        <requirement type="package">r-mungesumstats</requirement>
+        <requirement type="package">rpy2</requirement>
+        <requirement type="package">pandas</requirement>
+    </requirements> -->
 
-### Outputs
-- **Formatted TSV file** suitable for use with LDSC and other tools.
-
-### Notes
-- This tool currently uses the **GRCh37** human reference genome.
-- Indels are dropped to ensure compatibility with LDSC formatting.
-
-If your dataset uses **GRCh38** or a different dbSNP version, please modify the script or contact the admin.
-
-]]>
-  </help>
-
+    <help>
+        This tool wraps the R package MungeSumstats to reformat and clean GWAS summary statistics into LDSC-compatible format.
+    </help>
 </tool>
+

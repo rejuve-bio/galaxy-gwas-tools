@@ -1,0 +1,23 @@
+<tool id="filter_significant_snps" name="Filter Significant SNPs" version="0.1.0">
+    <description>Filter SNPs from munged sumstats based on p-value</description>
+
+    <command>
+        python3 $__tool_directory__/filter_significant_snps.py 
+            -i '$input_file' 
+            -o '$output_file' 
+            -p '$pval'
+    </command>
+
+    <inputs>
+        <param name="input_file" type="data" format="txt" label="Munged Sumstats File"/>
+        <param name="pval" type="float" value="5e-8" label="P-value Threshold"/>
+    </inputs>
+
+    <outputs>
+        <data name="output_file" format="tabular" label="Significant SNPs"/>
+    </outputs>
+
+    <help>
+        This tool filters summary statistics and retains only SNPs with a p-value less than the specified threshold (default: 5e-8).
+    </help>
+</tool>
