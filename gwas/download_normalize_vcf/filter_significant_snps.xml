@@ -1,0 +1,28 @@
+<tool id="download_normalize_1000g" name="Download and Normalize 1000G VCF" version="0.1.0">
+    <description>Download and normalize a 1000 Genomes VCF for a specific chromosome</description>
+
+    <requirements>
+        <requirement type="package">bcftools</requirement>
+        <requirement type="package">tabix</requirement>
+        <requirement type="package">wget</requirement>
+    </requirements>
+
+    <command><![CDATA[
+        python3 $__tool_directory__/download_and_normalize_vcf.py --chr '${chr}' --output_prefix '${output_prefix}' && mv '${output_prefix}.normalized.vcf.gz' '${vcf_output}'
+    ]]></command>
+
+
+    <inputs>
+        <param name="chr" type="text" label="Chromosome (e.g., 22)" />
+        <param name="output_prefix" type="text" value="chr_output" label="Output File Prefix"/>
+    </inputs>
+
+    <outputs>
+        <data name="vcf_output" format="vcf_bgzip" label="Normalized VCF File"/>
+    </outputs>
+
+    <help>
+        This tool downloads a VCF file from the 1000 Genomes FTP server, normalizes it using bcftools, and compresses/indexes the result.
+        You must have the reference FASTA file (e.g., human_g1k_v37.fasta) available and indexed with samtools faidx.
+    </help>
+</tool>
