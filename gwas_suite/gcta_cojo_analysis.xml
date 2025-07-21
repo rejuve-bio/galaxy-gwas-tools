@@ -1,0 +1,40 @@
+<tool id="gcta_cojo_analysis" name="GCTA-COJO Analysis" version="1.0.0">
+    <description>identifies independent GWAS signals</description>
+
+    <requirements>
+        <requirement type="package" version="1.94.1">gcta</requirement>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        python3 '$__tool_directory__/gcta_cojo_wrapper.py'
+            --sumstats '$sumstats_file'
+            --plink_ref '${plink_reference.element_identifiers[0].directory}'
+            --maf $maf
+            --population '$population'
+            --output '$output_file'
+            --script_dir '$__tool_directory__'
+    ]]></command>
+
+    <inputs>
+        <param name="sumstats_file" type="data" format="tsv" label="Filtered Summary Statistics" help="Output from the 'Filter by P-value' tool."/>
+        <param name="plink_reference" type="data_collection" collection_type="list" label="1000G PLINK Reference Panel" help="A collection of PLINK .bed files. The .bim and .fam files must be in the same history and have the same name."/>
+        <param name="maf" type="float" value="0.01" label="Minor Allele Frequency (MAF)" />
+        <param name="population" type="text" value="EUR" label="Population" help="Population code used in reference panel filenames (e.g., EUR, ASN)."/>
+    </inputs>
+
+    <outputs>
+        <data name="output_file" format="tsv" label="${tool.name} on ${on_string}"/>
+    </outputs>
+
+    <help><![CDATA[
+**What it does**
+
+This tool performs a conditional and joint analysis (COJO) using GCTA to identify genetic variants that are independently associated with a trait.
+
+**Inputs**
+
+- **Filtered Summary Statistics**: The list of significant SNPs from the previous step.
+- **1000G PLINK Reference Panel**: This must be a **dataset collection**. You need to upload all your PLINK files (`.bed`, `.bim`, `.fam` for each chromosome) and then build a collection from them. The tool will use the `.bed` files from this collection to find the others.
+    ]]></help>
+</tool>

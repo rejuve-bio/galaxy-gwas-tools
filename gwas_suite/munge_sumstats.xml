@@ -1,0 +1,63 @@
+<tool id="munge_sumstats_formatter" name="MungeSumstats Formatter" version="1.0.0">
+    <description>Formats GWAS summary statistics using the MungeSumstats R package</description>
+
+    <requirements>
+        <requirement type="package" version="3.5">r-rpy2</requirement>
+        <requirement type="package" version="1.14.0">bioconductor-mungesumstats</requirement>
+    </requirements>
+
+<command detect_errors="exit_code"><![CDATA[
+    ## Define a name for our intermediate output file
+    #set $intermediate_file = "formatted_sumstats.tsv"
+
+    ## Create a dedicated directory for logs
+    mkdir -p logs &&
+
+    ## Run the script, telling it to write to our intermediate file
+    python3 '$__tool_directory__/munge_sumstats.py'
+        --sumstats '$sumstats_input'
+        --ref_genome '$ref_genome'
+        --output '$intermediate_file'
+        --log_dir 'logs' &&
+    
+    ## After the script succeeds, move the intermediate file to the final location
+    mv '$intermediate_file' '$output_file'
+]]></command>
+
+    <inputs>
+        <param name="sumstats_input" type="data" format="tsv,txt" label="GWAS Summary Statistics File" help="Input file containing summary statistics."/>
+
+        <param name="ref_genome" type="select" label="Reference Genome Build" help="Select the genome build corresponding to your summary statistics.">
+            <option value="GRCh37" selected="true">GRCh37 (hg19)</option>
+            <option value="GRCh38">GRCh38 (hg38)</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <data name="output_file" format="tsv" label="${tool.name} on ${on_string}: Formatted Sumstats"/>
+        </outputs>
+
+    <tests>
+        <test>
+            <param name="sumstats_input" value="test_sumstats.tsv"/>
+            <param name="ref_genome" value="GRCh37"/>
+            <output name="output_file" file="expected_output.tsv" compare="sim_size"/>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+**What it does**
+
+This tool is a wrapper for the R package `MungeSumstats`, which standardizes the format of GWAS summary statistics.
+It performs various checks and conversions to prepare the data for downstream analyses like LD Score Regression or fine-mapping.
+
+**Inputs**
+
+* **GWAS Summary Statistics File**: A tab-separated file with columns for SNP, CHR, BP, p-value, etc.
+* **Reference Genome Build**: The reference genome used for SNP positions (GRCh37 or GRCh38).
+
+**Outputs**
+
+* **Formatted Sumstats**: A standardized TSV file ready for downstream analysis.
+    ]]></help>
+</tool>
