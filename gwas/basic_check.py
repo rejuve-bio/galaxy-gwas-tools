@@ -25,6 +25,8 @@ output_file = sys.argv[2]
 
 sumstats = gl.Sumstats(input_file, fmt="auto")
 
+sumstats
+
 # Fix: Drop duplicate columns
 sumstats.data = sumstats.data.loc[:, ~sumstats.data.columns.duplicated()]
 
