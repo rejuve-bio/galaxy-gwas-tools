@@ -1,15 +1,19 @@
 <tool id="gcta_cojo_analysis" name="GCTA-COJO Analysis" version="1.0.6">
     <description>Identifies independent GWAS signals</description>
+
     <requirements>
         <requirement type="package" version="1.94.1">gcta</requirement>
         <requirement type="package" version="2.1.0">pandas</requirement>
     </requirements>
+
     <command detect_errors="exit_code"><![CDATA[
-        # Create a directory for the reference files and link the inputs into it
+        # Create a directory for the reference files
         mkdir plink_ref &&
-        ln -s '$plink_bed' 'plink_ref/${population}.bed' &&
-        ln -s '$plink_bim' 'plink_ref/${population}.bim' &&
-        ln -s '$plink_fam' 'plink_ref/${population}.fam' &&
+
+        # Link the inputs into the directory with the correct, chromosome-specific names
+        ln -s '$plink_bed' 'plink_ref/${population}.${chromosome}.bed' &&
+        ln -s '$plink_bim' 'plink_ref/${population}.${chromosome}.bim' &&
+        ln -s '$plink_fam' 'plink_ref/${population}.${chromosome}.fam' &&
 
         python3 "$__tool_directory__/gcta_cojo_wrapper.py"
             --sumstats "$sumstats_file"
@@ -19,22 +23,28 @@
             --output "$output_file"
             --script_dir "$__tool_directory__"
     ]]></command>
+
     <inputs>
         <param name="sumstats_file" type="data" format="tsv" label="Filtered Summary Statistics" help="Output from the 'Filter by P-value' tool."/>
 
-        <!-- Aligned formats -->
         <param name="plink_bed" type="data" format="binary" label="PLINK BED file"/>
         <param name="plink_bim" type="data" format="tabular" label="PLINK BIM file"/>
         <param name="plink_fam" type="data" format="tabular" label="PLINK FAM file"/>
 
+        <!-- NEW PARAMETER -->
+        <param name="chromosome" type="integer" value="22" label="Chromosome of Reference Panel" help="The chromosome number corresponding to your PLINK files."/>
+
         <param name="maf" type="float" value="0.01" label="Minor Allele Frequency (MAF)" />
-        <param name="population" type="text" value="EUR" label="Population Prefix" help="The prefix of your PLINK files (e.g., EUR for EUR.bed). This will be used to name the files for GCTA."/>
+        <param name="population" type="text" value="EUR" label="Population Prefix" help="The prefix of your PLINK files (e.g., EUR)."/>
     </inputs>
+
     <outputs>
         <data name="output_file" format="tsv" label="${tool.name} on ${on_string}"/>
     </outputs>
+
     <help><![CDATA[
 **What it does**
+
 This tool performs a conditional and joint analysis (COJO) using GCTA to identify genetic variants that are independently associated with a trait.
     ]]></help>
 </tool>
