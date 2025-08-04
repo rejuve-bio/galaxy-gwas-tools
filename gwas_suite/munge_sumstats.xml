@@ -2,7 +2,7 @@
     <description>Formats GWAS summary statistics using the MungeSumstats R package</description>
 
     <requirements>
-        <requirement type="package" version="3.5">r-rpy2</requirement>
+        <requirement type="package" version="3.5">rpy2</requirement>
         <requirement type="package" version="1.14.0">bioconductor-mungesumstats</requirement>
     </requirements>
 

@@ -1,50 +1,37 @@
-<tool id="gcta_cojo_analysis" name="GCTA-COJO Analysis" version="1.0.6">
-    <description>Identifies independent GWAS signals</description>
+<tool id="gcta_cojo_analysis_custom" name="GCTA-COJO Analysis with preprocessing" version="1.0">
+  <description>Run GCTA COJO analysis with automatic summary stats preprocessing</description>
 
-    <requirements>
-        <requirement type="package" version="1.94.1">gcta</requirement>
-        <requirement type="package" version="2.1.0">pandas</requirement>
-    </requirements>
+  <requirements>
+    <requirement type="package" version="1.94.1">gcta</requirement>
+  </requirements>
 
-    <command detect_errors="exit_code"><![CDATA[
-        # Create a directory for the reference files
-        mkdir plink_ref &&
+  <command><![CDATA[
+mkdir -p plink_input && \
+cp "${plink_bed}" plink_input/plink.bed && \
+cp "${plink_bim}" plink_input/plink.bim && \
+cp "${plink_fam}" plink_input/plink.fam && \
+awk 'NR==1 {print "SNP\tA1\tA2\tfreq\tb\tse\tp\tN"} NR>1 {print $1"\t"$4"\t"$5"\t"$6"\t"$11"\t"$12"\t"$14"\t"$8}' "${cojo_file}" > cojo_input.dat && \
+~/bin/gcta64 --bfile plink_input/plink --cojo-file cojo_input.dat --cojo-slct --out gcta_output &> gcta.log
+  ]]></command>
 
-        # Link the inputs into the directory with the correct, chromosome-specific names
-        ln -s '$plink_bed' 'plink_ref/${population}.${chromosome}.bed' &&
-        ln -s '$plink_bim' 'plink_ref/${population}.${chromosome}.bim' &&
-        ln -s '$plink_fam' 'plink_ref/${population}.${chromosome}.fam' &&
+  <inputs>
+    <param name="plink_bed" type="data" format="bed" label="PLINK BED file" />
+    <param name="plink_bim" type="data" format="bim" label="PLINK BIM file" />
+    <param name="plink_fam" type="data" format="fam" label="PLINK FAM file" />
+    <param name="cojo_file" type="data" format="tabular" label="Summary Statistics file" />
+  </inputs>
 
-        python3 "$__tool_directory__/gcta_cojo_wrapper.py"
-            --sumstats "$sumstats_file"
-            --plink_ref_dir "plink_ref"
-            --maf $maf
-            --population "$population"
-            --output "$output_file"
-            --script_dir "$__tool_directory__"
-    ]]></command>
+  <outputs>
+    <data name="cojo_output" format="tabular" label="GCTA COJO Output" />
+    <data name="log" format="txt" label="GCTA Log File" />
+  </outputs>
 
-    <inputs>
-        <param name="sumstats_file" type="data" format="tsv" label="Filtered Summary Statistics" help="Output from the 'Filter by P-value' tool."/>
+  <stdout>gcta_output.jma.cojo</stdout>
+  <stderr>gcta.log</stderr>
 
-        <param name="plink_bed" type="data" format="binary" label="PLINK BED file"/>
-        <param name="plink_bim" type="data" format="tabular" label="PLINK BIM file"/>
-        <param name="plink_fam" type="data" format="tabular" label="PLINK FAM file"/>
-
-        <!-- NEW PARAMETER -->
-        <param name="chromosome" type="integer" value="22" label="Chromosome of Reference Panel" help="The chromosome number corresponding to your PLINK files."/>
-
-        <param name="maf" type="float" value="0.01" label="Minor Allele Frequency (MAF)" />
-        <param name="population" type="text" value="EUR" label="Population Prefix" help="The prefix of your PLINK files (e.g., EUR)."/>
-    </inputs>
-
-    <outputs>
-        <data name="output_file" format="tsv" label="${tool.name} on ${on_string}"/>
-    </outputs>
-
-    <help><![CDATA[
-**What it does**
-
-This tool performs a conditional and joint analysis (COJO) using GCTA to identify genetic variants that are independently associated with a trait.
-    ]]></help>
+  <help>
+    This tool runs GCTA COJO analysis on your data. It first preprocesses the summary statistics file to the required format.
+    
+    Input summary statistics must have columns including SNP, A1, A2, freq, b, se, p, N, etc. The tool extracts the necessary columns automatically.
+  </help>
 </tool>
