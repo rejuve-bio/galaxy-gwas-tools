@@ -9,16 +9,13 @@ def format_gwas_for_cojo(gwas_file, output_file):
     Selects and renames the required columns.
     """
     try:
-        print("Attempting to read GWAS summary statistics file...")
+        # Read the input GWAS file
         df = pd.read_csv(gwas_file, sep='\t', low_memory=False)
-        print(f"Successfully read {len(df)} rows.")
 
         # Normalize column names to uppercase for easier matching
         df.columns = [col.upper() for col in df.columns]
-        print("Found columns:", list(df.columns))
 
         # Define the columns we need and their final names for GCTA
-        # This map handles variations in input column names (e.g., FRQ or FREQ)
         column_map = {
             'SNP': 'SNP',
             'A1': 'A1',
@@ -29,33 +26,16 @@ def format_gwas_for_cojo(gwas_file, output_file):
             'P': 'p',
             'N': 'N'
         }
-        
-        # Check for alternative names
-        if 'FREQ' in df.columns:
-            column_map['FREQ'] = 'freq'
-        
-        # Find which columns are actually present in the dataframe
-        present_columns = [col for col in column_map.keys() if col in df.columns]
-        
-        if len(present_columns) < 8:
-            missing = set(column_map.keys()) - set(present_columns)
-            raise ValueError(f"Input file is missing required columns. Could not find: {missing}")
 
-        print(f"Using columns: {present_columns}")
-        
         # Select and rename the columns
-        cojo_df = df[present_columns].rename(columns=column_map)
-
-        # Ensure final columns are in the correct order for GCTA
-        final_order = ['SNP', 'A1', 'A2', 'freq', 'b', 'se', 'p', 'N']
-        cojo_df = cojo_df[final_order]
+        cojo_df = df[list(column_map.keys())].rename(columns=column_map)
 
         # Save the formatted file
         cojo_df.to_csv(output_file, sep='\t', index=False)
         print(f"Successfully formatted GWAS data for COJO and saved to {output_file}")
 
     except Exception as e:
-        sys.exit(f"FATAL ERROR during data formatting: {e}")
+        sys.exit(f"An error occurred during data formatting: {e}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Format GWAS summary statistics for GCTA-COJO.")

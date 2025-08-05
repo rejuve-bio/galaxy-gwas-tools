@@ -1,0 +1,65 @@
+<tool id="gcta_cojo_generic" name="GCTA COJO Analysis" version="1.0.2">
+    <description>Conditional and joint association analysis (COJO)</description>
+
+    <requirements>
+        <requirement type="package" version="1.93.2">gcta</requirement>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        ## This new command block captures ALL output (stdout and stderr) from all steps
+        ## and redirects it to the log file. The shell syntax is now corrected.
+        bash -c '
+            echo "--- Step 1: Setting up environment ---" &&
+            ln -s "$bed" plink_input.bed &&
+            ln -s "$bim" plink_input.bim &&
+            ln -s "$fam" plink_input.fam &&
+            echo "Symbolic links created successfully." &&
+
+            echo "--- Step 2: Formatting GWAS data ---" &&
+            python3 "$__tool_directory__/prepare_gwas_for_cojo.py" --gwas "$gwas" --output "cojo_input.ma" &&
+            echo "Python formatting script finished." &&
+
+            echo "--- Step 3: Running GCTA analysis ---" &&
+            gcta --bfile plink_input --cojo-file cojo_input.ma --cojo-slct --out cojo_output &&
+            echo "GCTA analysis finished." &&
+
+            echo "--- Step 4: Moving output files ---" &&
+            if [ -f cojo_output.jma.cojo ]; then
+                mv cojo_output.jma.cojo "$cojo_out";
+            else
+                echo "Warning: No .jma.cojo result file was created by GCTA." >&2;
+                touch "$cojo_out";
+            fi &&
+            mv cojo_output.log "$log_out"
+        ' > '$log_out' 2>&1
+    ]]></command>
+
+    <inputs>
+        <param name="gwas" type="data" format="tsv" label="Filtered GWAS summary statistics"/>
+        <param name="bed" type="data" format="binary" label="PLINK BED file"/>
+        <param name="bim" type="data" format="tabular" label="PLINK BIM file"/>
+        <param name="fam" type="data" format="tabular" label="PLINK FAM file"/>
+    </inputs>
+
+    <outputs>
+        <data name="cojo_out" format="tabular" label="GCTA COJO Result on ${gwas.name}"/>
+        <data name="log_out" format="txt" label="GCTA Full Log on ${gwas.name}"/>
+    </outputs>
+
+    <help><![CDATA[
+**What it does**
+
+This tool performs a conditional and joint association analysis (COJO) using the GCTA software.
+
+**Inputs**
+
+- **Filtered GWAS summary statistics:** A tab-separated file containing at least the following columns: SNP, A1, A2, FRQ, BETA, SE, P, N.
+- **PLINK BED/BIM/FAM files:** A reference panel for the chromosome being analyzed.
+
+**Outputs**
+
+- **GCTA COJO Result:** A table (`.jma.cojo`) listing the independently significant SNPs.
+- **GCTA Full Log:** The complete log file from all steps for debugging purposes.
+    ]]></help>
+</tool>

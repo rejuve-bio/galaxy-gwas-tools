@@ -1,16 +1,25 @@
-<tool id="gcta_cojo_chr1" name="GCTA COJO Analysis (chr1)" version="0.2">
+<tool id="gcta_cojo_chr1" name="GCTA COJO Analysis (chr1)" version="0.1">
     <description>Conditional and joint association analysis (COJO) using GCTA</description>
 
     <requirements>
-        <requirement type="package" version="1.94.1">gcta</requirement>
+        <!-- <requirement type="package">gcta</requirement> -->
+        <requirement type="package" version="1.93.2">gcta</requirement>
     </requirements>
 
     <command><![CDATA[
+        cp $bed plink_input.bed &&
+        cp $bim plink_input.bim &&
+        cp $fam plink_input.fam &&
+
         awk 'NR==1 {print "SNP\tA1\tA2\tfreq\tb\tse\tp\tN"} NR>1 {print $1"\t"$4"\t"$5"\t"$6"\t"$11"\t"$12"\t"$14"\t"$8}' $gwas > cojo_input.dat &&
-        gcta64 --bfile plink_input --cojo-file cojo_input.dat --cojo-slct --out cojo_output &&
+
+        /home/icog-bioai2/bin/gcta64 --bfile plink_input --cojo-file cojo_input.dat --cojo-slct --out cojo_output &&
+
         mv cojo_output.jma.cojo $cojo_out &&
         mv cojo_output.log $log_out
     ]]></command>
+
+
 
     <inputs>
         <param name="gwas" type="data" format="tabular,tsv" label="Filtered GWAS summary statistics (.tsv)"/>
@@ -18,13 +27,6 @@
         <param name="bim" type="data" format="tabular" label="PLINK BIM file for chr1"/>
         <param name="fam" type="data" format="tabular" label="PLINK FAM file for chr1"/>
     </inputs>
-
-    <configfiles>
-        <configfile name="plink_input.bed">$bed</configfile>
-        <configfile name="plink_input.bim">$bim</configfile>
-        <configfile name="plink_input.fam">$fam</configfile>
-    </configfiles>
-
     <outputs>
         <data name="cojo_out" format="tabular" label="GCTA COJO Result (chr1)"/>
         <data name="log_out" format="txt" label="GCTA Log (chr1)"/>
@@ -33,4 +35,5 @@
     <stdio>
         <exit_code range="1:" level="fatal" description="GCTA failed. Check log file." />
     </stdio>
+
 </tool>
