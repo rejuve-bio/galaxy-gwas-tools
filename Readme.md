@@ -8,7 +8,7 @@ A collection of modular and reproducible Galaxy tools for genome-wide associatio
 - SuSiE fine-mapping
 - VCF processing with 1000 Genomes reference data
 
-Each tool is designed to be small, independent, and Galaxy-compliant, with a one-script-per-tool principle (`.py` + `.xml`), allowing easy integration into any Galaxy-based bioinformatics workflow.
+Each tool is designed to be small, independent, and Galaxy-compliant, allowing easy integration into any Galaxy-based bioinformatics workflow.
 
 ---
 
