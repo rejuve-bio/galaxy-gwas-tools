@@ -1,0 +1,50 @@
+<tool id="calculate_ld_matrix" name="Calculate LD Matrix" version="1.0.0">
+    <description>
+        Calculates an LD matrix for a genomic region using PLINK
+    </description>
+    <requirements>
+        <requirement type="package" version="1.90">
+            plink
+        </requirement>
+        <requirement type="package" version="2.1.0">
+            pandas
+        </requirement>
+    </requirements>
+    <command detect_errors="exit_code">
+        # Create a directory to hold the reference files
+        mkdir plink_ref &amp;&amp;
+
+        # Create links for each file from the collection into our new directory.
+        # This assumes the collection has 3 files: .bed, .bim, .fam
+        ln -s '$plink_reference[0]' 'plink_ref/${plink_reference[0].name}' &amp;&amp;
+        ln -s '$plink_reference[1]' 'plink_ref/${plink_reference[1].name}' &amp;&amp;
+        ln -s '$plink_reference[2]' 'plink_ref/${plink_reference[2].name}' &amp;&amp;
+
+        python3 "$__tool_directory__/calculate_ld_matrix.py"
+            --sumstats "$sumstats_file"
+            --plink_ref_dir "plink_ref"
+            --lead_variant "$lead_variant"
+            --window $window
+            --population "$population"
+            --output_ld "$output_ld"
+            --output_snps "$output_snps"
+    </command>
+    <inputs>
+        <param name="sumstats_file" type="data" format="tsv" label="Summary Statistics with IDs" help="A TSV file, typically from the 'Add SNP ID' tool."/>
+        <param name="plink_reference" type="data_collection" collection_type="list" label="PLINK Reference Panel (single chromosome)" help="A collection with the .bed, .bim, and .fam files for the chromosome of interest."/>
+        <param name="lead_variant" type="text" label="Lead Variant ID" help="The ID of the SNP to center the window on (must exist in the summary statistics file)."/>
+        <param name="window" type="integer" value="500" label="Window Size (in kb)" help="The size of the window on each side of the lead variant."/>
+        <param name="population" type="text" value="EUR" label="Population Prefix" help="The prefix of your PLINK files (e.g., EUR for files named EUR.22.bed)."/>
+    </inputs>
+    <outputs>
+        <data name="output_ld" format="txt.gz" label="${tool.name} on ${on_string}: LD Matrix"/>
+        <data name="output_snps" format="list" label="${tool.name} on ${on_string}: SNP List"/>
+    </outputs>
+    <help>
+        **What it does**
+
+This tool calculates the Linkage Disequilibrium (LD) matrix for a group of SNPs in a specific genomic region. It uses a lead variant to define the center of a window, finds all SNPs from the summary statistics file within that window, and then uses PLINK and a reference panel to compute the r-squared correlation between them.
+
+The resulting LD matrix is a required input for statistical fine-mapping tools like SuSiE.
+    </help>
+</tool>

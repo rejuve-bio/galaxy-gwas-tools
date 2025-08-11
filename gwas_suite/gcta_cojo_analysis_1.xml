@@ -1,4 +1,4 @@
-<tool id="gcta_cojo_chr1" name="GCTA COJO Analysis (chr1)" version="0.1">
+<tool id="gcta_cojo" name="GCTA COJO Analysis" version="0.1">
     <description>Conditional and joint association analysis (COJO) using GCTA</description>
 
     <requirements>

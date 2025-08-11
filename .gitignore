@@ -1,2 +1,17 @@
 .venv
 *.gz
+*/test_data
+*.log
+*.sqlite3
+*.db
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+calculate_ld/test-data/

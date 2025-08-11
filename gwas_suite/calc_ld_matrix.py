@@ -4,25 +4,25 @@ import pandas as pd
 import subprocess
 import os
 import sys
+import shutil
 
-def calculate_ld_matrix(sumstats_file, plink_ref_dir, chromosome, lead_variant, window_kb, population, output_ld_path, output_log_path):
+def calculate_ld_matrix(sumstats_file, plink_ref_dir, chromosome, lead_variant, window_kb, population, output_ld_path, output_snps_path):
     """
     Calculates an LD matrix for a given genomic region using PLINK.
     """
     try:
-        # --- THIS IS THE FIX ---
-        # Hardcode the path to the PLINK executable from your main Conda installation.
-        plink_exec = "/home/icog-bioai2/miniconda3/bin/plink"
-        if not os.path.exists(plink_exec):
-            sys.exit(f"ERROR: The PLINK executable was not found at the hardcoded path: {plink_exec}")
-        print(f"Using PLINK executable at: {plink_exec}")
-        # --- END FIX ---
+        # --- 1. Find the PLINK executable ---
+        plink_exec = shutil.which("plink")
+        if not plink_exec:
+            sys.exit("ERROR: 'plink' executable not found. The Conda environment is not activated correctly.")
+        print(f"Found PLINK executable at: {plink_exec}")
 
-        # --- Identify SNPs in the target window ---
+        # --- 2. Identify SNPs in the target window ---
         print("Reading summary statistics to identify region...")
         df = pd.read_csv(sumstats_file, sep='\t', low_memory=False)
         df.columns = [col.upper() for col in df.columns]
 
+        # Robustly find the SNP identifier column
         if 'SNP' in df.columns:
             snp_col_name = 'SNP'
         elif 'ID' in df.columns:
@@ -30,73 +30,73 @@ def calculate_ld_matrix(sumstats_file, plink_ref_dir, chromosome, lead_variant, 
         else:
             raise ValueError("Could not find a 'SNP' or 'ID' column in the summary statistics file.")
         
+        # Case-insensitive search for the lead variant
         df['id_lower'] = df[snp_col_name].str.lower()
         lead_variant_lower = lead_variant.lower()
+
         lead_variant_row = df[df['id_lower'] == lead_variant_lower]
         if lead_variant_row.empty:
             raise ValueError(f"Lead variant '{lead_variant}' not found in the '{snp_col_name}' column.")
 
         lead_info = lead_variant_row.iloc[0]
+        # The chromosome from the data must match the user's input for safety
         if str(lead_info['CHR']) != str(chromosome):
              raise ValueError(f"Lead variant '{lead_variant}' is on CHR {lead_info['CHR']}, but you provided a reference for CHR {chromosome}.")
+        
         position = lead_info['BP']
 
         window_bp = window_kb * 1000
         start_pos = max(0, position - window_bp)
         end_pos = position + window_bp
-        print(f"Defining window on CHR {chromosome} from {start_pos} to {end_pos}.")
+        print(f"Defining window on CHR {chromosome} from {start_pos} to {end_pos} ({window_kb}kb around {lead_variant}).")
 
-        region_df = df[(df['CHR'] == int(chromosome)) & (df['BP'] >= start_pos) & (df['BP'] <= end_pos)]
+        region_df = df[(df['CHR'] == chromosome) & (df['BP'] >= start_pos) & (df['BP'] <= end_pos)]
         snps_in_region = region_df[snp_col_name].unique().tolist()
 
         if not snps_in_region:
-            print("No SNPs from the summary statistics file were found in the specified window.")
-            with open(output_ld_path, 'w') as f: f.write("")
-            with open(output_log_path, 'w') as f: f.write("# No SNPs found in window\n")
-            sys.exit()
+            raise ValueError("No SNPs found in the specified window.")
 
         extract_snps_file = "snps_to_extract.txt"
         with open(extract_snps_file, 'w') as f:
             for snp_id in snps_in_region:
                 f.write(f"{snp_id}\n")
-        print(f"Found {len(snps_in_region)} SNPs in the window.")
+        print(f"Found {len(snps_in_region)} SNPs in the window. Wrote list to {extract_snps_file}.")
 
-        # --- Run PLINK to calculate LD matrix ---
+        # --- 3. Run PLINK to calculate LD matrix ---
         plink_prefix = os.path.join(plink_ref_dir, f"{population}.{chromosome}")
         output_prefix = "ld_matrix_plink"
 
         print(f"Running PLINK with reference: {plink_prefix}")
         cmd = [
-            plink_exec, "--bfile", plink_prefix, "--r", "square", "gz",
-            "--extract", extract_snps_file, "--out", output_prefix
+            plink_exec,
+            "--bfile", plink_prefix,
+            "--r", "square", "gz",
+            "--extract", extract_snps_file,
+            "--out", output_prefix
         ]
         
         process = subprocess.run(cmd, capture_output=True, text=True)
         if process.returncode != 0:
             print("ERROR: PLINK command failed.", file=sys.stderr)
-            print("--- PLINK STDOUT ---", file=sys.stderr); print(process.stdout, file=sys.stderr)
-            print("--- PLINK STDERR ---", file=sys.stderr); print(process.stderr, file=sys.stderr)
+            print("--- PLINK Standard Output ---", file=sys.stderr)
+            print(process.stdout, file=sys.stderr)
+            print("--- PLINK Standard Error ---", file=sys.stderr)
+            print(process.stderr, file=sys.stderr)
             if "No variants remain" in process.stderr or "No variants remain" in process.stdout:
-                 print("PLINK Warning: None of the SNPs from your file were found in the reference panel.")
-                 with open(output_ld_path, 'w') as f: f.write("")
-                 plink_log_file = f"{output_prefix}.log"
-                 if os.path.exists(plink_log_file):
-                     os.rename(plink_log_file, output_log_path)
-                 else:
-                     with open(output_log_path, 'w') as f:
-                         f.write("# PLINK did not produce a log file.\n")
-                 sys.exit()
+                 sys.exit("PLINK Error: None of the SNPs from your file were found in the reference panel.")
             sys.exit("PLINK execution failed.")
 
-        # --- Prepare final output files ---
+        # --- 4. Prepare final output files ---
         plink_output_file = f"{output_prefix}.ld.gz"
         if not os.path.exists(plink_output_file):
             raise FileNotFoundError(f"PLINK did not generate the expected output file: {plink_output_file}")
 
         os.rename(plink_output_file, output_ld_path)
-        plink_log_file = f"{output_prefix}.log"
-        os.rename(plink_log_file, output_log_path)
-        print("Successfully generated LD matrix and PLINK log.")
+        # We output the list of SNPs that were actually used by PLINK, which is in the .log file
+        # This is more accurate than the requested list.
+        plink_snp_list = f"{output_prefix}.log"
+        os.rename(plink_snp_list, output_snps_path)
+        print("Successfully generated LD matrix and SNP list from PLINK log.")
 
     except Exception as e:
         sys.exit(f"An error occurred: {e}")
@@ -110,11 +110,16 @@ if __name__ == "__main__":
     parser.add_argument("--window", required=True, type=int)
     parser.add_argument("--population", required=True)
     parser.add_argument("--output_ld", required=True)
-    parser.add_argument("--output_log", required=True)
+    parser.add_argument("--output_snps", required=True)
     
     args = parser.parse_args()
     calculate_ld_matrix(
-        args.sumstats, args.plink_ref_dir, args.chromosome,
-        args.lead_variant, args.window, args.population,
-        args.output_ld, args.output_log
+        args.sumstats,
+        args.plink_ref_dir,
+        args.chromosome,
+        args.lead_variant,
+        args.window,
+        args.population,
+        args.output_ld,
+        args.output_snps
     )
