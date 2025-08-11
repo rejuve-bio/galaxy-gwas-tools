@@ -26,7 +26,7 @@
         <param name="plink_bed" type="data" format="binary" label="PLINK BED file"/>
         <param name="plink_bim" type="data" format="tabular" label="PLINK BIM file"/>
         <param name="plink_fam" type="data" format="tabular" label="PLINK FAM file"/>
-        <param name="chromosome" type="integer" value="1" label="Chromosome of Reference Panel"/>
+        <param name="chromosome" type="integer" value="22" label="Chromosome of Reference Panel"/>
         <param name="lead_variant" type="text" label="Lead Variant ID"/>
         <param name="window" type="integer" value="500" label="Window Size (in kb)"/>
         <param name="population" type="text" value="EUR" label="Population Prefix"/>
