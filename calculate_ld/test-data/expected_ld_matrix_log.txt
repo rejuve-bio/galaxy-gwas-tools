@@ -1,0 +1,26 @@
+PLINK v1.90b7.2 64-bit (11 Dec 2023)
+Options in effect:
+  --bfile plink_ref/EUR.22
+  --extract snps_to_extract.txt
+  --out ld_matrix_plink
+  --r square gz
+
+Hostname: dl
+Working directory: /tmp/tmpmj4izc7g/job_working_directory/000/5/working
+Start time: Sun Aug 10 22:21:20 2025
+
+Random number seed: 1754889680
+257418 MB RAM detected; reserving 128709 MB for main workspace.
+1110240 variants loaded from .bim file.
+503 people (0 males, 0 females, 503 ambiguous) loaded from .fam.
+Ambiguous sex IDs written to ld_matrix_plink.nosex .
+--extract: 67 variants remaining.
+Using up to 27 threads (change this with --threads).
+Before main variant filters, 503 founders and 0 nonfounders present.
+Calculating allele frequencies... done.
+Total genotyping rate is in [0.9999995, 1).
+67 variants and 503 people pass filters and QC.
+Note: No phenotypes present.
+--r square gz to ld_matrix_plink.ld.gz ... done.
+
+End time: Sun Aug 10 22:21:21 2025

@@ -1,0 +1,64 @@
+<tool id="calculate_ld_matrix" name="Calculate LD Matrix" version="1.0.2">
+    <description>Calculates an LD matrix for a genomic region using PLINK</description>
+
+    <requirements>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+    </requirements>
+
+    <stdio>
+        <exit_code range="1:" level="fatal" description="Error calculating LD matrix. See log for details." />
+    </stdio>
+
+    <command detect_errors="exit_code"><![CDATA[
+    mkdir -p plink_ref &&
+    ln -sf '$plink_bed' "plink_ref/${population}.${chromosome}.bed" &&
+    ln -sf '$plink_bim' "plink_ref/${population}.${chromosome}.bim" &&
+    ln -sf '$plink_fam' "plink_ref/${population}.${chromosome}.fam" &&
+
+    python3 "$__tool_directory__/ld_matrix.py" --sumstats "$sumstats_file" --plink_ref_dir "plink_ref" --chromosome $chromosome --lead_variant "$lead_variant" --window $window --population "$population" --output_ld "$output_ld" --output_log "$output_log"
+    ]]></command>
+
+
+
+
+    <inputs>
+        <param name="sumstats_file" type="data" format="tsv" label="Summary Statistics with IDs"/>
+        <param name="plink_bed" type="data" format="binary" label="PLINK BED file"/>
+        <param name="plink_bim" type="data" format="tabular" label="PLINK BIM file"/>
+        <param name="plink_fam" type="data" format="tabular" label="PLINK FAM file"/>
+        <param name="chromosome" type="integer" value="1" label="Chromosome of Reference Panel"/>
+        <param name="lead_variant" type="text" label="Lead Variant ID"/>
+        <param name="window" type="integer" value="500" label="Window Size (in kb)"/>
+        <param name="population" type="text" value="EUR" label="Population Prefix"/>
+    </inputs>
+
+    <outputs>
+        <data name="output_ld" format="tabular" label="${tool.name}: LD Matrix"/>
+        <data name="output_log" format="txt" label="${tool.name}: PLINK Log"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="sumstats_file" value="Galaxy199-[Filter Sumstats by P-value on data 198].tsv"/>
+            <param name="plink_bed" value="Galaxy210-[PLINK BED for EUR on Normalized VCF for chr22].binary"/>
+            <param name="plink_bim" value="Galaxy211-[PLINK BIM for EUR on Normalized VCF for chr22].tabular"/>
+            <param name="plink_fam" value="Galaxy209-[PLINK FAM for EUR on Normalized VCF for chr22].tabular"/>
+            <param name="chromosome" value="22"/>
+            <param name="lead_variant" value="rs5995843"/>
+            <param name="window" value="500"/>
+            <param name="population" value="EUR"/>
+            <output name="output_ld" file="expected_ld_matrix_output.ld.gz"/>
+            <output name="output_log" file="expected_ld_matrix_log.txt"/>
+        </test>
+    </tests>
+
+
+    <help>
+        This tool calculates the Linkage Disequilibrium (LD) matrix for a group of SNPs in a specific genomic region.
+    </help>
+
+    <citations>
+        <citation type="doi">10.1086/519795</citation>
+    </citations>
+
+</tool>
