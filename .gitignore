@@ -1,6 +1,6 @@
 .venv
 *.gz
-*/test_data
+*/test-data
 *.log
 *.sqlite3
 *.db
@@ -15,3 +15,4 @@ build/
 *.egg
 
 calculate_ld/test-data/
+finampping/test-data/

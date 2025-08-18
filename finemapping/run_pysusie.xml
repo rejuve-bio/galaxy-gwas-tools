@@ -1,48 +1,60 @@
-<tool id="pysusie_finemap" name="PySuSiE Fine-Mapping" version="1.0.1">
-    <description>Fine-mapping GWAS summary statistics with PySuSiE</description>
+<tool id="pysusie_finemap" name="PySuSiE Fine-Mapping" version="1.0.0" profile="22.05">
+    <description>Fine-mapping GWAS loci using PySuSiE</description>
 
     <requirements>
-        <requirement type="python_module" version="0.2.1">pysusie</requirement>
-        <requirement type="python_module" version="2.1.0">pandas</requirement>
-        <requirement type="python_module" version="1.26.0">numpy</requirement>
+        <requirement type="package">susiepy</requirement>
+        <requirement type="package">pandas</requirement>
+        <requirement type="package">numpy</requirement>
     </requirements>
 
-    <command detect_errors="exit_code"><![CDATA[
+    <command detect_errors="exit_code">
         python3 '$__tool_directory__/run_pysusie.py'
             --sumstats '$sumstats_file'
             --ld_matrix '$ld_matrix_file'
             --snp_list '$snp_list_file'
-            --n $sample_size
+            --n '$sample_size'
             --output_creds '$output_creds'
             --output_pips '$output_pips'
-    ]]></command>
+    </command>
 
     <inputs>
-        <param name="sumstats_file" type="data" format="tabular,txt,txt.gz" label="Full Filtered Summary Statistics"/>
-        <param name="ld_matrix_file" type="data" format="tabular,txt,txt.gz" label="LD Matrix File"/>
-        <param name="snp_list_file" type="data" format="tabular,txt,txt.gz" label="SNP List / PLINK Log"/>
-        <param name="sample_size" type="integer" label="GWAS Sample Size (N)" value="100000"/>
+        <param name="sumstats_file" type="data" format="tabular" label="Summary statistics file" />
+        <param name="ld_matrix_file" type="data" format="tabular" label="LD matrix file" />
+        <param name="snp_list_file" type="data" format="tabular" label="SNP list file" />
+        <param name="sample_size" type="integer" label="Sample size" value="100000" />
     </inputs>
 
     <outputs>
-        <data name="output_creds" format="tabular" label="PySuSiE Credible Sets"/>
-        <data name="output_pips" format="tabular" label="PySuSiE PIPs"/>
+        <data name="output_creds" format="tabular" label="Credible sets" />
+        <data name="output_pips" format="tabular" label="Posterior inclusion probabilities" />
     </outputs>
 
+    <tests>
+        <test>
+            <param name="sumstats_file" value="Galaxy199-[Filter Sumstats by P-value on data 198].tsv" />
+            <param name="ld_matrix_file" value="Galaxy241-[Calculate LD Matrix_ LD Matrix].tabular" />
+            <param name="snp_list_file" value="snp_list.txt" ftype="txt"/>
+            <param name="sample_size" value="100000" />
+            <output name="output_creds" file="creds.tsv" />
+            <output name="output_pips" file="pips.tsv" />
+        </test>
+    </tests>
+
     <help><![CDATA[
-This tool runs the PySuSiE fine-mapping method on GWAS summary statistics.
+This tool runs fine-mapping using the [PySuSiE](https://github.com/stephenslab/susieR) algorithm.
 
 **Inputs:**
-- GWAS summary statistics file (`.txt`, `.tabular`, or gzipped `.txt.gz`)
-- LD matrix file (`.txt`, `.tabular`, or gzipped `.txt.gz`)
-- SNP list file
-- Sample size (N)
+- Summary statistics (with columns: `SNP`, `BETA`, `SE`).
+- LD matrix (tab-delimited, square, SNP IDs as row/column headers).
+- SNP list file (one SNP ID per line).
+- Sample size (integer).
 
 **Outputs:**
-- Credible set file
-- Posterior inclusion probabilities (PIPs)
-
-The dependencies are installed automatically from PyPI.
-
+- Credible sets table.
+- Posterior inclusion probabilities table.
     ]]></help>
+
+    <citations>
+        <citation type="doi">10.1038/s41588-018-0279-4</citation>
+    </citations>
 </tool>

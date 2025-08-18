@@ -1,0 +1,39 @@
+<tool id="finemap" name="PySuSiE Fine-mapping" version="1.0.1">
+    <description>2 Performs statistical fine-mapping using PySuSiE</description>
+
+    <requirements>
+        <requirement type="package">r-susier</requirement>
+        <requirement type="package">rpy2</requirement>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+        <requirement type="package" version="1.26.0">numpy</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        python3 '$__tool_directory__/run_pysusie.py'
+            --sumstats '$sumstats_file'
+            --ld_matrix '$ld_matrix_file'
+            --snp_list '$snp_list_file'
+            --n $sample_size
+            --output_creds '$output_creds'
+            --output_pips '$output_pips'
+    ]]></command>
+
+    <inputs>
+        <param name="sumstats_file" type="data" format="tsv" label="Full Filtered Summary Statistics" help="The output from your 'Filter by P-value' tool."/>
+        <param name="ld_matrix_file" type="data" format="data" label="LD Matrix File" help="The LD matrix output from the 'Calculate LD Matrix' tool."/>
+        <param name="snp_list_file" type="data" format="tabular" label="SNP List File" help="The clean SNP list output from the 'Calculate LD Matrix' tool."/>
+        
+        <param name="sample_size" type="integer" value="350000" label="GWAS Sample Size (N)" help="The approximate sample size from your summary statistics file."/>
+    </inputs>
+
+    <outputs>
+        <data name="output_creds" format="tabular" label="PySuSiE Credible Sets on ${on_string}"/>
+        <data name="output_pips" format="tabular" label="PySuSiE PIPs on ${on_string}"/>
+    </outputs>
+
+    <help><![CDATA[
+**What it does**
+
+This tool performs statistical fine-mapping on a GWAS signal using the Sum of Single Effects (SuSiE) model. It takes summary statistics and a pre-computed LD matrix for a specific region and identifies credible sets of variants, which are groups of SNPs that are statistically likely to contain the true causal variant for the trait.
+    ]]></help>
+</tool>

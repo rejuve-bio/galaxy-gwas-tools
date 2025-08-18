@@ -1,175 +1,60 @@
-# import sys
-# import subprocess
+#!/usr/bin/env python3
 
-# # Try importing pysusie; if missing, install from GitHub
-# try:
-#     import pysusie
-# except ImportError:
-#     print("pysusie not found. Installing from GitHub...", flush=True)
-#     subprocess.check_call([
-#         sys.executable, "-m", "pip", "install",
-#         "git+https://github.com/stephenslab/pySuSiE.git"
-#     ])
-#     import pysusie  # retry import after install
-
-
-# import pandas as pd
-# import numpy as np
-# import argparse
-# import gzip
-
-# # --- Function to handle plain or gzipped files ---
-# def read_table_auto(path, **kwargs):
-#     if str(path).endswith(".gz"):
-#         return pd.read_csv(path, compression="gzip", **kwargs)
-#     else:
-#         return pd.read_csv(path, **kwargs)
-
-# # --- CLI arguments ---
-# parser = argparse.ArgumentParser(description="Run PySuSiE fine-mapping")
-# parser.add_argument("--sumstats", required=True, help="Summary statistics file")
-# parser.add_argument("--ld_matrix", required=True, help="LD matrix file")
-# parser.add_argument("--snp_list", required=True, help="SNP list file")
-# parser.add_argument("--n", type=int, required=True, help="GWAS sample size")
-# parser.add_argument("--output_creds", required=True, help="Output file for credible sets")
-# parser.add_argument("--output_pips", required=True, help="Output file for PIPs")
-# args = parser.parse_args()
-
-# # --- Load inputs ---
-# sumstats = read_table_auto(args.sumstats, sep="\t")
-# ld_matrix = read_table_auto(args.ld_matrix, sep="\t").values
-# snp_list = read_table_auto(args.snp_list, sep="\t")["SNP"].tolist()
-
-# # --- Run PySuSiE ---
-# result = pysusie.susie_rss(
-#     betahat=sumstats["BETA"].values,
-#     se=sumstats["SE"].values,
-#     R=ld_matrix,
-#     n=args.n
-# )
-
-# # --- Save outputs ---
-# pd.DataFrame(result["sets"]).to_csv(args.output_creds, sep="\t", index=False)
-# pd.DataFrame({
-#     "SNP": snp_list,
-#     "PIP": result["pip"]
-# }).to_csv(args.output_pips, sep="\t", index=False)
-
-
-
-
-
-# import sys
-# import subprocess
-# import argparse
-# import pandas as pd
-# import numpy as np
-
-# # --- Auto-install pysusie from GitHub if missing ---
-# try:
-#     import pysusie
-# except ImportError:
-#     print("pysusie not found. Installing from GitHub...", flush=True)
-#     subprocess.check_call([
-#         sys.executable, "-m", "pip", "install",
-#         "git+https://github.com/stephenslab/pySuSiE.git"
-#     ])
-#     import pysusie
-
-# # --- Argument parsing ---
-# parser = argparse.ArgumentParser(description="Run PySuSiE fine-mapping")
-# parser.add_argument("--sumstats", required=True, help="Path to summary statistics file")
-# parser.add_argument("--ld_matrix", required=True, help="Path to LD matrix file")
-# parser.add_argument("--snp_list", required=True, help="Path to SNP list file")
-# parser.add_argument("--n", type=int, required=True, help="GWAS sample size")
-# parser.add_argument("--output_creds", required=True, help="Output file for credible sets")
-# parser.add_argument("--output_pips", required=True, help="Output file for PIPs")
-# args = parser.parse_args()
-
-# # --- Load data ---
-# sumstats = pd.read_csv(args.sumstats, sep="\t")
-# ld_matrix = np.loadtxt(args.ld_matrix)
-# snp_list = pd.read_csv(args.snp_list, sep="\t", header=None)[0].tolist()
-
-# # --- Run PySuSiE ---
-# res = pysusie.susie_rss(
-#     betahat=sumstats["BETA"].values,
-#     se=sumstats["SE"].values,
-#     R=ld_matrix,
-#     n=args.n
-# )
-
-# # --- Save outputs ---
-# pd.DataFrame(res.get("sets", {}).get("cs", []), columns=["Credible_Set"]).to_csv(
-#     args.output_creds, sep="\t", index=False
-# )
-# pd.DataFrame({"SNP": snp_list, "PIP": res.get("pip", [])}).to_csv(
-#     args.output_pips, sep="\t", index=False
-# )
-
-
-
-
-
-
-
-
-import sys
-import subprocess
 import argparse
 import pandas as pd
 import numpy as np
-import time
+import rpy2.robjects as ro
+from rpy2.robjects import numpy2ri
+from rpy2.robjects.conversion import localconverter
 
-# --- Auto-install pysusie from GitHub if missing ---
-try:
-    import pysusie
-except ImportError:
-    print("pysusie not found. Installing from GitHub...", flush=True)
-    subprocess.check_call([
-        sys.executable, "-m", "pip", "install",
-        "git+https://github.com/stephenslab/pySuSiE.git"
-    ])
-    import pysusie
+def main():
+    parser = argparse.ArgumentParser(description="Run SuSiE fine-mapping using susieR via rpy2")
+    parser.add_argument('--sumstats', required=True, help='Path to summary stats TSV file')
+    parser.add_argument('--ld_matrix', required=True, help='Path to LD matrix file (tab-delimited)')
+    parser.add_argument('--n', type=int, required=True, help='Sample size')
+    parser.add_argument('--output_pips', required=True, help='Output file for PIPs')
+    parser.add_argument('--output_creds', required=True, help='Output file for credible sets')
 
-# --- Argument parsing ---
-parser = argparse.ArgumentParser(description="Run PySuSiE fine-mapping")
-parser.add_argument("--sumstats", required=True, help="Path to summary statistics file")
-parser.add_argument("--ld_matrix", required=True, help="Path to LD matrix file")
-parser.add_argument("--snp_list", required=True, help="Path to SNP list file")
-parser.add_argument("--n", type=int, required=True, help="GWAS sample size")
-parser.add_argument("--output_creds", required=True, help="Output file for credible sets")
-parser.add_argument("--output_pips", required=True, help="Output file for PIPs")
-args = parser.parse_args()
+    args = parser.parse_args()
 
-print("Loading data...", flush=True)
-sumstats = pd.read_csv(args.sumstats, sep="\t")
-ld_matrix = np.loadtxt(args.ld_matrix)
-snp_list = pd.read_csv(args.snp_list, sep="\t", header=None)[0].tolist()
-print(f"Summary stats: {sumstats.shape[0]} SNPs")
-print(f"LD matrix shape: {ld_matrix.shape}")
-print(f"SNP list length: {len(snp_list)}")
+    # Load summary stats
+    sumstats = pd.read_csv(args.sumstats, sep='\t')
+    betas = sumstats['BETA'].values
+    ses = sumstats['SE'].values
 
-print("Running PySuSiE fine-mapping...", flush=True)
-start = time.time()
+    # Load LD matrix
+    R = np.loadtxt(args.ld_matrix)
 
-res = pysusie.susie_rss(
-    betahat=sumstats["BETA"].values,
-    se=sumstats["SE"].values,
-    R=ld_matrix,
-    n=args.n,
-    L=10,           # limit number of causal signals to speed up
-    max_iter=100,  # reduce max iterations
-)
+    # Use rpy2 conversion context to convert numpy arrays to R objects
+    with localconverter(ro.default_converter + numpy2ri.converter):
+        ro.globalenv['bhat'] = betas
+        ro.globalenv['shat'] = ses
+        ro.globalenv['R'] = R
+        ro.globalenv['n'] = args.n
 
-print(f"PySuSiE finished in {time.time() - start:.2f} seconds", flush=True)
+        # Load susieR package and run susie_rss
+        ro.r('library(susieR)')
+        ro.r('fit <- susie_rss(bhat=bhat, shat=shat, R=R, n=n)')
 
-print("Saving outputs...", flush=True)
-pd.DataFrame(res.get("sets", {}).get("cs", []), columns=["Credible_Set"]).to_csv(
-    args.output_creds, sep="\t", index=False
-)
-pd.DataFrame({"SNP": snp_list, "PIP": res.get("pip", [])}).to_csv(
-    args.output_pips, sep="\t", index=False
-)
+        # Extract PIPs and credible sets
+        pips = np.array(ro.r('fit$pip'))
+        cs_list = ro.r('fit$sets$cs')
 
-print("Done.", flush=True)
+    # Write PIPs to file
+    with open(args.output_pips, 'w') as f:
+        f.write('SNP\tPIP\n')
+        for snp, pip in zip(sumstats['SNP'], pips):
+            f.write(f"{snp}\t{pip:.6f}\n")
+
+    # Write credible sets to file
+    with open(args.output_creds, 'w') as f:
+        f.write('Credible_Set_ID\tSNPs\n')
+        for i, cs in enumerate(cs_list):
+            snp_indices = list(cs)
+            snps_in_set = [sumstats['SNP'].iloc[idx-1] for idx in snp_indices]  # R is 1-based indexing
+            f.write(f"{i+1}\t{','.join(snps_in_set)}\n")
+
+    print("Done! PIPs and credible sets saved.")
+
+if __name__ == "__main__":
+    main()

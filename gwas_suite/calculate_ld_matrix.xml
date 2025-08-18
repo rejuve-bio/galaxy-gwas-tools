@@ -1,17 +1,20 @@
-<tool id="calculate_ld_matrix" name="Calculate LD Matrix" version="1.0.2">
-    <description>Calculates an LD matrix for a genomic region using PLINK</description>
+<tool id="calculate_ld_matrix" name="Calculate LD Matrix" version="1.0.3">
+    <description>2 Calculates an LD matrix for a genomic region using PLINK</description>
 
     <requirements>
-        <!-- The pandas requirement is still needed for the Python script -->
         <requirement type="package" version="2.1.0">pandas</requirement>
+        <!-- We still need PLINK, but your Python script will find it -->
     </requirements>
 
+    <stdio>
+        <exit_code range="1:" level="fatal" description="Error calculating LD matrix. See log for details." />
+    </stdio>
+
     <command detect_errors="exit_code"><![CDATA[
-        # Create a directory for the reference files and link the inputs into it
-        mkdir plink_ref &&
-        ln -s '$plink_bed' 'plink_ref/${population}.${chromosome}.bed' &&
-        ln -s '$plink_bim' 'plink_ref/${population}.${chromosome}.bim' &&
-        ln -s '$plink_fam' 'plink_ref/${population}.${chromosome}.fam' &&
+        mkdir -p plink_ref &&
+        ln -sf '$plink_bed' "plink_ref/${population}.${chromosome}.bed" &&
+        ln -sf '$plink_bim' "plink_ref/${population}.${chromosome}.bim" &&
+        ln -sf '$plink_fam' "plink_ref/${population}.${chromosome}.fam" &&
 
         python3 "$__tool_directory__/calculate_ld_matrix.py"
             --sumstats "$sumstats_file"
@@ -21,7 +24,7 @@
             --window $window
             --population "$population"
             --output_ld "$output_ld"
-            --output_log "$output_log"
+            --output_snps "$output_snps"
     ]]></command>
 
     <inputs>
@@ -29,15 +32,17 @@
         <param name="plink_bed" type="data" format="binary" label="PLINK BED file"/>
         <param name="plink_bim" type="data" format="tabular" label="PLINK BIM file"/>
         <param name="plink_fam" type="data" format="tabular" label="PLINK FAM file"/>
-        <param name="chromosome" type="integer" value="1" label="Chromosome of Reference Panel"/>
+        <param name="chromosome" type="integer" value="22" label="Chromosome of Reference Panel"/>
         <param name="lead_variant" type="text" label="Lead Variant ID"/>
         <param name="window" type="integer" value="500" label="Window Size (in kb)"/>
         <param name="population" type="text" value="EUR" label="Population Prefix"/>
     </inputs>
 
     <outputs>
-        <data name="output_ld" format="txt.gz" label="${tool.name} on ${on_string}: LD Matrix"/>
-        <data name="output_log" format="txt" label="${tool.name} on ${on_string}: PLINK Log"/>
+        <!-- Use 'data' for the compressed binary output -->
+        <data name="output_ld" format="tabular" label="${tool.name}: LD Matrix"/>
+        <!-- Use 'tabular' for the simple text list of SNPs -->
+        <data name="output_snps" format="tabular" label="${tool.name}: SNP List"/>
     </outputs>
 
     <help>
