@@ -1,0 +1,13 @@
+name: calculate_ld_matrix
+owner: ofge-gel_2019
+description: "Calculates LD matrices from GWAS summary statistics using PLINK."
+long_description: >
+  This tool reads GWAS summary statistics and extracts SNPs either in a specified
+  region around a lead variant or across an entire chromosome. It uses PLINK with a
+  reference panel to compute a pairwise linkage disequilibrium (LD) matrix and produces
+  a clean list of overlapping SNPs. The output is a gzipped LD matrix and a SNP list,
+  ready for downstream fine-mapping, polygenic risk score analysis, or other population
+  genetics workflows.
+categories:
+  - Variant Analysis
+  - Statistics
