@@ -1,0 +1,11 @@
+name: vcf_to_plink
+owner: ofge-gel_2019
+description: "Filters a VCF for a specific population and converts it to PLINK format."
+long_description: >
+  This tool downloads the 1000 Genomes population panel, extracts sample IDs for a given
+  super-population (e.g., EUR, AFR, EAS, SAS, AMR), and generates a sample keep file. 
+  It then uses PLINK to filter the VCF by those samples and convert the data into 
+  binary PLINK format (BED, BIM, FAM). This prepares genotype data for downstream 
+  analyses such as GWAS, imputation, or population genetics studies.
+categories:
+  - Variant Analysis
