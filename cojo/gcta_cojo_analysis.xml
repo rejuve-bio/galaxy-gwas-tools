@@ -1,0 +1,32 @@
+<tool id="gcta_cojo" name="GCTA COJO Analysis" version="0.1">
+    <description>Conditional(updated) and joint association analysis (COJO) using GCTA</description>
+
+    <command><![CDATA[
+        cp '${plink_files.bed}' plink_input.bed &&
+        cp '${plink_files.bim}' plink_input.bim &&
+        cp '${plink_files.fam}' plink_input.fam &&
+
+        awk 'NR==1 {print "SNP\tA1\tA2\tfreq\tb\tse\tp\tN"} NR>1 {print $1"\t"$4"\t"$5"\t"$6"\t"$11"\t"$12"\t"$14"\t"$8}' $gwas > cojo_input.dat &&
+
+        python3 $__tool_directory__/run_gcta_cojo.py &&
+
+        mv cojo_output.jma.cojo $cojo_out &&
+        mv cojo_output.log $log_out
+    ]]></command>
+
+    <inputs>
+        <param name="gwas" type="data" format="tabular,tsv" label="Filtered GWAS summary statistics (.tsv)"/>
+        <param name="bed" type="data" format="binary" label="PLINK BED file"/>
+        <param name="bim" type="data" format="tabular" label="PLINK BIM file"/>
+        <param name="fam" type="data" format="tabular" label="PLINK FAM file"/>
+    </inputs>
+    <outputs>
+        <data name="cojo_out" format="tabular" label="GCTA COJO Result"/>
+        <data name="log_out" format="txt" label="GCTA Log"/>
+    </outputs>
+
+    <stdio>
+        <exit_code range="1:" level="fatal" description="GCTA failed. Check log file." />
+    </stdio>
+
+</tool>
