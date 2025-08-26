@@ -1,0 +1,38 @@
+<tool id="filter_by_pvalue" name="Filter Sumstats by P-value" version="1.0.0">
+    <description>Selects variants based on a significance threshold</description>
+
+    <requirements>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        python3 '$__tool_directory__/filter_by_pvalue.py'
+            --input '$input_file'
+            --output '$output_file'
+            --threshold $p_value_threshold
+    ]]></command>
+
+    <inputs>
+        <param name="input_file" type="data" format="tsv" label="Summary Statistics with IDs" help="A TSV file, typically from the 'Add SNP ID' tool."/>
+        <param name="p_value_threshold" type="float" value="5e-8" label="Significance Threshold (P-value)" help="Keep variants with a P-value STRICTLY LESS than this value."/>
+    </inputs>
+
+    <outputs>
+        <data name="output_file" format="tsv" label="${tool.name} on ${on_string}"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="input_file" value="filter_p_input.tsv"/>
+            <param name="p_value_threshold" value="0.05"/>
+            <output name="output_file" file="filter_p_output.tsv"/>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+**What it does**
+
+This tool filters a summary statistics file to keep only the variants that meet a certain level of statistical significance.
+It is common to use a genome-wide significance threshold of 5x10^-8 (formatted as `5e-8`).
+    ]]></help>
+</tool>
