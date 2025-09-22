@@ -65,5 +65,5 @@ These components are modular, allowing them to be used independently as Galaxy t
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/galaxy-gwas-tools.git
+   git clone https://github.com/rejuve-bio/galaxy-gwas-tools.git
    cd galaxy-gwas-tools
