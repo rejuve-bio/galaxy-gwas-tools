@@ -33,7 +33,31 @@
         <param name="plink_bed" type="data" format="binary" label="PLINK BED file"/>
         <param name="plink_bim" type="data" format="tabular" label="PLINK BIM file"/>
         <param name="plink_fam" type="data" format="tabular" label="PLINK FAM file"/>
-        <param name="chromosome" type="integer" value="22" label="Chromosome of Reference Panel"/>
+        <param name="chromosome" type="select" label="Chromosome of Reference Panel">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22" selected="true">22</option>
+        </param>
+
         <param name="population" type="text" value="EUR" label="Population Prefix"/>
         <param name="lead_variant" type="text" optional="true" label="Lead Variant ID (optional)"/>
         <param name="window" type="integer" value="500" label="Window Size (in kb, used if lead_variant provided)" optional="true"/>
