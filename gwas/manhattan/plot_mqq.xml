@@ -1,36 +1,3 @@
-<!-- <tool id="gwaslab_plot_mqq" name="Plot MQQ" version="1.0.0">
-  <command>
-    python $__tool_directory__/plot_mqq.py $input_file $output_manhattan $output_qq
-  </command>
-  <inputs>
-    <param name="input_file" type="data" format="tabular" label="Checked Summary Statistics"/>
-  </inputs>
-  <outputs>
-    <data name="output_manhattan" format="png" label="Manhattan Plot"/>
-    <data name="output_qq" format="png" label="Q-Q Plot"/>
-  </outputs>
-</tool> -->
-
-
-<!-- <tool id="gwaslab_plot_mqq" name="Plot MQQ" version="1.0.0">
-  <command>
-    python $__tool_directory__/plot_mqq.py $input_file $output_qq
-  </command>
-  <inputs>
-    <param name="input_file" type="data" format="tabular" label="Checked Summary Statistics"/>
-  </inputs>
-  <outputs>
-    <data name="output_qq" format="png" label="Q-Q Plot"/>
-  </outputs>
-</tool> -->
-
-
-
-
-
-
-
-
 <tool id="plot_mqq" name="Manhattan and QQ Plot" version="1.0">
     <!-- <description>Generate Manhattan and QQ plot from GWAS summary statistics</description> -->
     <command><![CDATA[
@@ -45,12 +12,12 @@
         <data name="manhattan_output" format="png" label="Manhattan Plot"/>
         <data name="qq_output" format="png" label="QQ Plot"/>
     </outputs>
-    <!-- <requirements>
-        <requirement type="package">python</requirement>
+    <requirements>
+        <!-- <requirement type="package">python</requirement> -->
         <requirement type="package">matplotlib</requirement>
-        <requirement type="package">pandas</requirement>
+        <!-- <requirement type="package">pandas</requirement> -->
         <requirement type="package">scipy</requirement>
-    </requirements> -->
+    </requirements>
 
     <help>
         This tool generates a Manhattan plot and a QQ plot from GWAS summary statistics.
