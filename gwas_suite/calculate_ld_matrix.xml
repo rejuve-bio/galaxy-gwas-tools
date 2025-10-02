@@ -27,6 +27,8 @@
             --output_snps "$output_snps"
     ]]></command>
 
+    
+
     <inputs>
         <param name="sumstats_file" type="data" format="tsv" label="Summary Statistics with IDs"/>
         <param name="plink_bed" type="data" format="binary" label="PLINK BED file"/>
