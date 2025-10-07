@@ -1,0 +1,40 @@
+<tool id="gwas_sumstats_harmoniser" name="GWAS Sumstats Harmoniser" version="1.0.0">
+    <description>Harmonise GWAS summary statistics to GRCh38 for fine-mapping</description>
+
+    <requirements>
+        <requirement type="package">python</requirement>
+        <requirement type="package">nextflow</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code">
+        <![CDATA[
+        ./harmonizer.sh \
+            --input "$input_file" \
+            --build "$build" \
+            --ref "$ref_dir" \
+            --code-repo "$code_repo" \
+            --threshold "$threshold" \
+            > "$log"
+        ]]>
+    </command>
+
+    <inputs>
+        <param name="input_file" type="data" label="GWAS summary statistics (.tsv.gz or .bgz)" />
+        <param name="build" type="select" label="Genome build">
+            <option value="GRCh37">GRCh37</option>
+            <option value="GRCh38" selected="true">GRCh38</option>
+        </param>
+        <param name="ref_dir" type="data_collection" label="Reference VCF folder"/>
+        <param name="threshold" type="float" value="0.99" label="Matching threshold"/>
+        <param name="code_repo" type="text" value="/opt/gwas-sumstats-harmoniser" hidden="true" />
+    </inputs>
+
+    <outputs>
+        <data name="harmonised_sumstats" format="tabular" label="Harmonised GWAS summary statistics"/>
+        <data name="log" format="txt" label="Harmonisation log"/>
+    </outputs>
+
+    <help>
+        This tool wraps the gwas-sumstats-harmoniser pipeline for use in Galaxy.
+    </help>
+</tool>
