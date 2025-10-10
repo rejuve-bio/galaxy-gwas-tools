@@ -1,53 +1,61 @@
-<tool id="gwas_harmonizer" name="GWAS Harmonizer" version="1.0.0">
-    <description>Harmonise GWAS summary statistics using the gwas-sumstats-harmoniser Nextflow pipeline</description>
+<tool id="gwas_sumstats_harmoniser" name="GWAS Sumstats Harmoniser" version="1.0.0">
+    <description>Prepare reference data or harmonise GWAS summary statistics using Nextflow-based GWAS harmoniser</description>
+    <requirements>
+        <requirement type="package">nextflow</requirement>
+        <requirement type="package">bgzip</requirement>
+        <requirement type="package">tabix</requirement>
+        <requirement type="package">awk</requirement>
+        <requirement type="package">coreutils</requirement>
+    </requirements>
 
-    <command detect_errors="exit_code"><![CDATA[
-# Stage input file
-input_file="$input"
-
-# Debug info
-echo "Input file: $input_file"
-echo "Build: $build"
-echo "Threshold: $threshold"
-
-# Run harmonizer
-bash /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/harmonizer.sh \
-    --input "$input_file" \
-    --build "$build" \
-    --ref /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/data/gwas_harm_ref \
-    --code-repo /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser \
-    --threshold "$threshold"
-
-# Package outputs into a tarball for Galaxy
-tar -czf "$output" -C /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/data/sumstats/*/final .
-]]></command>
+    <command detect_errors="exit_code">
+        <![CDATA[
+        #if $mode.choice == "setup"
+            bash '$__tool_directory__/harmonizer_setup.sh' \
+                --ref '$ref_dir' \
+                --code-repo '$code_repo'
+        #else
+            bash '$__tool_directory__/harmonizer.sh' \
+                --input '$input' \
+                --build '$build' \
+                --threshold '$threshold' \
+                --ref '$ref_dir' \
+                --code-repo '$code_repo'
+        #end if
+        ]]>
+    </command>
 
     <inputs>
-        <param name="input" type="data" format="tabular,gz,bgz" label="Input GWAS summary stats file"/>
-        <param name="build" type="select" label="Genome build">
-            <option value="GRCh37">GRCh37</option>
-            <option value="GRCh38" selected="true">GRCh38</option>
-        </param>
-        <param name="threshold" type="float" value="0.99" label="Harmonization threshold"/>
+        <conditional name="mode">
+            <param name="choice" type="select" label="Choose operation mode">
+                <option value="setup">Prepare reference data</option>
+                <option value="harmonise" selected="true">Harmonise GWAS summary stats</option>
+            </param>
+            <when value="setup">
+                <param name="ref_dir" type="data" format="directory" label="Reference directory" help="Folder to store or update reference data"/>
+                <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Path to gwas-sumstats-harmoniser code repository"/>
+            </when>
+            <when value="harmonise">
+                <param name="input" type="data" format="tabular" label="GWAS summary statistics file (.tsv/.gz)"/>
+                <param name="build" type="select" label="Genome build">
+                    <option value="GRCh37">GRCh37 (hg19)</option>
+                    <option value="GRCh38">GRCh38 (hg38)</option>
+                </param>
+                <param name="threshold" type="float" value="0.99" label="Palindromic variant threshold"/>
+                <param name="ref_dir" type="data" format="directory" label="Reference data directory (prepared previously)"/>
+                <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Path to gwas-sumstats-harmoniser code repository"/>
+            </when>
+        </conditional>
     </inputs>
 
     <outputs>
-        <data name="output" format="tabular" label="Harmonised GWAS Summary Stats"/>
+        <data name="log" format="txt" label="Harmoniser log file"/>
     </outputs>
 
-    <help>
-        This tool runs the **GWAS Summary Stats Harmonizer** Nextflow pipeline
-        to standardize and align GWAS data for downstream fine-mapping workflows.
+    <help><![CDATA[
+This tool runs the [GWAS Sumstats Harmoniser](https://github.com/your-org/gwas-sumstats-harmoniser)
+Nextflow workflow for preparing reference data or harmonising GWAS summary statistics
+into standard SSF format.
 
-        Output: Harmonised GWAS summary stats in a tarball of SSF files.
-    </help>
-
-    <tests>
-        <test>
-            <param name="input" file="test_data/sample.gwas.tsv.gz"/>
-            <param name="build" value="GRCh38"/>
-            <param name="threshold" value="0.99"/>
-            <output name="output" file="expected_output.tar.gz"/>
-        </test>
-    </tests>
-</tool>
+### Two modes:
+1. **Setup mode** — prepare the reference dataset:
