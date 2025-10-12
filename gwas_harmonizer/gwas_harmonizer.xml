@@ -1,0 +1,38 @@
+<tool id="gwas_harmonizer" name="GWAS Harmonizer" version="0.1.0">
+    <description>Harmonize GWAS summary statistics to target genome build</description>
+    <requirements>
+        <requirement type="package" version="22.10.6">nextflow</requirement>
+        <requirement type="package" version="3.8">python</requirement>
+    </requirements>
+    <command detect_errors="exit_code">
+        <![CDATA[
+        python '$__tool_directory__/harmonizer_wrapper.py'
+            --input '$input_file'
+            --build '$build'
+            --threshold '$threshold'
+            --ref-dir '$ref_dir'
+            --code-repo '$code_repo'
+        ]]>
+    </command>
+    <inputs>
+        <param name="input_file" type="data" format="txt,tsv,tabular,csv" label="GWAS Summary Statistics"/>
+        <param name="build" type="select" label="Target genome build">
+            <option value="GRCh38">GRCh38/hg38</option>
+            <option value="GRCh37">GRCh37/hg19</option>
+        </param>
+        <param name="threshold" type="float" value="0.99" min="0.01" max="0.999" label="Palindromic variants threshold"/>
+        <param name="ref_dir" type="text" label="Reference data directory" help="Path to prepared reference data"/>
+        <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Harmonizer code repository path"/>
+    </inputs>
+    <outputs>
+        <data name="harmonized_output" format="tsv" label="Harmonized sumstats" from_work_dir="harmonized_output.tsv"/>
+        <data name="logs" format="txt" label="Harmonization logs" from_work_dir="harmonization_logs.txt"/>
+        <data name="report" format="html" label="Nextflow report" from_work_dir="harm_report.html"/>
+    </outputs>
+    <help>
+        <![CDATA[
+        Harmonizes GWAS summary statistics to target genome build (GRCh37 or GRCh38).
+        Handles strand alignment, allele flipping, and coordinate conversion.
+        ]]>
+    </help>
+</tool>
