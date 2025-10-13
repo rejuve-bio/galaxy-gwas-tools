@@ -3,6 +3,7 @@
     <requirements>
         <requirement type="package" version="22.10.6">nextflow</requirement>
         <requirement type="package" version="3.8">python</requirement>
+        <requirement type="package" version="0.4.1">pyliftover</requirement>
     </requirements>
     <command detect_errors="exit_code">
         <![CDATA[
