@@ -537,10 +537,6 @@
 
 
 
-
-
-
-
 #!/usr/bin/env python3
 import os
 import sys
@@ -756,6 +752,8 @@ def to_gwas_ssf(input_file, output_dir, build):
                 minor_allele = str(row[ea_col]) if ea_col and pd.notna(row[ea_col]) else ''
                 
                 # Determine effect and other alleles
+                # In UK Biobank format, minor_allele is the effect allele
+                # The other allele is the one that's NOT the minor allele
                 if minor_allele and ref_allele and alt_allele:
                     if minor_allele == ref_allele:
                         ea = ref_allele
@@ -766,34 +764,71 @@ def to_gwas_ssf(input_file, output_dir, build):
                     else:
                         # If minor allele doesn't match ref/alt, use minor as effect
                         ea = minor_allele
-                        oa = ref_allele if minor_allele != ref_allele else alt_allele
+                        oa = ref_allele  # default to ref as other
                 else:
                     # Fallback: use minor_allele as effect, ref as other
                     ea = minor_allele
                     oa = ref_allele
+                    
+                # Ensure we have valid alleles
+                if not ea or ea == 'nan' or len(ea) != 1:
+                    continue
+                if not oa or oa == 'nan' or len(oa) != 1:
+                    continue
             else:
                 # Standard separate column format
                 ea = str(row[ea_col]).upper() if ea_col and pd.notna(row[ea_col]) else ''
                 oa = str(row[oa_col]).upper() if oa_col and pd.notna(row[oa_col]) else ''
             
             # Skip rows with missing essential data
-            if not chrom or not pos or not ea:
+            if not chrom or not pos or not ea or not oa:
                 continue
             
-            # Handle optional columns
+            # Handle optional columns - FIXED: Ensure numeric values
             beta_col = next((col for col in df.columns if any(p in col for p in ['beta', 'or'])), None)
             se_col = next((col for col in df.columns if any(p in col for p in ['se', 'standard_error', 'stderr'])), None)
             pval_col = next((col for col in df.columns if any(p in col for p in ['p', 'pval', 'p_value'])), None)
             eaf_col = next((col for col in df.columns if any(p in col for p in ['eaf', 'effect_allele_frequency', 'frq', 'freq', 'minor_af'])), None)
             rsid_col = next((col for col in df.columns if any(p in col for p in ['rsid', 'snp', 'id'])), None)
             
-            beta = str(row[beta_col]) if beta_col and pd.notna(row[beta_col]) else ''
-            se = str(row[se_col]) if se_col and pd.notna(row[se_col]) else ''
-            pval = str(row[pval_col]) if pval_col and pd.notna(row[pval_col]) else ''
-            eaf = str(row[eaf_col]) if eaf_col and pd.notna(row[eaf_col]) else 'NA'
-            rsid = str(row[rsid_col]) if rsid_col and pd.notna(row[rsid_col]) else 'NA'
+            # Ensure numeric values for beta, se, pval
+            beta_val = ''
+            if beta_col and pd.notna(row[beta_col]):
+                try:
+                    beta_val = str(float(row[beta_col]))
+                except (ValueError, TypeError):
+                    beta_val = ''  # Skip if not convertible to float
             
-            output_data.append([chrom, pos, ea.upper(), oa.upper(), beta, se, pval, eaf, rsid])
+            se_val = ''
+            if se_col and pd.notna(row[se_col]):
+                try:
+                    se_val = str(float(row[se_col]))
+                except (ValueError, TypeError):
+                    se_val = ''
+            
+            pval_val = ''
+            if pval_col and pd.notna(row[pval_col]):
+                try:
+                    pval_val = str(float(row[pval_col]))
+                except (ValueError, TypeError):
+                    pval_val = ''
+            
+            eaf_val = 'NA'
+            if eaf_col and pd.notna(row[eaf_col]):
+                try:
+                    eaf_val = str(float(row[eaf_col]))
+                except (ValueError, TypeError):
+                    eaf_val = 'NA'
+            
+            rsid_val = 'NA'
+            if rsid_col and pd.notna(row[rsid_col]):
+                rsid_val = str(row[rsid_col])
+            
+            # Skip rows with missing essential numeric data
+            if not beta_val and not pval_val:
+                continue
+            
+            output_data.append([chrom, pos, ea.upper(), oa.upper(), beta_val, se_val, pval_val, eaf_val, rsid_val])
             successful_rows += 1
             
         except Exception as e:
@@ -811,6 +846,16 @@ def to_gwas_ssf(input_file, output_dir, build):
         'chromosome', 'base_pair_location', 'effect_allele', 'other_allele',
         'beta', 'standard_error', 'p_value', 'effect_allele_frequency', 'rsid'
     ])
+    
+    # DEBUG: Check the first few rows of output
+    print(f"\nFirst 3 rows of converted data:")
+    print(output_df.head(3))
+    
+    # Validate that no allele data ended up in numeric columns
+    print(f"\nValidating converted data...")
+    print(f"Beta column sample: {output_df['beta'].head(3).tolist()}")
+    print(f"Effect allele sample: {output_df['effect_allele'].head(3).tolist()}")
+    print(f"Other allele sample: {output_df['other_allele'].head(3).tolist()}")
     
     # Save to file
     output_tsv = os.path.join(output_dir, 'converted_sumstats.tsv')
