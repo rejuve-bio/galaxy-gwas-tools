@@ -559,8 +559,175 @@ def resolve_path(path, base_dir=None):
     
     return os.path.abspath(path)
 
+def setup_compatible_environment(temp_dir):
+    """Create a temporary virtual environment with compatible dependencies"""
+    venv_path = os.path.join(temp_dir, "harmonizer_venv")
+    
+    print(f"Setting up compatible environment in {venv_path}...")
+    
+    # Create virtual environment
+    subprocess.run([sys.executable, "-m", "venv", venv_path], check=True, capture_output=True)
+    
+    # Get pip path
+    if sys.platform == "win32":
+        pip_path = os.path.join(venv_path, "Scripts", "pip")
+        python_path = os.path.join(venv_path, "Scripts", "python")
+    else:
+        pip_path = os.path.join(venv_path, "bin", "pip")
+        python_path = os.path.join(venv_path, "bin", "python")
+    
+    # Install compatible versions
+    requirements = [
+        "numpy>=1.21,<1.24",
+        "pandas>=1.5,<2.0", 
+        "pydantic>=1.10.4,<2.0.0",
+        "ruamel.yaml==0.17.32"
+    ]
+    
+    for req in requirements:
+        print(f"Installing {req}...")
+        result = subprocess.run([pip_path, "install", req], capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"Warning: Failed to install {req}: {result.stderr}")
+    
+    return venv_path, python_path
+
+def patch_metadata_issue():
+    """Patch the metadata issue by modifying the problematic file"""
+    try:
+        # Try to import to see if patching is needed
+        from gwas_sumstats_tools.schema.metadata import SumStatsMetadata
+        print("No patching needed - imports work correctly")
+        return True
+    except TypeError as e:
+        if "constr() got an unexpected keyword argument 'regex'" in str(e):
+            print("Patching metadata issue...")
+            # Find the metadata.py file
+            metadata_file = None
+            for path in sys.path:
+                potential_file = os.path.join(path, 'gwas_sumstats_tools', 'schema', 'metadata.py')
+                if os.path.exists(potential_file):
+                    metadata_file = potential_file
+                    break
+            
+            if metadata_file:
+                print(f"Found metadata file: {metadata_file}")
+                # Create backup
+                backup_file = metadata_file + '.backup'
+                shutil.copy2(metadata_file, backup_file)
+                
+                # Read and patch
+                with open(metadata_file, 'r') as f:
+                    content = f.read()
+                
+                # Replace the problematic line
+                if "constr(regex=r'^GCST\\d+$')" in content:
+                    content = content.replace(
+                        "gwas_id: Optional[constr(regex=r'^GCST\\d+$')] = None",
+                        "gwas_id: Optional[str] = None  # Patched: removed regex for compatibility"
+                    )
+                    
+                    with open(metadata_file, 'w') as f:
+                        f.write(content)
+                    print("Metadata file patched successfully")
+                    
+                    # Test if patch worked
+                    try:
+                        from gwas_sumstats_tools.schema.metadata import SumStatsMetadata
+                        print("Patch successful - imports now work")
+                        return True
+                    except Exception as e2:
+                        print(f"Patch failed: {e2}")
+                        # Restore backup
+                        shutil.copy2(backup_file, metadata_file)
+                        return False
+                else:
+                    print("No need to patch - line already modified")
+                    return True
+            else:
+                print("Could not find metadata.py to patch")
+                return False
+        else:
+            print(f"Different error during import: {e}")
+            return False
+    except Exception as e:
+        print(f"Unexpected error during import test: {e}")
+        return False
+
+def run_harmonizer_in_compatible_env(args, temp_dir):
+    """Run the harmonizer in a compatible environment"""
+    # First try to patch the current environment
+    if patch_metadata_issue():
+        print("Using patched current environment")
+        return run_harmonizer_direct(args, temp_dir)
+    else:
+        print("Patching failed, setting up compatible environment...")
+        # Set up compatible environment
+        venv_path, python_path = setup_compatible_environment(temp_dir)
+        
+        try:
+            # Run the harmonizer steps in the compatible environment
+            harmonizer_script = f"""
+import os
+import sys
+import subprocess
+import tempfile
+
+# Add code repo to path
+sys.path.insert(0, '{args.code_repo}')
+
+# Set up environment
+env = os.environ.copy()
+env['PATH'] = "{args.code_repo}:" + env['PATH']
+
+# Build Nextflow command
+cmd = [
+    'nextflow', 'run', '{args.code_repo}',
+    '-profile', 'standard',
+    '--harm',
+    '--ref', '{args.ref_dir}',
+    '--file', '{args.ssf_file}',
+    '--chromlist', '{args.chromlist}',
+    '--to_build', '{args.to_build}',
+    '--threshold', '{args.threshold}',
+    '-with-report', 'harm_report.html',
+    '-with-timeline', 'harm_timeline.html', 
+    '-with-trace', 'harm_trace.txt'
+]
+
+# Run Nextflow
+print("Running harmonization in compatible environment...")
+process = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE, 
+                         stderr=subprocess.STDOUT, text=True)
+
+for line in process.stdout:
+    print(line, end='')
+
+return_code = process.wait()
+sys.exit(return_code)
+"""
+            # Write the script to a temporary file
+            script_file = os.path.join(temp_dir, "run_harmonizer.py")
+            with open(script_file, 'w') as f:
+                f.write(harmonizer_script)
+            
+            # Run the script in the compatible environment
+            result = subprocess.run([python_path, script_file], capture_output=True, text=True)
+            
+            print(result.stdout)
+            if result.stderr:
+                print("STDERR:", result.stderr)
+                
+            return result.returncode
+            
+        finally:
+            # Clean up the temporary environment
+            shutil.rmtree(venv_path, ignore_errors=True)
+
 def to_gwas_ssf(input_file, output_dir, build):
     """Convert input file to GWAS-SSF format"""
+    # ... [Keep your existing to_gwas_ssf implementation unchanged] ...
+    # [Your complete existing to_gwas_ssf function here]
     import pandas as pd
     import gzip
     import hashlib
@@ -937,6 +1104,112 @@ def chromlist_from_ssf(ssf_file):
     
     return ','.join(present_chroms)
 
+def run_harmonizer_direct(args, temp_dir):
+    """Run harmonizer directly (attempt in current environment)"""
+    # Set up environment
+    env = os.environ.copy()
+    env['PATH'] = f"{args.code_repo}:{env['PATH']}"
+    
+    # Build Nextflow command
+    cmd = [
+        'nextflow', 'run', args.code_repo,
+        '-profile', 'standard',
+        '--harm',
+        '--ref', args.ref_dir,
+        '--file', args.ssf_file,
+        '--chromlist', args.chromlist,
+        '--to_build', args.to_build,
+        '--threshold', str(args.threshold),
+        '-with-report', 'harm_report.html',
+        '-with-timeline', 'harm_timeline.html',
+        '-with-trace', 'harm_trace.txt'
+    ]
+    
+    # Run Nextflow
+    with open('harmonization_logs.txt', 'w') as log_file:
+        process = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE, 
+                                 stderr=subprocess.STDOUT, text=True)
+        
+        for line in process.stdout:
+            print(line, end='')
+            log_file.write(line)
+            log_file.flush()
+        
+        return_code = process.wait()
+    
+    return return_code
+
+def collect_outputs():
+    """Collect harmonized output files"""
+    # Look for harmonized output files in the work directory
+    harmonized_files = []
+    for root, dirs, files in os.walk('.'):
+        for file in files:
+            file_path = os.path.join(root, file)
+            # Look for files with "harmonised" in name AND actual data content
+            if any(pattern in file.lower() for pattern in ['harmonised', 'final']) and file.endswith(('.tsv', '.gz', '.tsv.gz')):
+                # Check if file has actual data (not just headers)
+                try:
+                    if file.endswith('.gz'):
+                        with gzip.open(file_path, 'rt') as f:
+                            lines = sum(1 for _ in f)
+                    else:
+                        with open(file_path, 'r') as f:
+                            lines = sum(1 for _ in f)
+                    
+                    if lines > 1:  # Has data beyond header
+                        harmonized_files.append(file_path)
+                        print(f"Found harmonized file: {file_path} with {lines} lines")
+                except:
+                    continue
+
+    # Also check the main output directory structure
+    output_dirs = ['results', 'output', 'final', 'harmonised']
+    for output_dir in output_dirs:
+        if os.path.exists(output_dir):
+            for root, dirs, files in os.walk(output_dir):
+                for file in files:
+                    if file.endswith(('.tsv', '.gz', '.tsv.gz')):
+                        harmonized_files.append(os.path.join(root, file))
+
+    # Look for Nextflow's output pattern (dated folders)
+    nextflow_outputs = glob.glob('20*')  # Pattern for dated folders
+    for nf_out in nextflow_outputs:
+        if os.path.isdir(nf_out):
+            print(f"Checking Nextflow output directory: {nf_out}")
+            for root, dirs, files in os.walk(nf_out):
+                for file in files:
+                    if 'harmonised' in file.lower() and file.endswith(('.tsv', '.gz')):
+                        harmonized_files.append(os.path.join(root, file))
+
+    if harmonized_files:
+        # Use the largest file found (most likely the main output)
+        largest_file = max(harmonized_files, key=lambda x: os.path.getsize(x))
+        print(f"Using output file: {largest_file}")
+        
+        # If it's gzipped, decompress it for Galaxy
+        if largest_file.endswith('.gz'):
+            with gzip.open(largest_file, 'rt') as f_in:
+                with open('harmonized_output.tsv', 'w') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
+        else:
+            shutil.copy2(largest_file, 'harmonized_output.tsv')
+    else:
+        # Create debug output to see what's available
+        print("No harmonized files found. Available files:")
+        for root, dirs, files in os.walk('.'):
+            for file in files:
+                if file.endswith(('.tsv', '.gz', '.parquet')):
+                    file_path = os.path.join(root, file)
+                    size = os.path.getsize(file_path)
+                    print(f"  {file_path} ({size} bytes)")
+        
+        # Create empty output with error message
+        with open('harmonized_output.tsv', 'w') as f:
+            f.write("# ERROR: No harmonized output generated\n")
+            f.write("# The harmonizer ran but produced no output files\n")
+            f.write("# Check the harmonization logs for details\n")
+
 def main():
     parser = argparse.ArgumentParser(description='GWAS Harmonizer Wrapper')
     parser.add_argument('--input', required=True, help='Input GWAS summary statistics file')
@@ -971,114 +1244,22 @@ def main():
         chromlist = chromlist_from_ssf(ssf_file)
         print(f"Chromosomes detected: {chromlist}")
         
-        # Step 3: Set up environment
-        env = os.environ.copy()
-        env['PATH'] = f"{args.code_repo}:{env['PATH']}"
+        # Add derived arguments for subprocess
+        args.ssf_file = ssf_file
+        args.chromlist = chromlist
+        args.to_build = '38' if args.build == 'GRCh38' else '37'
         
-        # Step 4: Run Nextflow harmonization
-        print("Running harmonization...")
+        # Step 3: Run harmonization with compatibility handling
+        print("Running harmonization with compatibility handling...")
         
-        # Build Nextflow command
-        cmd = [
-            'nextflow', 'run', args.code_repo,
-            '-profile', 'standard',
-            '--harm',
-            '--ref', args.ref_dir,
-            '--file', ssf_file,
-            '--chromlist', chromlist,
-            '--to_build', '38' if args.build == 'GRCh38' else '37',
-            '--threshold', str(args.threshold),
-            '-with-report', 'harm_report.html',
-            '-with-timeline', 'harm_timeline.html',
-            '-with-trace', 'harm_trace.txt'
-        ]
-        
-        # Run Nextflow
-        with open('harmonization_logs.txt', 'w') as log_file:
-            process = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE, 
-                                     stderr=subprocess.STDOUT, text=True)
-            
-            for line in process.stdout:
-                print(line, end='')
-                log_file.write(line)
-                log_file.flush()
-            
-            return_code = process.wait()
+        return_code = run_harmonizer_in_compatible_env(args, temp_dir)
         
         if return_code != 0:
             sys.exit(f"Harmonization failed with return code: {return_code}")
         
-        # Step 5: Collect outputs - FIXED VERSION
+        # Step 4: Collect outputs
         print("Collecting harmonized outputs...")
-        
-        # Look for harmonized output files in the work directory
-        harmonized_files = []
-        for root, dirs, files in os.walk('.'):
-            for file in files:
-                file_path = os.path.join(root, file)
-                # Look for files with "harmonised" in name AND actual data content
-                if any(pattern in file.lower() for pattern in ['harmonised', 'final']) and file.endswith(('.tsv', '.gz', '.tsv.gz')):
-                    # Check if file has actual data (not just headers)
-                    try:
-                        if file.endswith('.gz'):
-                            with gzip.open(file_path, 'rt') as f:
-                                lines = sum(1 for _ in f)
-                        else:
-                            with open(file_path, 'r') as f:
-                                lines = sum(1 for _ in f)
-                        
-                        if lines > 1:  # Has data beyond header
-                            harmonized_files.append(file_path)
-                            print(f"Found harmonized file: {file_path} with {lines} lines")
-                    except:
-                        continue
-
-        # Also check the main output directory structure
-        output_dirs = ['results', 'output', 'final', 'harmonised']
-        for output_dir in output_dirs:
-            if os.path.exists(output_dir):
-                for root, dirs, files in os.walk(output_dir):
-                    for file in files:
-                        if file.endswith(('.tsv', '.gz', '.tsv.gz')):
-                            harmonized_files.append(os.path.join(root, file))
-
-        # Look for Nextflow's output pattern (dated folders)
-        nextflow_outputs = glob.glob('20*')  # Pattern for dated folders
-        for nf_out in nextflow_outputs:
-            if os.path.isdir(nf_out):
-                print(f"Checking Nextflow output directory: {nf_out}")
-                for root, dirs, files in os.walk(nf_out):
-                    for file in files:
-                        if 'harmonised' in file.lower() and file.endswith(('.tsv', '.gz')):
-                            harmonized_files.append(os.path.join(root, file))
-
-        if harmonized_files:
-            # Use the largest file found (most likely the main output)
-            largest_file = max(harmonized_files, key=lambda x: os.path.getsize(x))
-            print(f"Using output file: {largest_file}")
-            
-            # If it's gzipped, decompress it for Galaxy
-            if largest_file.endswith('.gz'):
-                with gzip.open(largest_file, 'rt') as f_in:
-                    with open('harmonized_output.tsv', 'w') as f_out:
-                        shutil.copyfileobj(f_in, f_out)
-            else:
-                shutil.copy2(largest_file, 'harmonized_output.tsv')
-        else:
-            # Create debug output to see what's available
-            print("No harmonized files found. Available files:")
-            for root, dirs, files in os.walk('.'):
-                for file in files:
-                    if file.endswith(('.tsv', '.gz', '.parquet')):
-                        file_path = os.path.join(root, file)
-                        size = os.path.getsize(file_path)
-                        print(f"  {file_path} ({size} bytes)")
-            
-            # Create empty output with error message
-            with open('harmonized_output.tsv', 'w') as f:
-                f.write("# ERROR: No harmonized output generated\n")
-                f.write("# The harmonizer ran but produced no output files\n")
-                f.write("# Check the harmonization logs for details\n")
+        collect_outputs()
         
         print("Harmonization completed successfully!")
         
