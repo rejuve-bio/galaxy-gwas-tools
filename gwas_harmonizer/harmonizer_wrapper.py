@@ -534,16 +534,291 @@
 
 
 
+
+
+
+
+
+
+
+# #!/usr/bin/env python3
+# import os
+# import sys
+# import argparse
+# import subprocess
+# import tempfile
+# import shutil
+
+# def main():
+#     parser = argparse.ArgumentParser(description='GWAS Harmonizer Wrapper - Calls original bash script')
+#     parser.add_argument('--input', required=True, help='Input GWAS summary statistics file')
+#     parser.add_argument('--build', required=True, choices=['GRCh37', 'GRCh38'], help='Target genome build')
+#     parser.add_argument('--threshold', type=float, default=0.99, help='Palindromic variants threshold')
+#     parser.add_argument('--ref-dir', required=True, help='Reference data directory')
+#     parser.add_argument('--code-repo', required=True, help='Path to harmonizer code repository')
+    
+#     args = parser.parse_args()
+    
+#     # Validate inputs
+#     if not os.path.isfile(args.input):
+#         sys.exit(f"Error: Input file not found: {args.input}")
+    
+#     if not os.path.isdir(args.ref_dir):
+#         sys.exit(f"Error: Reference directory not found: {args.ref_dir}")
+    
+#     if not os.path.isdir(args.code_repo):
+#         sys.exit(f"Error: Code repository not found: {args.code_repo}")
+    
+#     # Create a temporary bash script that replicates your working harmonizer.sh
+#     bash_script = f'''#!/bin/bash
+# set -euo pipefail
+
+# # Set variables from Python arguments
+# SUMSTATS="{args.input}"
+# BUILD="{args.build}"
+# THRESHOLD="{args.threshold}"
+# REF_DIR="{args.ref_dir}"
+# CODE_REPO="{args.code_repo}"
+# BASEDIR="$(pwd -P)"
+
+# # Your original resolve_path function
+# resolve_path() {{
+#   local p="$1"
+#   case "$p" in
+#     /*) : ;;
+#     ~*) p="${{p/#\\~/$HOME}}";;
+#     *)  p="${{BASEDIR%/}}/$p";;
+#   esac
+#   if command -v realpath >/dev/null 2>&1; then
+#     realpath -m -- "$p"
+#   elif command -v python3 >/dev/null 2>&1; then
+#     python3 - "$p" <<'PY'
+# import os, sys
+# print(os.path.abspath(sys.argv[1]))
+# PY
+#   else
+#     printf '%s\\n' "$p"
+#   fi
+# }}
+
+# # Your original to_gwas_ssf function
+# to_gwas_ssf() {{
+#   set -euo pipefail
+#   : "${{SUMSTATS:?Set SUMSTATS to the input sumstats path}}"
+#   BUILD="${{BUILD:-GRCh37}}"
+#   COORD="${{COORD:-1-based}}"
+
+#   SRC="$(resolve_path "$SUMSTATS")"
+
+#   # Output dir
+#   OUT_DIR="$(dirname -- "$SRC")"
+#   mkdir -p "$OUT_DIR"
+
+#   # Normalize stem name
+#   _stem_from_name() {{
+#     local n="$1"
+#     n="${{n##*/}}"
+#     n="${{n%.tsv.gz}}"
+#     n="${{n%.tsv.bgz}}"
+#     n="${{n%.bgz}}"
+#     n="${{n%.gz}}"
+#     n="${{n%.tsv}}"
+#     echo "$n"
+#   }}
+
+#   STEM="$(_stem_from_name "$SRC")"
+
+#   OUT_TSV="${{OUT_DIR%/}}/${{STEM}}.tsv"
+#   OUT_GZ="${{OUT_TSV}}.gz"
+#   OUT_YAML="${{OUT_GZ}}-meta.yaml"
+
+#   # Reader based on extension
+#   READER="cat"
+#   case "$SRC" in *.gz|*.bgz) READER="bgzip -dc";; esac
+
+#   # Build GWAS-SSF - using your exact awk logic
+#   $READER "$SRC" | awk -v OFS="\\t" '
+#     BEGIN{{ print "chromosome\\tbase_pair_location\\teffect_allele\\tother_allele\\tbeta\\tstandard_error\\tp_value\\teffect_allele_frequency\\trsid" }}
+#     NR==1{{
+#       for(i=1;i<=NF;i++) h[tolower($i)]=i
+#       is_neale = h["variant"] && (h["beta"]||h["or"]) && (h["se"]||h["stderr"]||h["standard_error"]) && (h["pval"]||h["p"])
+#       if(!is_neale){{ print "ERROR: unknown layout" > "/dev/stderr"; exit 2 }}
+#       next
+#     }}
+#     {{
+#       chrom=""; pos=""; ea=""; oa=""; beta=""; se=""; p=""; eaf=""; rsid=""
+#       if(is_neale){{
+#         split($h["variant"], v, ":"); chrom=v[1]; pos=v[2]; oa=v[3]; ea=v[4]
+#         if(h["beta"]) beta=$h["beta"]
+#         if(h["se"]) se=$h["se"]; else if(h["stderr"]) se=$h["stderr"]; else if(h["standard_error"]) se=$h["standard_error"]
+#         if(h["pval"]) p=$h["pval"]; else if(h["p"]) p=$h["p"]
+#         if(h["minor_af"]) eaf=$h["minor_af"]
+#         rsid="NA"
+#       }}
+#       if(eaf=="") eaf="NA"; if(rsid=="") rsid="NA"
+#       print chrom, pos, toupper(ea), toupper(oa), beta, se, p, eaf, rsid
+#     }}
+#   ' > "$OUT_TSV"
+
+#   # Compress and index
+#   bgzip -f "$OUT_TSV"
+#   tabix -c N -S 1 -s 1 -b 2 -e 2 "$OUT_GZ" 2>/dev/null || true
+
+#   # Compute md5
+#   MD5="$(md5sum < "$OUT_GZ" | awk '{{print $1}}')"
+
+#   # Sidecar YAML
+#   cat > "$OUT_YAML" <<YAML
+# # Study meta-data
+# date_metadata_last_modified: $(date +%F)
+
+# # Genotyping Information
+# genome_assembly: GRCh${{BUILD}}
+# coordinate_system: ${{COORD}}
+
+# # Summary Statistic information
+# data_file_name: $(basename "$OUT_GZ")
+# file_type: GWAS-SSF v0.1
+# data_file_md5sum: ${{MD5}}
+
+# # Harmonization status
+# is_harmonised: false
+# is_sorted: false
+# YAML
+
+#   echo "$OUT_GZ"
+# }}
+
+# # Your original chromlist_from_ssf function
+# chromlist_from_ssf() {{
+#    local ssf="$1"
+#   [[ -r "$ssf" ]] || {{ echo "cannot read SSF: $ssf" >&2; exit 1; }}
+
+#   local reader="cat"
+#   case "$ssf" in *.gz|*.bgz) reader="bgzip -dc";; esac
+
+#   mapfile -t present < <(
+#     $reader "$ssf" | awk -F'\\t' '
+#       NR==1 {{ for(i=1;i<=NF;i++) if($i=="chromosome") c=i; next }}
+#       {{
+#         chr=$c
+#         sub(/^chr/,"",chr)
+#         if(chr=="23") chr="X"
+#         else if(chr=="24") chr="Y"
+#         else if(chr=="26") chr="MT"
+#         print chr
+#       }}
+#     ' | awk 'NF' | sort -u
+#   )
+
+#   local order=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X Y MT)
+
+#   local have=()
+#   for ch in "${{order[@]}}"; do
+#     if printf '%s\\n' "${{present[@]}}" | grep -qx "$ch"; then
+#       have+=("$ch")
+#     fi
+#   done
+
+#   if [[ ${{#have[@]}} -eq 0 ]]; then
+#     echo "WARN: No chromosomes detected in SSF; using full list" >&2
+#     echo "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y,MT"
+#     return 0
+#   fi
+
+#   (IFS=,; echo "${{have[*]}}")
+# }}
+
+# # Main execution
+# echo "==== VALIDATE INPUT SUMSTATS ===="
+
+# OUT_GZ="$(to_gwas_ssf)" 
+# echo "SSF file: $OUT_GZ"
+# CHROMLIST="$(chromlist_from_ssf "$OUT_GZ")"
+# echo "Chromosomes detected: $CHROMLIST"
+
+# REF_DIR_ABS="$(resolve_path "$REF_DIR")"
+
+# SUMSTATS_DIR=$(dirname -- "$SUMSTATS")
+# cd "$SUMSTATS_DIR"
+
+# LOG_DIR="$SUMSTATS_DIR/logs"
+# mkdir -p "$LOG_DIR"
+
+# export PATH="$CODE_REPO:$PATH"
+
+# echo "==== HARMONISE SUMSTATS ===="
+# nextflow run "$CODE_REPO" -profile standard \\
+#   --harm \\
+#   --ref "$REF_DIR_ABS" \\
+#   --file "$OUT_GZ" \\
+#   --chromlist "$CHROMLIST" \\
+#   --to_build "$BUILD" \\
+#   --threshold "$THRESHOLD"  \\
+#   -resume \\
+#   -with-report   "logs/harm-report-$(date +%s).html" \\
+#   -with-timeline "logs/harm-timeline-$(date +%s).html" \\
+#   -with-trace    "logs/harm-trace-$(date +%s).txt" \\
+#   |& tee -a "$LOG_DIR/harm.log"
+
+# # Copy the harmonized output
+# HARMONIZED_FILE=$(find . -name "*harmonised*" -type f | head -1)
+# if [[ -n "$HARMONIZED_FILE" ]]; then
+#     cp "$HARMONIZED_FILE" "harmonized_output.tsv"
+#     echo "Harmonization completed successfully!"
+# else
+#     echo "# ERROR: No harmonized output found" > "harmonized_output.tsv"
+#     echo "Harmonization completed but no output file found"
+# fi
+# '''
+    
+#     # Write the bash script to a temporary file
+#     with tempfile.NamedTemporaryFile(mode='w', suffix='.sh', delete=False) as f:
+#         f.write(bash_script)
+#         bash_script_path = f.name
+    
+#     try:
+#         # Make it executable
+#         os.chmod(bash_script_path, 0o755)
+        
+#         # Run the bash script
+#         result = subprocess.run(['bash', bash_script_path], capture_output=True, text=True)
+        
+#         # Print output
+#         print(result.stdout)
+#         if result.stderr:
+#             print("STDERR:", result.stderr, file=sys.stderr)
+        
+#         if result.returncode != 0:
+#             sys.exit(f"Bash script failed with return code: {result.returncode}")
+            
+#         print("Harmonization completed successfully via bash script!")
+        
+#     finally:
+#         # Clean up
+#         os.unlink(bash_script_path)
+
+# if __name__ == '__main__':
+#     main()
+
+
+
+
+
+
+
+
+
+
+
 #!/usr/bin/env python3
 import os
 import sys
 import argparse
 import subprocess
-import tempfile
-import shutil
 
 def main():
-    parser = argparse.ArgumentParser(description='GWAS Harmonizer Wrapper - Calls original bash script')
+    parser = argparse.ArgumentParser(description='GWAS Harmonizer Wrapper - Direct bash call')
     parser.add_argument('--input', required=True, help='Input GWAS summary statistics file')
     parser.add_argument('--build', required=True, choices=['GRCh37', 'GRCh38'], help='Target genome build')
     parser.add_argument('--threshold', type=float, default=0.99, help='Palindromic variants threshold')
@@ -552,244 +827,31 @@ def main():
     
     args = parser.parse_args()
     
-    # Validate inputs
-    if not os.path.isfile(args.input):
-        sys.exit(f"Error: Input file not found: {args.input}")
+    # Build the command to call your original harmonizer.sh
+    cmd = [
+        'bash',
+        '/path/to/your/original/harmonizer.sh',  # You need to set this path
+        '--input', args.input,
+        '--build', args.build,
+        '--threshold', str(args.threshold),
+        '--ref', args.ref_dir,
+        '--code-repo', args.code_repo
+    ]
     
-    if not os.path.isdir(args.ref_dir):
-        sys.exit(f"Error: Reference directory not found: {args.ref_dir}")
+    print(f"Running: {' '.join(cmd)}")
     
-    if not os.path.isdir(args.code_repo):
-        sys.exit(f"Error: Code repository not found: {args.code_repo}")
+    # Run the command
+    result = subprocess.run(cmd, capture_output=True, text=True)
     
-    # Create a temporary bash script that replicates your working harmonizer.sh
-    bash_script = f'''#!/bin/bash
-set -euo pipefail
-
-# Set variables from Python arguments
-SUMSTATS="{args.input}"
-BUILD="{args.build}"
-THRESHOLD="{args.threshold}"
-REF_DIR="{args.ref_dir}"
-CODE_REPO="{args.code_repo}"
-BASEDIR="$(pwd -P)"
-
-# Your original resolve_path function
-resolve_path() {{
-  local p="$1"
-  case "$p" in
-    /*) : ;;
-    ~*) p="${{p/#\\~/$HOME}}";;
-    *)  p="${{BASEDIR%/}}/$p";;
-  esac
-  if command -v realpath >/dev/null 2>&1; then
-    realpath -m -- "$p"
-  elif command -v python3 >/dev/null 2>&1; then
-    python3 - "$p" <<'PY'
-import os, sys
-print(os.path.abspath(sys.argv[1]))
-PY
-  else
-    printf '%s\\n' "$p"
-  fi
-}}
-
-# Your original to_gwas_ssf function
-to_gwas_ssf() {{
-  set -euo pipefail
-  : "${{SUMSTATS:?Set SUMSTATS to the input sumstats path}}"
-  BUILD="${{BUILD:-GRCh37}}"
-  COORD="${{COORD:-1-based}}"
-
-  SRC="$(resolve_path "$SUMSTATS")"
-
-  # Output dir
-  OUT_DIR="$(dirname -- "$SRC")"
-  mkdir -p "$OUT_DIR"
-
-  # Normalize stem name
-  _stem_from_name() {{
-    local n="$1"
-    n="${{n##*/}}"
-    n="${{n%.tsv.gz}}"
-    n="${{n%.tsv.bgz}}"
-    n="${{n%.bgz}}"
-    n="${{n%.gz}}"
-    n="${{n%.tsv}}"
-    echo "$n"
-  }}
-
-  STEM="$(_stem_from_name "$SRC")"
-
-  OUT_TSV="${{OUT_DIR%/}}/${{STEM}}.tsv"
-  OUT_GZ="${{OUT_TSV}}.gz"
-  OUT_YAML="${{OUT_GZ}}-meta.yaml"
-
-  # Reader based on extension
-  READER="cat"
-  case "$SRC" in *.gz|*.bgz) READER="bgzip -dc";; esac
-
-  # Build GWAS-SSF - using your exact awk logic
-  $READER "$SRC" | awk -v OFS="\\t" '
-    BEGIN{{ print "chromosome\\tbase_pair_location\\teffect_allele\\tother_allele\\tbeta\\tstandard_error\\tp_value\\teffect_allele_frequency\\trsid" }}
-    NR==1{{
-      for(i=1;i<=NF;i++) h[tolower($i)]=i
-      is_neale = h["variant"] && (h["beta"]||h["or"]) && (h["se"]||h["stderr"]||h["standard_error"]) && (h["pval"]||h["p"])
-      if(!is_neale){{ print "ERROR: unknown layout" > "/dev/stderr"; exit 2 }}
-      next
-    }}
-    {{
-      chrom=""; pos=""; ea=""; oa=""; beta=""; se=""; p=""; eaf=""; rsid=""
-      if(is_neale){{
-        split($h["variant"], v, ":"); chrom=v[1]; pos=v[2]; oa=v[3]; ea=v[4]
-        if(h["beta"]) beta=$h["beta"]
-        if(h["se"]) se=$h["se"]; else if(h["stderr"]) se=$h["stderr"]; else if(h["standard_error"]) se=$h["standard_error"]
-        if(h["pval"]) p=$h["pval"]; else if(h["p"]) p=$h["p"]
-        if(h["minor_af"]) eaf=$h["minor_af"]
-        rsid="NA"
-      }}
-      if(eaf=="") eaf="NA"; if(rsid=="") rsid="NA"
-      print chrom, pos, toupper(ea), toupper(oa), beta, se, p, eaf, rsid
-    }}
-  ' > "$OUT_TSV"
-
-  # Compress and index
-  bgzip -f "$OUT_TSV"
-  tabix -c N -S 1 -s 1 -b 2 -e 2 "$OUT_GZ" 2>/dev/null || true
-
-  # Compute md5
-  MD5="$(md5sum < "$OUT_GZ" | awk '{{print $1}}')"
-
-  # Sidecar YAML
-  cat > "$OUT_YAML" <<YAML
-# Study meta-data
-date_metadata_last_modified: $(date +%F)
-
-# Genotyping Information
-genome_assembly: GRCh${{BUILD}}
-coordinate_system: ${{COORD}}
-
-# Summary Statistic information
-data_file_name: $(basename "$OUT_GZ")
-file_type: GWAS-SSF v0.1
-data_file_md5sum: ${{MD5}}
-
-# Harmonization status
-is_harmonised: false
-is_sorted: false
-YAML
-
-  echo "$OUT_GZ"
-}}
-
-# Your original chromlist_from_ssf function
-chromlist_from_ssf() {{
-   local ssf="$1"
-  [[ -r "$ssf" ]] || {{ echo "cannot read SSF: $ssf" >&2; exit 1; }}
-
-  local reader="cat"
-  case "$ssf" in *.gz|*.bgz) reader="bgzip -dc";; esac
-
-  mapfile -t present < <(
-    $reader "$ssf" | awk -F'\\t' '
-      NR==1 {{ for(i=1;i<=NF;i++) if($i=="chromosome") c=i; next }}
-      {{
-        chr=$c
-        sub(/^chr/,"",chr)
-        if(chr=="23") chr="X"
-        else if(chr=="24") chr="Y"
-        else if(chr=="26") chr="MT"
-        print chr
-      }}
-    ' | awk 'NF' | sort -u
-  )
-
-  local order=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X Y MT)
-
-  local have=()
-  for ch in "${{order[@]}}"; do
-    if printf '%s\\n' "${{present[@]}}" | grep -qx "$ch"; then
-      have+=("$ch")
-    fi
-  done
-
-  if [[ ${{#have[@]}} -eq 0 ]]; then
-    echo "WARN: No chromosomes detected in SSF; using full list" >&2
-    echo "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y,MT"
-    return 0
-  fi
-
-  (IFS=,; echo "${{have[*]}}")
-}}
-
-# Main execution
-echo "==== VALIDATE INPUT SUMSTATS ===="
-
-OUT_GZ="$(to_gwas_ssf)" 
-echo "SSF file: $OUT_GZ"
-CHROMLIST="$(chromlist_from_ssf "$OUT_GZ")"
-echo "Chromosomes detected: $CHROMLIST"
-
-REF_DIR_ABS="$(resolve_path "$REF_DIR")"
-
-SUMSTATS_DIR=$(dirname -- "$SUMSTATS")
-cd "$SUMSTATS_DIR"
-
-LOG_DIR="$SUMSTATS_DIR/logs"
-mkdir -p "$LOG_DIR"
-
-export PATH="$CODE_REPO:$PATH"
-
-echo "==== HARMONISE SUMSTATS ===="
-nextflow run "$CODE_REPO" -profile standard \\
-  --harm \\
-  --ref "$REF_DIR_ABS" \\
-  --file "$OUT_GZ" \\
-  --chromlist "$CHROMLIST" \\
-  --to_build "$BUILD" \\
-  --threshold "$THRESHOLD"  \\
-  -resume \\
-  -with-report   "logs/harm-report-$(date +%s).html" \\
-  -with-timeline "logs/harm-timeline-$(date +%s).html" \\
-  -with-trace    "logs/harm-trace-$(date +%s).txt" \\
-  |& tee -a "$LOG_DIR/harm.log"
-
-# Copy the harmonized output
-HARMONIZED_FILE=$(find . -name "*harmonised*" -type f | head -1)
-if [[ -n "$HARMONIZED_FILE" ]]; then
-    cp "$HARMONIZED_FILE" "harmonized_output.tsv"
-    echo "Harmonization completed successfully!"
-else
-    echo "# ERROR: No harmonized output found" > "harmonized_output.tsv"
-    echo "Harmonization completed but no output file found"
-fi
-'''
+    # Print output
+    print(result.stdout)
+    if result.stderr:
+        print("STDERR:", result.stderr, file=sys.stderr)
     
-    # Write the bash script to a temporary file
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.sh', delete=False) as f:
-        f.write(bash_script)
-        bash_script_path = f.name
+    if result.returncode != 0:
+        sys.exit(f"Command failed with return code: {result.returncode}")
     
-    try:
-        # Make it executable
-        os.chmod(bash_script_path, 0o755)
-        
-        # Run the bash script
-        result = subprocess.run(['bash', bash_script_path], capture_output=True, text=True)
-        
-        # Print output
-        print(result.stdout)
-        if result.stderr:
-            print("STDERR:", result.stderr, file=sys.stderr)
-        
-        if result.returncode != 0:
-            sys.exit(f"Bash script failed with return code: {result.returncode}")
-            
-        print("Harmonization completed successfully via bash script!")
-        
-    finally:
-        # Clean up
-        os.unlink(bash_script_path)
+    print("Harmonization completed successfully!")
 
 if __name__ == '__main__':
     main()
