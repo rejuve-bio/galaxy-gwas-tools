@@ -830,7 +830,7 @@ def main():
     # Build the command to call your original harmonizer.sh
     cmd = [
         'bash',
-        '/path/to/your/original/harmonizer.sh',  # You need to set this path
+        '/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/harmonizer.sh',  # You need to set this path
         '--input', args.input,
         '--build', args.build,
         '--threshold', str(args.threshold),
