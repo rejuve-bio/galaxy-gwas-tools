@@ -725,12 +725,11 @@ sys.exit(return_code)
             shutil.rmtree(venv_path, ignore_errors=True)
 
 def to_gwas_ssf(input_file, output_dir, build):
-    """Convert input file to GWAS-SSF format - FIXED VERSION"""
+    """Convert input file to GWAS-SSF format - CRITICAL FIXES FOR COORDINATE CONVERSION"""
     import pandas as pd
     import gzip
     import hashlib
     
-    # DEBUG: Check the actual input file structure
     print(f"\n=== DEBUG: Analyzing input file ===")
     print(f"Input file: {input_file}")
     
@@ -741,46 +740,12 @@ def to_gwas_ssf(input_file, output_dir, build):
     for i, line in enumerate(lines):
         print(f"Line {i+1}: {line.strip()}")
     
-    # Try different separators
-    separators = ['\t', ',', ' ', ';']
-    df = None
-    used_sep = None
-    
-    for sep in separators:
-        try:
-            if input_file.endswith('.gz'):
-                df_test = pd.read_csv(input_file, compression='gzip', sep=sep, nrows=5, engine='python')
-            else:
-                df_test = pd.read_csv(input_file, sep=sep, nrows=5, engine='python')
-            
-            if len(df_test.columns) > 1:
-                df = df_test
-                used_sep = sep
-                print(f"Detected separator: '{sep}' with {len(df.columns)} columns")
-                print(f"Columns: {list(df.columns)}")
-                break
-        except Exception as e:
-            continue
-    
-    if df is None:
-        # Try with no header and tab separator (most common for GWAS)
-        try:
-            if input_file.endswith('.gz'):
-                df = pd.read_csv(input_file, compression='gzip', sep='\t', header=None, nrows=5, engine='python')
-            else:
-                df = pd.read_csv(input_file, sep='\t', header=None, nrows=5, engine='python')
-            print(f"No header detected. Using default column names")
-            print(f"Columns: {list(df.columns)}")
-            used_sep = '\t'
-        except Exception as e:
-            raise Exception(f"Cannot parse input file with any separator. Error: {e}")
-    
-    # Now read the full file with the detected separator
+    # Read the full file with tab separator (your format uses tabs)
     try:
         if input_file.endswith('.gz'):
-            df = pd.read_csv(input_file, compression='gzip', sep=used_sep, engine='python')
+            df = pd.read_csv(input_file, compression='gzip', sep='\t', engine='python')
         else:
-            df = pd.read_csv(input_file, sep=used_sep, engine='python')
+            df = pd.read_csv(input_file, sep='\t', engine='python')
     except Exception as e:
         raise Exception(f"Failed to read full file: {e}")
     
@@ -794,252 +759,169 @@ def to_gwas_ssf(input_file, output_dir, build):
     df.columns = df.columns.str.lower()
     print(f"\nLowercase columns: {list(df.columns)}")
     
-    # Check for variant column format (chrom:pos:ref:alt)
+    # FIXED: Better variant column parsing with chromosome cleaning
     variant_col = None
     for col in df.columns:
         if 'variant' in col:
             variant_col = col
             break
     
-    if variant_col:
-        print(f"Found variant column: {variant_col}")
-        # Check if it's in chrom:pos:ref:alt format
-        sample_variant = str(df[variant_col].iloc[0]) if len(df) > 0 else ""
-        print(f"Sample variant: {sample_variant}")
-        
-        if ':' in sample_variant:
-            print("Detected chrom:pos:ref:alt format in variant column")
-            # Parse the variant column
-            def parse_variant(variant_str):
-                try:
-                    parts = variant_str.split(':')
-                    if len(parts) >= 4:
-                        return parts[0], parts[1], parts[2], parts[3]  # chrom, pos, ref, alt
-                    elif len(parts) >= 2:
-                        return parts[0], parts[1], '', ''  # chrom, pos only
-                    else:
-                        return '', '', '', ''
-                except:
-                    return '', '', '', ''
-            
-            # Apply parsing
-            parsed = df[variant_col].apply(parse_variant)
-            df['chromosome'] = parsed.apply(lambda x: x[0])
-            df['base_pair_location'] = parsed.apply(lambda x: x[1])
-            df['ref_allele'] = parsed.apply(lambda x: x[2])
-            df['alt_allele'] = parsed.apply(lambda x: x[3])
-            
-            print(f"Parsed variant column - Sample: {df[['chromosome', 'base_pair_location', 'ref_allele', 'alt_allele']].iloc[0].tolist()}")
-            
-            # Use parsed columns
-            chrom_col = 'chromosome'
-            pos_col = 'base_pair_location'
-            # For allele columns, we need to determine which is effect allele
-            # In your format, minor_allele is likely the effect allele
-            ea_col = 'minor_allele'
-            oa_col = None  # We'll determine this based on ref/alt
-            
-        else:
-            raise Exception(f"Variant column exists but not in expected chrom:pos:ref:alt format. Found: {sample_variant}")
-    else:
-        # Original column detection logic for separate columns
-        required_patterns = ['chr', 'pos', 'bp', 'allele', 'a1', 'a2']
-        optional_patterns = ['beta', 'or', 'se', 'p', 'freq', 'rsid', 'snp', 'id']
-        
-        available_columns = list(df.columns)
-        print(f"All available columns: {available_columns}")
-        
-        # Find best matches for required fields
-        chrom_col = None
-        pos_col = None
-        ea_col = None
-        oa_col = None
-        
-        # Look for chromosome column
-        for pattern in ['chr', 'chrom', 'chromosome']:
-            for col in available_columns:
-                if pattern in col:
-                    chrom_col = col
-                    break
-            if chrom_col:
-                break
-        
-        # Look for position column
-        for pattern in ['pos', 'bp', 'position']:
-            for col in available_columns:
-                if pattern in col:
-                    pos_col = col
-                    break
-            if pos_col:
-                break
-        
-        # Look for effect allele column
-        for pattern in ['a1', 'effect_allele', 'allele1', 'ea']:
-            for col in available_columns:
-                if pattern in col:
-                    ea_col = col
-                    break
-            if ea_col:
-                break
-        
-        # Look for other allele column
-        for pattern in ['a2', 'other_allele', 'allele2', 'oa']:
-            for col in available_columns:
-                if pattern in col:
-                    oa_col = col
-                    break
-            if oa_col:
-                break
+    if not variant_col:
+        raise Exception("No variant column found. Expected column named 'variant'")
     
-    print(f"\nDetected columns:")
-    print(f"  Chromosome: {chrom_col}")
-    print(f"  Position: {pos_col}")
-    print(f"  Effect allele: {ea_col}")
-    print(f"  Other allele: {oa_col}")
+    print(f"Found variant column: {variant_col}")
     
-    if not chrom_col or not pos_col:
-        raise Exception(f"Missing required columns. Need chromosome and position. Found columns: {original_columns}")
+    # Parse the variant column (format: chrom:pos:ref:alt)
+    def parse_variant(variant_str):
+        try:
+            parts = str(variant_str).split(':')
+            if len(parts) >= 4:
+                chrom = parts[0].replace('chr', '').replace('CHR', '')  # Remove 'chr' prefix
+                pos = parts[1]
+                ref = parts[2].upper()
+                alt = parts[3].upper()
+                return chrom, pos, ref, alt
+            else:
+                return '', '', '', ''
+        except:
+            return '', '', '', ''
     
-    # FIXED: Better column detection for your specific format
-    beta_col = None
-    se_col = None  
-    pval_col = None
-    eaf_col = None
+    # Apply parsing
+    print("Parsing variant column...")
+    parsed = df[variant_col].apply(parse_variant)
+    df['chromosome'] = parsed.apply(lambda x: x[0])
+    df['base_pair_location'] = parsed.apply(lambda x: x[1])
+    df['ref_allele'] = parsed.apply(lambda x: x[2]) 
+    df['alt_allele'] = parsed.apply(lambda x: x[3])
     
-    # Direct mapping for your known column names
-    for col in df.columns:
-        if col == 'beta':
-            beta_col = col
-        elif col == 'se':
-            se_col = col
-        elif col == 'pval':
-            pval_col = col
-        elif col == 'minor_af':
-            eaf_col = col
+    # Check parsing results
+    sample_idx = 0
+    sample_variant = str(df[variant_col].iloc[sample_idx]) if len(df) > 0 else ""
+    sample_parsed = df[['chromosome', 'base_pair_location', 'ref_allele', 'alt_allele']].iloc[sample_idx].tolist()
+    print(f"Sample variant parsing: '{sample_variant}' -> {sample_parsed}")
     
-    # Fallback to pattern matching if direct names not found
-    if not beta_col:
-        beta_col = next((col for col in df.columns if 'beta' in col), None)
-    if not se_col:
-        se_col = next((col for col in df.columns if 'se' in col), None)
-    if not pval_col:
-        pval_col = next((col for col in df.columns if any(p in col for p in ['pval', 'p_value', 'p'])), None)
-    if not eaf_col:
-        eaf_col = next((col for col in df.columns if any(p in col for p in ['eaf', 'effect_allele_frequency', 'frq', 'freq', 'minor_af'])), None)
+    # FIXED: Determine effect and other alleles correctly
+    # In your format, minor_allele is the effect allele
+    ea_col = 'minor_allele'
+    if ea_col not in df.columns:
+        raise Exception(f"Effect allele column '{ea_col}' not found")
     
-    print(f"Detected data columns:")
-    print(f"  Beta: {beta_col}")
-    print(f"  Standard Error: {se_col}") 
-    print(f"  P-value: {pval_col}")
-    print(f"  Effect Allele Frequency: {eaf_col}")
+    print(f"Using effect allele column: {ea_col}")
     
     # Map columns to GWAS-SSF format
     output_data = []
     successful_rows = 0
+    failed_rows = 0
+    invalid_chromosomes = 0
+    invalid_alleles = 0
+    
+    # Valid chromosome names
+    valid_chroms = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15',
+                   '16','17','18','19','20','21','22','X','Y','MT']
     
     for idx, row in df.iterrows():
         try:
-            chrom = str(row[chrom_col]) if pd.notna(row[chrom_col]) else ''
-            pos = str(row[pos_col]) if pd.notna(row[pos_col]) else ''
+            chrom = str(row['chromosome']).strip()
+            pos = str(row['base_pair_location']).strip()
+            ref_allele = str(row['ref_allele']).strip().upper()
+            alt_allele = str(row['alt_allele']).strip().upper()
+            minor_allele = str(row[ea_col]).strip().upper() if pd.notna(row[ea_col]) else ''
             
-            # Handle alleles based on format
-            if variant_col and ':' in str(df[variant_col].iloc[0]):
-                # For variant column format, we have ref and alt alleles
-                ref_allele = str(row['ref_allele']) if 'ref_allele' in df.columns and pd.notna(row.get('ref_allele', '')) else ''
-                alt_allele = str(row['alt_allele']) if 'alt_allele' in df.columns and pd.notna(row.get('alt_allele', '')) else ''
-                minor_allele = str(row[ea_col]) if ea_col and pd.notna(row[ea_col]) else ''
-                
-                # Determine effect and other alleles
-                if minor_allele and ref_allele and alt_allele:
-                    if minor_allele == ref_allele:
-                        ea = ref_allele
-                        oa = alt_allele
-                    elif minor_allele == alt_allele:
-                        ea = alt_allele
-                        oa = ref_allele
-                    else:
-                        ea = minor_allele
-                        oa = ref_allele
-                else:
-                    ea = minor_allele
-                    oa = ref_allele
-                    
-                # Ensure we have valid alleles
-                if not ea or ea == 'nan' or len(ea) != 1:
-                    continue
-                if not oa or oa == 'nan' or len(oa) != 1:
-                    continue
-            else:
-                # Standard separate column format
-                ea = str(row[ea_col]).upper() if ea_col and pd.notna(row[ea_col]) else ''
-                oa = str(row[oa_col]).upper() if oa_col and pd.notna(row[oa_col]) else ''
-            
-            # Skip rows with missing essential data
-            if not chrom or not pos or not ea or not oa:
+            # FIXED: Skip rows with missing essential data
+            if not chrom or not pos or chrom == 'NA' or pos == 'NA' or not ref_allele or not alt_allele:
+                failed_rows += 1
                 continue
             
-            # FIXED: Better handling of numeric values
+            # FIXED: Validate chromosome - critical for coordinate conversion
+            if chrom not in valid_chroms:
+                invalid_chromosomes += 1
+                if invalid_chromosomes <= 5:
+                    print(f"Warning: Invalid chromosome '{chrom}' at row {idx}")
+                continue
+            
+            # FIXED: Validate position is numeric
+            try:
+                int(pos)
+            except (ValueError, TypeError):
+                failed_rows += 1
+                continue
+            
+            # FIXED: Determine effect and other alleles
+            # The minor_allele is the effect allele in your format
+            ea = minor_allele
+            # Other allele is the one that's NOT the minor allele
+            if minor_allele == ref_allele:
+                oa = alt_allele
+            elif minor_allele == alt_allele:
+                oa = ref_allele
+            else:
+                # If minor allele doesn't match ref or alt, skip
+                invalid_alleles += 1
+                continue
+            
+            # FIXED: Validate alleles are single characters and valid nucleotides
+            valid_bases = {'A', 'C', 'G', 'T'}
+            if not ea or len(ea) != 1 or ea not in valid_bases:
+                invalid_alleles += 1
+                continue
+            if not oa or len(oa) != 1 or oa not in valid_bases:
+                invalid_alleles += 1
+                continue
+            
+            # Handle numeric columns
+            beta_col = 'beta'
+            se_col = 'se'
+            pval_col = 'pval'
+            eaf_col = 'minor_af'
+            
             beta_val = ''
-            if beta_col and pd.notna(row[beta_col]):
+            if beta_col in df.columns and pd.notna(row[beta_col]):
                 try:
-                    beta_val = float(row[beta_col])
-                    beta_val = str(beta_val) if beta_val != 0 else ''
+                    beta_val = str(float(row[beta_col]))
                 except (ValueError, TypeError):
-                    # Try scientific notation conversion
-                    try:
-                        beta_val = str(float(row[beta_col]))
-                    except:
-                        beta_val = ''
+                    beta_val = ''
             
             se_val = ''
-            if se_col and pd.notna(row[se_col]):
+            if se_col in df.columns and pd.notna(row[se_col]):
                 try:
-                    se_val = float(row[se_col])
-                    se_val = str(se_val) if se_val != 0 else ''
+                    se_val = str(float(row[se_col]))
                 except (ValueError, TypeError):
-                    try:
-                        se_val = str(float(row[se_col]))
-                    except:
-                        se_val = ''
+                    se_val = ''
             
             pval_val = ''
-            if pval_col and pd.notna(row[pval_col]):
+            if pval_col in df.columns and pd.notna(row[pval_col]):
                 try:
-                    pval_val = float(row[pval_col])
-                    pval_val = str(pval_val)
+                    pval_val = str(float(row[pval_col]))
                 except (ValueError, TypeError):
-                    try:
-                        pval_val = str(float(row[pval_col]))
-                    except:
-                        pval_val = ''
+                    pval_val = ''
             
             eaf_val = 'NA'
-            if eaf_col and pd.notna(row[eaf_col]):
+            if eaf_col in df.columns and pd.notna(row[eaf_col]):
                 try:
-                    eaf_val = float(row[eaf_col])
-                    eaf_val = str(eaf_val)
+                    eaf_val = str(float(row[eaf_col]))
                 except (ValueError, TypeError):
-                    try:
-                        eaf_val = str(float(row[eaf_col]))
-                    except:
-                        eaf_val = 'NA'
+                    eaf_val = 'NA'
             
-            rsid_val = 'NA'
-            
-            # FIXED: Don't skip rows just because beta is missing
-            # Some GWAS files might have OR instead of beta, or other effect measures
-            if not pval_val:  # At minimum we need p-value
+            # Skip rows missing p-value (minimum requirement)
+            if not pval_val:
+                failed_rows += 1
                 continue
             
-            output_data.append([chrom, pos, ea.upper(), oa.upper(), beta_val, se_val, pval_val, eaf_val, rsid_val])
+            output_data.append([chrom, pos, ea, oa, beta_val, se_val, pval_val, eaf_val, 'NA'])
             successful_rows += 1
             
         except Exception as e:
-            if successful_rows < 5:  # Only show first few errors
+            failed_rows += 1
+            if failed_rows <= 5:  # Only show first few errors
                 print(f"Warning: Skipping row {idx} due to error: {e}")
             continue
     
-    print(f"Successfully processed {successful_rows} out of {len(df)} rows")
+    print(f"\n=== CONVERSION SUMMARY ===")
+    print(f"Successfully processed: {successful_rows} rows")
+    print(f"Failed rows: {failed_rows}")
+    print(f"Invalid chromosomes: {invalid_chromosomes}")
+    print(f"Invalid alleles: {invalid_alleles}")
+    print(f"Total input rows: {len(df)}")
     
     if successful_rows == 0:
         raise Exception("No valid rows found in the input file. Check the data format.")
@@ -1051,14 +933,14 @@ def to_gwas_ssf(input_file, output_dir, build):
     ])
     
     # DEBUG: Check the first few rows of output
-    print(f"\nFirst 3 rows of converted data:")
-    print(output_df.head(3))
+    print(f"\nFirst 5 rows of converted data:")
+    print(output_df.head(5))
     
-    # Validate that no allele data ended up in numeric columns
-    print(f"\nValidating converted data...")
-    print(f"Beta column sample: {output_df['beta'].head(3).tolist()}")
-    print(f"Effect allele sample: {output_df['effect_allele'].head(3).tolist()}")
-    print(f"Other allele sample: {output_df['other_allele'].head(3).tolist()}")
+    # Validate chromosome distribution
+    print(f"\nChromosome distribution in output:")
+    chrom_counts = output_df['chromosome'].value_counts().sort_index()
+    for chrom, count in chrom_counts.items():
+        print(f"  {chrom}: {count} variants")
     
     # Save to file
     output_tsv = os.path.join(output_dir, 'converted_sumstats.tsv')
@@ -1075,7 +957,7 @@ def to_gwas_ssf(input_file, output_dir, build):
     with open(output_gz, 'rb') as f:
         md5 = hashlib.md5(f.read()).hexdigest()
     
-    # Create YAML metadata
+    # Create YAML metadata - FIXED: Ensure proper coordinate system
     yaml_content = f"""# Study meta-data
 date_metadata_last_modified: 2024-01-01
 
@@ -1101,7 +983,7 @@ is_sorted: false
     return output_gz, yaml_file
 
 def chromlist_from_ssf(ssf_file):
-    """Extract chromosome list from SSF file"""
+    """Extract chromosome list from SSF file - FIXED VERSION"""
     import gzip
     import pandas as pd
     
@@ -1111,15 +993,17 @@ def chromlist_from_ssf(ssf_file):
     else:
         df = pd.read_csv(ssf_file, sep='\t')
     
+    # Clean chromosome names
+    df['chromosome'] = df['chromosome'].astype(str).str.replace('chr', '', case=False).str.strip()
+    
     # Get unique chromosomes
     chromosomes = df['chromosome'].unique()
+    print(f"Raw chromosomes found: {sorted(chromosomes)}")
     
     # Normalize chromosome names
     normalized_chroms = []
     for chrom in chromosomes:
-        chrom_str = str(chrom).upper()
-        if chrom_str.startswith('CHR'):
-            chrom_str = chrom_str[3:]
+        chrom_str = str(chrom).upper().strip()
         
         # Map numeric to canonical names
         if chrom_str == '23': chrom_str = 'X'
@@ -1138,6 +1022,7 @@ def chromlist_from_ssf(ssf_file):
         # Fallback to all chromosomes if none detected
         present_chroms = allowed_chroms
     
+    print(f"Final chromosome list: {present_chroms}")
     return ','.join(present_chroms)
 
 def run_harmonizer_direct(args, temp_dir):
@@ -1230,6 +1115,15 @@ def collect_outputs():
                     shutil.copyfileobj(f_in, f_out)
         else:
             shutil.copy2(largest_file, 'harmonized_output.tsv')
+            
+        # DEBUG: Check the harmonized output
+        print("\n=== HARMONIZED OUTPUT SAMPLE ===")
+        with open('harmonized_output.tsv', 'r') as f:
+            for i, line in enumerate(f):
+                if i < 6:  # Show header + 5 rows
+                    print(f"Line {i}: {line.strip()}")
+                else:
+                    break
     else:
         # Create debug output to see what's available
         print("No harmonized files found. Available files:")
