@@ -534,9 +534,6 @@
 
 
 
-
-
-
 #!/usr/bin/env python3
 import os
 import sys
@@ -544,604 +541,9 @@ import argparse
 import subprocess
 import tempfile
 import shutil
-import json
-import glob
-import gzip
-from pathlib import Path
-
-def resolve_path(path, base_dir=None):
-    """Resolve path relative to base directory"""
-    if base_dir is None:
-        base_dir = os.getcwd()
-    
-    if not os.path.isabs(path):
-        path = os.path.join(base_dir, path)
-    
-    return os.path.abspath(path)
-
-def setup_compatible_environment(temp_dir):
-    """Create a temporary virtual environment with compatible dependencies"""
-    venv_path = os.path.join(temp_dir, "harmonizer_venv")
-    
-    print(f"Setting up compatible environment in {venv_path}...")
-    
-    # Create virtual environment
-    subprocess.run([sys.executable, "-m", "venv", venv_path], check=True, capture_output=True)
-    
-    # Get pip path
-    if sys.platform == "win32":
-        pip_path = os.path.join(venv_path, "Scripts", "pip")
-        python_path = os.path.join(venv_path, "Scripts", "python")
-    else:
-        pip_path = os.path.join(venv_path, "bin", "pip")
-        python_path = os.path.join(venv_path, "bin", "python")
-    
-    # Install compatible versions
-    requirements = [
-        "numpy>=1.21,<1.24",
-        "pandas>=1.5,<2.0", 
-        "pydantic>=1.10.4,<2.0.0",
-        "ruamel.yaml==0.17.32"
-    ]
-    
-    for req in requirements:
-        print(f"Installing {req}...")
-        result = subprocess.run([pip_path, "install", req], capture_output=True, text=True)
-        if result.returncode != 0:
-            print(f"Warning: Failed to install {req}: {result.stderr}")
-    
-    return venv_path, python_path
-
-def patch_metadata_issue():
-    """Patch the metadata issue by modifying the problematic file"""
-    try:
-        # Try to import to see if patching is needed
-        from gwas_sumstats_tools.schema.metadata import SumStatsMetadata
-        print("No patching needed - imports work correctly")
-        return True
-    except TypeError as e:
-        if "constr() got an unexpected keyword argument 'regex'" in str(e):
-            print("Patching metadata issue...")
-            # Find the metadata.py file
-            metadata_file = None
-            for path in sys.path:
-                potential_file = os.path.join(path, 'gwas_sumstats_tools', 'schema', 'metadata.py')
-                if os.path.exists(potential_file):
-                    metadata_file = potential_file
-                    break
-            
-            if metadata_file:
-                print(f"Found metadata file: {metadata_file}")
-                # Create backup
-                backup_file = metadata_file + '.backup'
-                shutil.copy2(metadata_file, backup_file)
-                
-                # Read and patch
-                with open(metadata_file, 'r') as f:
-                    content = f.read()
-                
-                # Replace the problematic line
-                if "constr(regex=r'^GCST\\d+$')" in content:
-                    content = content.replace(
-                        "gwas_id: Optional[constr(regex=r'^GCST\\d+$')] = None",
-                        "gwas_id: Optional[str] = None  # Patched: removed regex for compatibility"
-                    )
-                    
-                    with open(metadata_file, 'w') as f:
-                        f.write(content)
-                    print("Metadata file patched successfully")
-                    
-                    # Test if patch worked
-                    try:
-                        from gwas_sumstats_tools.schema.metadata import SumStatsMetadata
-                        print("Patch successful - imports now work")
-                        return True
-                    except Exception as e2:
-                        print(f"Patch failed: {e2}")
-                        # Restore backup
-                        shutil.copy2(backup_file, metadata_file)
-                        return False
-                else:
-                    print("No need to patch - line already modified")
-                    return True
-            else:
-                print("Could not find metadata.py to patch")
-                return False
-        else:
-            print(f"Different error during import: {e}")
-            return False
-    except Exception as e:
-        print(f"Unexpected error during import test: {e}")
-        return False
-
-def run_harmonizer_in_compatible_env(args, temp_dir):
-    """Run the harmonizer in a compatible environment"""
-    # First try to patch the current environment
-    if patch_metadata_issue():
-        print("Using patched current environment")
-        return run_harmonizer_direct(args, temp_dir)
-    else:
-        print("Patching failed, setting up compatible environment...")
-        # Set up compatible environment
-        venv_path, python_path = setup_compatible_environment(temp_dir)
-        
-        try:
-            # Run the harmonizer steps in the compatible environment
-            harmonizer_script = f"""
-import os
-import sys
-import subprocess
-import tempfile
-
-# Add code repo to path
-sys.path.insert(0, '{args.code_repo}')
-
-# Set up environment
-env = os.environ.copy()
-env['PATH'] = "{args.code_repo}:" + env['PATH']
-
-# Build Nextflow command
-cmd = [
-    'nextflow', 'run', '{args.code_repo}',
-    '-profile', 'standard',
-    '--harm',
-    '--ref', '{args.ref_dir}',
-    '--file', '{args.ssf_file}',
-    '--chromlist', '{args.chromlist}',
-    '--to_build', '{args.to_build}',
-    '--threshold', '{args.threshold}',
-    '-with-report', 'harm_report.html',
-    '-with-timeline', 'harm_timeline.html', 
-    '-with-trace', 'harm_trace.txt'
-]
-
-# Run Nextflow
-print("Running harmonization in compatible environment...")
-process = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE, 
-                         stderr=subprocess.STDOUT, text=True)
-
-for line in process.stdout:
-    print(line, end='')
-
-return_code = process.wait()
-sys.exit(return_code)
-"""
-            # Write the script to a temporary file
-            script_file = os.path.join(temp_dir, "run_harmonizer.py")
-            with open(script_file, 'w') as f:
-                f.write(harmonizer_script)
-            
-            # Run the script in the compatible environment
-            result = subprocess.run([python_path, script_file], capture_output=True, text=True)
-            
-            print(result.stdout)
-            if result.stderr:
-                print("STDERR:", result.stderr)
-                
-            return result.returncode
-            
-        finally:
-            # Clean up the temporary environment
-            shutil.rmtree(venv_path, ignore_errors=True)
-
-def to_gwas_ssf(input_file, output_dir, build):
-    """Convert input file to GWAS-SSF format - CRITICAL FIXES FOR COORDINATE CONVERSION"""
-    import pandas as pd
-    import gzip
-    import hashlib
-    
-    print(f"\n=== DEBUG: Analyzing input file ===")
-    print(f"Input file: {input_file}")
-    
-    # Read first few lines to see the actual format
-    with open(input_file, 'r') as f:
-        lines = [next(f) for _ in range(5)]
-    print("First 5 lines of input:")
-    for i, line in enumerate(lines):
-        print(f"Line {i+1}: {line.strip()}")
-    
-    # Read the full file with tab separator (your format uses tabs)
-    try:
-        if input_file.endswith('.gz'):
-            df = pd.read_csv(input_file, compression='gzip', sep='\t', engine='python')
-        else:
-            df = pd.read_csv(input_file, sep='\t', engine='python')
-    except Exception as e:
-        raise Exception(f"Failed to read full file: {e}")
-    
-    print(f"Full dataset: {len(df)} rows, {len(df.columns)} columns")
-    if len(df) > 0:
-        print(f"Sample data:")
-        print(df.head(3))
-    
-    # Convert to lowercase for case-insensitive matching
-    original_columns = list(df.columns)
-    df.columns = df.columns.str.lower()
-    print(f"\nLowercase columns: {list(df.columns)}")
-    
-    # FIXED: Better variant column parsing with chromosome cleaning
-    variant_col = None
-    for col in df.columns:
-        if 'variant' in col:
-            variant_col = col
-            break
-    
-    if not variant_col:
-        raise Exception("No variant column found. Expected column named 'variant'")
-    
-    print(f"Found variant column: {variant_col}")
-    
-    # Parse the variant column (format: chrom:pos:ref:alt)
-    def parse_variant(variant_str):
-        try:
-            parts = str(variant_str).split(':')
-            if len(parts) >= 4:
-                chrom = parts[0].replace('chr', '').replace('CHR', '')  # Remove 'chr' prefix
-                pos = parts[1]
-                ref = parts[2].upper()
-                alt = parts[3].upper()
-                return chrom, pos, ref, alt
-            else:
-                return '', '', '', ''
-        except:
-            return '', '', '', ''
-    
-    # Apply parsing
-    print("Parsing variant column...")
-    parsed = df[variant_col].apply(parse_variant)
-    df['chromosome'] = parsed.apply(lambda x: x[0])
-    df['base_pair_location'] = parsed.apply(lambda x: x[1])
-    df['ref_allele'] = parsed.apply(lambda x: x[2]) 
-    df['alt_allele'] = parsed.apply(lambda x: x[3])
-    
-    # Check parsing results
-    sample_idx = 0
-    sample_variant = str(df[variant_col].iloc[sample_idx]) if len(df) > 0 else ""
-    sample_parsed = df[['chromosome', 'base_pair_location', 'ref_allele', 'alt_allele']].iloc[sample_idx].tolist()
-    print(f"Sample variant parsing: '{sample_variant}' -> {sample_parsed}")
-    
-    # FIXED: Determine effect and other alleles correctly
-    # In your format, minor_allele is the effect allele
-    ea_col = 'minor_allele'
-    if ea_col not in df.columns:
-        raise Exception(f"Effect allele column '{ea_col}' not found")
-    
-    print(f"Using effect allele column: {ea_col}")
-    
-    # Map columns to GWAS-SSF format
-    output_data = []
-    successful_rows = 0
-    failed_rows = 0
-    invalid_chromosomes = 0
-    invalid_alleles = 0
-    
-    # Valid chromosome names
-    valid_chroms = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15',
-                   '16','17','18','19','20','21','22','X','Y','MT']
-    
-    for idx, row in df.iterrows():
-        try:
-            chrom = str(row['chromosome']).strip()
-            pos = str(row['base_pair_location']).strip()
-            ref_allele = str(row['ref_allele']).strip().upper()
-            alt_allele = str(row['alt_allele']).strip().upper()
-            minor_allele = str(row[ea_col]).strip().upper() if pd.notna(row[ea_col]) else ''
-            
-            # FIXED: Skip rows with missing essential data
-            if not chrom or not pos or chrom == 'NA' or pos == 'NA' or not ref_allele or not alt_allele:
-                failed_rows += 1
-                continue
-            
-            # FIXED: Validate chromosome - critical for coordinate conversion
-            if chrom not in valid_chroms:
-                invalid_chromosomes += 1
-                if invalid_chromosomes <= 5:
-                    print(f"Warning: Invalid chromosome '{chrom}' at row {idx}")
-                continue
-            
-            # FIXED: Validate position is numeric
-            try:
-                int(pos)
-            except (ValueError, TypeError):
-                failed_rows += 1
-                continue
-            
-            # FIXED: Determine effect and other alleles
-            # The minor_allele is the effect allele in your format
-            ea = minor_allele
-            # Other allele is the one that's NOT the minor allele
-            if minor_allele == ref_allele:
-                oa = alt_allele
-            elif minor_allele == alt_allele:
-                oa = ref_allele
-            else:
-                # If minor allele doesn't match ref or alt, skip
-                invalid_alleles += 1
-                continue
-            
-            # FIXED: Validate alleles are single characters and valid nucleotides
-            valid_bases = {'A', 'C', 'G', 'T'}
-            if not ea or len(ea) != 1 or ea not in valid_bases:
-                invalid_alleles += 1
-                continue
-            if not oa or len(oa) != 1 or oa not in valid_bases:
-                invalid_alleles += 1
-                continue
-            
-            # Handle numeric columns
-            beta_col = 'beta'
-            se_col = 'se'
-            pval_col = 'pval'
-            eaf_col = 'minor_af'
-            
-            beta_val = ''
-            if beta_col in df.columns and pd.notna(row[beta_col]):
-                try:
-                    beta_val = str(float(row[beta_col]))
-                except (ValueError, TypeError):
-                    beta_val = ''
-            
-            se_val = ''
-            if se_col in df.columns and pd.notna(row[se_col]):
-                try:
-                    se_val = str(float(row[se_col]))
-                except (ValueError, TypeError):
-                    se_val = ''
-            
-            pval_val = ''
-            if pval_col in df.columns and pd.notna(row[pval_col]):
-                try:
-                    pval_val = str(float(row[pval_col]))
-                except (ValueError, TypeError):
-                    pval_val = ''
-            
-            eaf_val = 'NA'
-            if eaf_col in df.columns and pd.notna(row[eaf_col]):
-                try:
-                    eaf_val = str(float(row[eaf_col]))
-                except (ValueError, TypeError):
-                    eaf_val = 'NA'
-            
-            # Skip rows missing p-value (minimum requirement)
-            if not pval_val:
-                failed_rows += 1
-                continue
-            
-            output_data.append([chrom, pos, ea, oa, beta_val, se_val, pval_val, eaf_val, 'NA'])
-            successful_rows += 1
-            
-        except Exception as e:
-            failed_rows += 1
-            if failed_rows <= 5:  # Only show first few errors
-                print(f"Warning: Skipping row {idx} due to error: {e}")
-            continue
-    
-    print(f"\n=== CONVERSION SUMMARY ===")
-    print(f"Successfully processed: {successful_rows} rows")
-    print(f"Failed rows: {failed_rows}")
-    print(f"Invalid chromosomes: {invalid_chromosomes}")
-    print(f"Invalid alleles: {invalid_alleles}")
-    print(f"Total input rows: {len(df)}")
-    
-    if successful_rows == 0:
-        raise Exception("No valid rows found in the input file. Check the data format.")
-    
-    # Create output DataFrame
-    output_df = pd.DataFrame(output_data, columns=[
-        'chromosome', 'base_pair_location', 'effect_allele', 'other_allele',
-        'beta', 'standard_error', 'p_value', 'effect_allele_frequency', 'rsid'
-    ])
-    
-    # DEBUG: Check the first few rows of output
-    print(f"\nFirst 5 rows of converted data:")
-    print(output_df.head(5))
-    
-    # Validate chromosome distribution
-    print(f"\nChromosome distribution in output:")
-    chrom_counts = output_df['chromosome'].value_counts().sort_index()
-    for chrom, count in chrom_counts.items():
-        print(f"  {chrom}: {count} variants")
-    
-    # Save to file
-    output_tsv = os.path.join(output_dir, 'converted_sumstats.tsv')
-    output_gz = output_tsv + '.gz'
-    
-    output_df.to_csv(output_tsv, sep='\t', index=False)
-    
-    # Compress
-    with open(output_tsv, 'rb') as f_in:
-        with gzip.open(output_gz, 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
-    
-    # Calculate MD5
-    with open(output_gz, 'rb') as f:
-        md5 = hashlib.md5(f.read()).hexdigest()
-    
-    # Create YAML metadata - FIXED: Ensure proper coordinate system
-    yaml_content = f"""# Study meta-data
-date_metadata_last_modified: 2024-01-01
-
-# Genotyping Information
-genome_assembly: {build}
-coordinate_system: 1-based
-
-# Summary Statistic information
-data_file_name: {os.path.basename(output_gz)}
-file_type: GWAS-SSF v0.1
-data_file_md5sum: {md5}
-
-# Harmonization status
-is_harmonised: false
-is_sorted: false
-"""
-    
-    yaml_file = output_gz + '-meta.yaml'
-    with open(yaml_file, 'w') as f:
-        f.write(yaml_content)
-    
-    print(f"Successfully converted {successful_rows} variants to GWAS-SSF format")
-    return output_gz, yaml_file
-
-def chromlist_from_ssf(ssf_file):
-    """Extract chromosome list from SSF file - FIXED VERSION"""
-    import gzip
-    import pandas as pd
-    
-    # Read the SSF file
-    if ssf_file.endswith('.gz'):
-        df = pd.read_csv(ssf_file, compression='gzip', sep='\t')
-    else:
-        df = pd.read_csv(ssf_file, sep='\t')
-    
-    # Clean chromosome names
-    df['chromosome'] = df['chromosome'].astype(str).str.replace('chr', '', case=False).str.strip()
-    
-    # Get unique chromosomes
-    chromosomes = df['chromosome'].unique()
-    print(f"Raw chromosomes found: {sorted(chromosomes)}")
-    
-    # Normalize chromosome names
-    normalized_chroms = []
-    for chrom in chromosomes:
-        chrom_str = str(chrom).upper().strip()
-        
-        # Map numeric to canonical names
-        if chrom_str == '23': chrom_str = 'X'
-        elif chrom_str == '24': chrom_str = 'Y'
-        elif chrom_str == '26': chrom_str = 'MT'
-        
-        normalized_chroms.append(chrom_str)
-    
-    # Filter to allowed chromosomes and maintain order
-    allowed_chroms = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15',
-                     '16','17','18','19','20','21','22','X','Y','MT']
-    
-    present_chroms = [c for c in allowed_chroms if c in normalized_chroms]
-    
-    if not present_chroms:
-        # Fallback to all chromosomes if none detected
-        present_chroms = allowed_chroms
-    
-    print(f"Final chromosome list: {present_chroms}")
-    return ','.join(present_chroms)
-
-def run_harmonizer_direct(args, temp_dir):
-    """Run harmonizer directly (attempt in current environment)"""
-    # Set up environment
-    env = os.environ.copy()
-    env['PATH'] = f"{args.code_repo}:{env['PATH']}"
-    
-    # Build Nextflow command
-    cmd = [
-        'nextflow', 'run', args.code_repo,
-        '-profile', 'standard',
-        '--harm',
-        '--ref', args.ref_dir,
-        '--file', args.ssf_file,
-        '--chromlist', args.chromlist,
-        '--to_build', args.to_build,
-        '--threshold', str(args.threshold),
-        '-with-report', 'harm_report.html',
-        '-with-timeline', 'harm_timeline.html',
-        '-with-trace', 'harm_trace.txt'
-    ]
-    
-    # Run Nextflow
-    with open('harmonization_logs.txt', 'w') as log_file:
-        process = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE, 
-                                 stderr=subprocess.STDOUT, text=True)
-        
-        for line in process.stdout:
-            print(line, end='')
-            log_file.write(line)
-            log_file.flush()
-        
-        return_code = process.wait()
-    
-    return return_code
-
-def collect_outputs():
-    """Collect harmonized output files"""
-    # Look for harmonized output files in the work directory
-    harmonized_files = []
-    for root, dirs, files in os.walk('.'):
-        for file in files:
-            file_path = os.path.join(root, file)
-            # Look for files with "harmonised" in name AND actual data content
-            if any(pattern in file.lower() for pattern in ['harmonised', 'final']) and file.endswith(('.tsv', '.gz', '.tsv.gz')):
-                # Check if file has actual data (not just headers)
-                try:
-                    if file.endswith('.gz'):
-                        with gzip.open(file_path, 'rt') as f:
-                            lines = sum(1 for _ in f)
-                    else:
-                        with open(file_path, 'r') as f:
-                            lines = sum(1 for _ in f)
-                    
-                    if lines > 1:  # Has data beyond header
-                        harmonized_files.append(file_path)
-                        print(f"Found harmonized file: {file_path} with {lines} lines")
-                except:
-                    continue
-
-    # Also check the main output directory structure
-    output_dirs = ['results', 'output', 'final', 'harmonised']
-    for output_dir in output_dirs:
-        if os.path.exists(output_dir):
-            for root, dirs, files in os.walk(output_dir):
-                for file in files:
-                    if file.endswith(('.tsv', '.gz', '.tsv.gz')):
-                        harmonized_files.append(os.path.join(root, file))
-
-    # Look for Nextflow's output pattern (dated folders)
-    nextflow_outputs = glob.glob('20*')  # Pattern for dated folders
-    for nf_out in nextflow_outputs:
-        if os.path.isdir(nf_out):
-            print(f"Checking Nextflow output directory: {nf_out}")
-            for root, dirs, files in os.walk(nf_out):
-                for file in files:
-                    if 'harmonised' in file.lower() and file.endswith(('.tsv', '.gz')):
-                        harmonized_files.append(os.path.join(root, file))
-
-    if harmonized_files:
-        # Use the largest file found (most likely the main output)
-        largest_file = max(harmonized_files, key=lambda x: os.path.getsize(x))
-        print(f"Using output file: {largest_file}")
-        
-        # If it's gzipped, decompress it for Galaxy
-        if largest_file.endswith('.gz'):
-            with gzip.open(largest_file, 'rt') as f_in:
-                with open('harmonized_output.tsv', 'w') as f_out:
-                    shutil.copyfileobj(f_in, f_out)
-        else:
-            shutil.copy2(largest_file, 'harmonized_output.tsv')
-            
-        # DEBUG: Check the harmonized output
-        print("\n=== HARMONIZED OUTPUT SAMPLE ===")
-        with open('harmonized_output.tsv', 'r') as f:
-            for i, line in enumerate(f):
-                if i < 6:  # Show header + 5 rows
-                    print(f"Line {i}: {line.strip()}")
-                else:
-                    break
-    else:
-        # Create debug output to see what's available
-        print("No harmonized files found. Available files:")
-        for root, dirs, files in os.walk('.'):
-            for file in files:
-                if file.endswith(('.tsv', '.gz', '.parquet')):
-                    file_path = os.path.join(root, file)
-                    size = os.path.getsize(file_path)
-                    print(f"  {file_path} ({size} bytes)")
-        
-        # Create empty output with error message
-        with open('harmonized_output.tsv', 'w') as f:
-            f.write("# ERROR: No harmonized output generated\n")
-            f.write("# The harmonizer ran but produced no output files\n")
-            f.write("# Check the harmonization logs for details\n")
 
 def main():
-    parser = argparse.ArgumentParser(description='GWAS Harmonizer Wrapper')
+    parser = argparse.ArgumentParser(description='GWAS Harmonizer Wrapper - Calls original bash script')
     parser.add_argument('--input', required=True, help='Input GWAS summary statistics file')
     parser.add_argument('--build', required=True, choices=['GRCh37', 'GRCh38'], help='Target genome build')
     parser.add_argument('--threshold', type=float, default=0.99, help='Palindromic variants threshold')
@@ -1160,44 +562,234 @@ def main():
     if not os.path.isdir(args.code_repo):
         sys.exit(f"Error: Code repository not found: {args.code_repo}")
     
-    # Create working directory
-    work_dir = os.getcwd()
-    temp_dir = tempfile.mkdtemp(dir=work_dir)
+    # Create a temporary bash script that replicates your working harmonizer.sh
+    bash_script = f'''#!/bin/bash
+set -euo pipefail
+
+# Set variables from Python arguments
+SUMSTATS="{args.input}"
+BUILD="{args.build}"
+THRESHOLD="{args.threshold}"
+REF_DIR="{args.ref_dir}"
+CODE_REPO="{args.code_repo}"
+BASEDIR="$(pwd -P)"
+
+# Your original resolve_path function
+resolve_path() {{
+  local p="$1"
+  case "$p" in
+    /*) : ;;
+    ~*) p="${{p/#\\~/$HOME}}";;
+    *)  p="${{BASEDIR%/}}/$p";;
+  esac
+  if command -v realpath >/dev/null 2>&1; then
+    realpath -m -- "$p"
+  elif command -v python3 >/dev/null 2>&1; then
+    python3 - "$p" <<'PY'
+import os, sys
+print(os.path.abspath(sys.argv[1]))
+PY
+  else
+    printf '%s\\n' "$p"
+  fi
+}}
+
+# Your original to_gwas_ssf function
+to_gwas_ssf() {{
+  set -euo pipefail
+  : "${{SUMSTATS:?Set SUMSTATS to the input sumstats path}}"
+  BUILD="${{BUILD:-GRCh37}}"
+  COORD="${{COORD:-1-based}}"
+
+  SRC="$(resolve_path "$SUMSTATS")"
+
+  # Output dir
+  OUT_DIR="$(dirname -- "$SRC")"
+  mkdir -p "$OUT_DIR"
+
+  # Normalize stem name
+  _stem_from_name() {{
+    local n="$1"
+    n="${{n##*/}}"
+    n="${{n%.tsv.gz}}"
+    n="${{n%.tsv.bgz}}"
+    n="${{n%.bgz}}"
+    n="${{n%.gz}}"
+    n="${{n%.tsv}}"
+    echo "$n"
+  }}
+
+  STEM="$(_stem_from_name "$SRC")"
+
+  OUT_TSV="${{OUT_DIR%/}}/${{STEM}}.tsv"
+  OUT_GZ="${{OUT_TSV}}.gz"
+  OUT_YAML="${{OUT_GZ}}-meta.yaml"
+
+  # Reader based on extension
+  READER="cat"
+  case "$SRC" in *.gz|*.bgz) READER="bgzip -dc";; esac
+
+  # Build GWAS-SSF - using your exact awk logic
+  $READER "$SRC" | awk -v OFS="\\t" '
+    BEGIN{{ print "chromosome\\tbase_pair_location\\teffect_allele\\tother_allele\\tbeta\\tstandard_error\\tp_value\\teffect_allele_frequency\\trsid" }}
+    NR==1{{
+      for(i=1;i<=NF;i++) h[tolower($i)]=i
+      is_neale = h["variant"] && (h["beta"]||h["or"]) && (h["se"]||h["stderr"]||h["standard_error"]) && (h["pval"]||h["p"])
+      if(!is_neale){{ print "ERROR: unknown layout" > "/dev/stderr"; exit 2 }}
+      next
+    }}
+    {{
+      chrom=""; pos=""; ea=""; oa=""; beta=""; se=""; p=""; eaf=""; rsid=""
+      if(is_neale){{
+        split($h["variant"], v, ":"); chrom=v[1]; pos=v[2]; oa=v[3]; ea=v[4]
+        if(h["beta"]) beta=$h["beta"]
+        if(h["se"]) se=$h["se"]; else if(h["stderr"]) se=$h["stderr"]; else if(h["standard_error"]) se=$h["standard_error"]
+        if(h["pval"]) p=$h["pval"]; else if(h["p"]) p=$h["p"]
+        if(h["minor_af"]) eaf=$h["minor_af"]
+        rsid="NA"
+      }}
+      if(eaf=="") eaf="NA"; if(rsid=="") rsid="NA"
+      print chrom, pos, toupper(ea), toupper(oa), beta, se, p, eaf, rsid
+    }}
+  ' > "$OUT_TSV"
+
+  # Compress and index
+  bgzip -f "$OUT_TSV"
+  tabix -c N -S 1 -s 1 -b 2 -e 2 "$OUT_GZ" 2>/dev/null || true
+
+  # Compute md5
+  MD5="$(md5sum < "$OUT_GZ" | awk '{{print $1}}')"
+
+  # Sidecar YAML
+  cat > "$OUT_YAML" <<YAML
+# Study meta-data
+date_metadata_last_modified: $(date +%F)
+
+# Genotyping Information
+genome_assembly: GRCh${{BUILD}}
+coordinate_system: ${{COORD}}
+
+# Summary Statistic information
+data_file_name: $(basename "$OUT_GZ")
+file_type: GWAS-SSF v0.1
+data_file_md5sum: ${{MD5}}
+
+# Harmonization status
+is_harmonised: false
+is_sorted: false
+YAML
+
+  echo "$OUT_GZ"
+}}
+
+# Your original chromlist_from_ssf function
+chromlist_from_ssf() {{
+   local ssf="$1"
+  [[ -r "$ssf" ]] || {{ echo "cannot read SSF: $ssf" >&2; exit 1; }}
+
+  local reader="cat"
+  case "$ssf" in *.gz|*.bgz) reader="bgzip -dc";; esac
+
+  mapfile -t present < <(
+    $reader "$ssf" | awk -F'\\t' '
+      NR==1 {{ for(i=1;i<=NF;i++) if($i=="chromosome") c=i; next }}
+      {{
+        chr=$c
+        sub(/^chr/,"",chr)
+        if(chr=="23") chr="X"
+        else if(chr=="24") chr="Y"
+        else if(chr=="26") chr="MT"
+        print chr
+      }}
+    ' | awk 'NF' | sort -u
+  )
+
+  local order=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X Y MT)
+
+  local have=()
+  for ch in "${{order[@]}}"; do
+    if printf '%s\\n' "${{present[@]}}" | grep -qx "$ch"; then
+      have+=("$ch")
+    fi
+  done
+
+  if [[ ${{#have[@]}} -eq 0 ]]; then
+    echo "WARN: No chromosomes detected in SSF; using full list" >&2
+    echo "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y,MT"
+    return 0
+  fi
+
+  (IFS=,; echo "${{have[*]}}")
+}}
+
+# Main execution
+echo "==== VALIDATE INPUT SUMSTATS ===="
+
+OUT_GZ="$(to_gwas_ssf)" 
+echo "SSF file: $OUT_GZ"
+CHROMLIST="$(chromlist_from_ssf "$OUT_GZ")"
+echo "Chromosomes detected: $CHROMLIST"
+
+REF_DIR_ABS="$(resolve_path "$REF_DIR")"
+
+SUMSTATS_DIR=$(dirname -- "$SUMSTATS")
+cd "$SUMSTATS_DIR"
+
+LOG_DIR="$SUMSTATS_DIR/logs"
+mkdir -p "$LOG_DIR"
+
+export PATH="$CODE_REPO:$PATH"
+
+echo "==== HARMONISE SUMSTATS ===="
+nextflow run "$CODE_REPO" -profile standard \\
+  --harm \\
+  --ref "$REF_DIR_ABS" \\
+  --file "$OUT_GZ" \\
+  --chromlist "$CHROMLIST" \\
+  --to_build "$BUILD" \\
+  --threshold "$THRESHOLD"  \\
+  -resume \\
+  -with-report   "logs/harm-report-$(date +%s).html" \\
+  -with-timeline "logs/harm-timeline-$(date +%s).html" \\
+  -with-trace    "logs/harm-trace-$(date +%s).txt" \\
+  |& tee -a "$LOG_DIR/harm.log"
+
+# Copy the harmonized output
+HARMONIZED_FILE=$(find . -name "*harmonised*" -type f | head -1)
+if [[ -n "$HARMONIZED_FILE" ]]; then
+    cp "$HARMONIZED_FILE" "harmonized_output.tsv"
+    echo "Harmonization completed successfully!"
+else
+    echo "# ERROR: No harmonized output found" > "harmonized_output.tsv"
+    echo "Harmonization completed but no output file found"
+fi
+'''
+    
+    # Write the bash script to a temporary file
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.sh', delete=False) as f:
+        f.write(bash_script)
+        bash_script_path = f.name
     
     try:
-        # Step 1: Convert to GWAS-SSF format
-        print("Converting input to GWAS-SSF format...")
-        ssf_file, yaml_file = to_gwas_ssf(args.input, temp_dir, args.build)
+        # Make it executable
+        os.chmod(bash_script_path, 0o755)
         
-        # Step 2: Extract chromosome list
-        print("Extracting chromosome list...")
-        chromlist = chromlist_from_ssf(ssf_file)
-        print(f"Chromosomes detected: {chromlist}")
+        # Run the bash script
+        result = subprocess.run(['bash', bash_script_path], capture_output=True, text=True)
         
-        # Add derived arguments for subprocess
-        args.ssf_file = ssf_file
-        args.chromlist = chromlist
-        args.to_build = '38' if args.build == 'GRCh38' else '37'
+        # Print output
+        print(result.stdout)
+        if result.stderr:
+            print("STDERR:", result.stderr, file=sys.stderr)
         
-        # Step 3: Run harmonization with compatibility handling
-        print("Running harmonization with compatibility handling...")
+        if result.returncode != 0:
+            sys.exit(f"Bash script failed with return code: {result.returncode}")
+            
+        print("Harmonization completed successfully via bash script!")
         
-        return_code = run_harmonizer_in_compatible_env(args, temp_dir)
-        
-        if return_code != 0:
-            sys.exit(f"Harmonization failed with return code: {return_code}")
-        
-        # Step 4: Collect outputs
-        print("Collecting harmonized outputs...")
-        collect_outputs()
-        
-        print("Harmonization completed successfully!")
-        
-    except Exception as e:
-        sys.exit(f"Error during harmonization: {str(e)}")
     finally:
-        # Clean up temporary directory
-        shutil.rmtree(temp_dir, ignore_errors=True)
+        # Clean up
+        os.unlink(bash_script_path)
 
 if __name__ == '__main__':
     main()
