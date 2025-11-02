@@ -1,12 +1,11 @@
 <?xml version="1.0"?>
-<tool id="gwas_harmonizer_setup" name="GWAS Harmonizer Setup" version="1.0.2">
-    <description>Prepare reference data for GWAS harmonization (Nextflow-based)</description>
+<tool id="gwas_harmonizer_setup" name="GWAS Harmonizer Setup" version="1.1.0">
+    <description>Prepare reference data for GWAS harmonization using a portable Nextflow environment</description>
 
     <requirements>
         <requirement type="package">python</requirement>
-        <requirement type="package">nextflow</requirement>
-        <requirement type="package">git</requirement>
         <requirement type="package">curl</requirement>
+        <requirement type="package">git</requirement>
     </requirements>
 
     <command detect_errors="exit_code">
@@ -22,7 +21,7 @@
         <param name="code_repo" type="text"
                label="Path to harmonizer repository"
                value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser"
-               help="Absolute path to local GWAS harmonizer Nextflow repository (contains main.nf)"/>
+               help="Absolute path to the local GWAS harmonizer repository (containing main.nf)"/>
 
         <param name="ref_dir" type="text"
                label="Reference data directory (absolute path)"
@@ -30,9 +29,9 @@
                help="Writable directory for storing reference data files"/>
 
         <param name="chromlist" type="text"
-               value="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y,MT"
                label="Chromosome list"
-               help="Comma-separated list of chromosomes (e.g. 1,2,3,...,22,X,Y,MT)"/>
+               value="1,2,3,...,22,X,Y,MT"
+               help="Comma-separated list of chromosomes to harmonize"/>
     </inputs>
 
     <outputs>
@@ -45,22 +44,25 @@
     </outputs>
 
     <help><![CDATA[
-**GWAS Harmonizer Setup** initializes reference data for the EBISPOT GWAS harmonizer Nextflow pipeline.
+**GWAS Harmonizer Setup**
 
-### Steps:
-1. Verifies the repository and reference paths.
-2. Runs the Nextflow reference-building workflow.
-3. Produces report, timeline, and log files for Galaxy outputs.
+This Galaxy tool prepares reference data for the EBISPOT GWAS Harmonizer pipeline.  
+It installs local portable Java 17 and Nextflow if they are not already available,  
+and executes the reference-building workflow.
 
-### Expected repository contents:
-- main.nf
-- harmonizer.sh
-- gwas-ref/
-- nextflow.config
+### Workflow Steps
+1. Validate the harmonizer repository and reference directory.
+2. Install or detect Java 17 (locally if missing).
+3. Install or detect Nextflow (locally if missing).
+4. Run the Nextflow reference workflow with reporting enabled.
 
-### Outputs:
-- Log directory (as text path)
+### Outputs
+- Log directory (path text file)
 - Nextflow HTML report
 - Nextflow timeline
+
+### Notes
+- The setup is fully self-contained and does not require root access.
+- Java and Nextflow are installed under the repository directory.
     ]]></help>
 </tool>
