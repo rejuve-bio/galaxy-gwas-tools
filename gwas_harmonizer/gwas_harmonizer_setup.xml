@@ -1,32 +1,66 @@
-<tool id="gwas_harmonizer_setup" name="GWAS Harmonizer Setup" version="0.1.0">
-    <description>Prepare reference data for GWAS summary statistics harmonization</description>
+<?xml version="1.0"?>
+<tool id="gwas_harmonizer_setup" name="GWAS Harmonizer Setup" version="1.0.2">
+    <description>Prepare reference data for GWAS harmonization (Nextflow-based)</description>
+
     <requirements>
-        <requirement type="package" version="22.10.6">nextflow</requirement>
-        <requirement type="package" version="3.8">python</requirement>
-        <requirement type="package" version="15.0.1">pyarrow</requirement>
+        <requirement type="package">python</requirement>
+        <requirement type="package">nextflow</requirement>
+        <requirement type="package">git</requirement>
+        <requirement type="package">curl</requirement>
     </requirements>
+
     <command detect_errors="exit_code">
         <![CDATA[
-        python '$__tool_directory__/harmonizer_setup_wrapper.py'
-            --code-repo '$code_repo'
-            --ref-dir '$ref_dir'
-            --chromlist '$chromlist'
+        python $__tool_directory__/harmonizer_setup_wrapper.py 
+            --code-repo "${code_repo}" 
+            --ref-dir "${ref_dir}" 
+            --chromlist "${chromlist}"
         ]]>
     </command>
+
     <inputs>
-        <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Harmonizer code repository path"/>
-        <param name="ref_dir" type="text" label="Reference data directory" help="Directory where reference data will be stored"/>
-        <param name="chromlist" type="text" value="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y,MT" label="Chromosome list"/>
+        <param name="code_repo" type="text"
+               label="Path to harmonizer repository"
+               value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser"
+               help="Absolute path to local GWAS harmonizer Nextflow repository (contains main.nf)"/>
+
+        <param name="ref_dir" type="text"
+               label="Reference data directory (absolute path)"
+               value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref"
+               help="Writable directory for storing reference data files"/>
+
+        <param name="chromlist" type="text"
+               value="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y,MT"
+               label="Chromosome list"
+               help="Comma-separated list of chromosomes (e.g. 1,2,3,...,22,X,Y,MT)"/>
     </inputs>
+
     <outputs>
-        <data name="log_dir" format="txt" label="Log directory" from_work_dir="logs"/>
-        <data name="report" format="html" label="Nextflow report" from_work_dir="logs/ref-report.html"/>
-        <data name="timeline" format="html" label="Nextflow timeline" from_work_dir="logs/ref-timeline.html"/>
+        <data name="log_dir" format="txt" from_work_dir="log_dir.txt"
+              label="Reference setup log directory path"/>
+        <data name="report" format="html" from_work_dir="report.html"
+              label="Nextflow setup report"/>
+        <data name="timeline" format="html" from_work_dir="timeline.html"
+              label="Nextflow setup timeline"/>
     </outputs>
-    <help>
-        <![CDATA[
-        Prepares reference data for GWAS summary statistics harmonization.
-        This tool downloads and processes reference genomes and datasets needed for harmonization.
-        ]]>
-    </help>
+
+    <help><![CDATA[
+**GWAS Harmonizer Setup** initializes reference data for the EBISPOT GWAS harmonizer Nextflow pipeline.
+
+### Steps:
+1. Verifies the repository and reference paths.
+2. Runs the Nextflow reference-building workflow.
+3. Produces report, timeline, and log files for Galaxy outputs.
+
+### Expected repository contents:
+- main.nf
+- harmonizer.sh
+- gwas-ref/
+- nextflow.config
+
+### Outputs:
+- Log directory (as text path)
+- Nextflow HTML report
+- Nextflow timeline
+    ]]></help>
 </tool>
