@@ -320,7 +320,7 @@
 #!/usr/bin/env python3
 """
 gwas_sumstats_harmonizer.py
-Version that extracts harmonized data in tabular format.
+Version that properly extracts harmonized GWAS summary statistics.
 """
 
 import argparse
@@ -426,12 +426,71 @@ def read_log_file(log_path, max_lines=50):
     except Exception as e:
         return f"Error reading log file: {e}"
 
+def find_harmonized_outputs(extract_dir):
+    """Find actual harmonized GWAS data files"""
+    print("Searching for harmonized GWAS data files...", flush=True)
+    
+    harmonized_files = []
+    
+    # Look for harmonized output directories and files
+    potential_dirs = [
+        "harmonised", 
+        "harmonized",
+        "output",
+        "results",
+        "final"
+    ]
+    
+    # Common harmonized file patterns
+    file_patterns = [
+        "*harmonised*",
+        "*harmonized*", 
+        "*final*",
+        "*output*",
+        "*.tsv",
+        "*.txt",
+        "*.csv",
+        "*.gz"
+    ]
+    
+    # First look in known output directories
+    for dir_name in potential_dirs:
+        dir_path = extract_dir / dir_name
+        if dir_path.exists() and dir_path.is_dir():
+            print(f"Found output directory: {dir_name}", flush=True)
+            for pattern in file_patterns:
+                for file_path in dir_path.rglob(pattern):
+                    if file_path.is_file() and file_path.stat().st_size > 1000:  # Filter small files
+                        harmonized_files.append(file_path)
+    
+    # Also search the entire extracted directory
+    for pattern in file_patterns:
+        for file_path in extract_dir.rglob(pattern):
+            if (file_path.is_file() and 
+                file_path.stat().st_size > 1000 and  # Filter small files
+                file_path not in harmonized_files and
+                "trace" not in file_path.name.lower() and  # Exclude trace files
+                "report" not in file_path.name.lower() and  # Exclude report files
+                "log" not in file_path.name.lower()):  # Exclude log files
+                harmonized_files.append(file_path)
+    
+    # Sort by file size (largest first, likely main output)
+    harmonized_files.sort(key=lambda x: x.stat().st_size, reverse=True)
+    
+    print(f"Found {len(harmonized_files)} potential harmonized data files:", flush=True)
+    for file_path in harmonized_files[:10]:  # Show top 10
+        print(f"  - {file_path.relative_to(extract_dir)} ({file_path.stat().st_size} bytes)", flush=True)
+    
+    return harmonized_files
+
 def extract_and_convert_harmonized_data(tarball_path, output_dir):
-    """Extract harmonized data from tarball and convert to tabular format"""
-    print("Extracting and converting harmonized data...", flush=True)
+    """Extract harmonized data from tarball and find the main GWAS output"""
+    print("Extracting harmonized GWAS data...", flush=True)
     
     # Extract tarball
     extract_dir = output_dir / "extracted"
+    if extract_dir.exists():
+        shutil.rmtree(extract_dir)
     extract_dir.mkdir(exist_ok=True)
     
     try:
@@ -442,58 +501,89 @@ def extract_and_convert_harmonized_data(tarball_path, output_dir):
         print(f"Error extracting tarball: {e}", flush=True)
         return None
     
-    # Look for harmonized output files
-    harmonized_files = []
-    for pattern in ["*.tsv", "*.txt", "*.csv", "harmonised*", "*harmonized*"]:
-        harmonized_files.extend(extract_dir.rglob(pattern))
+    # Find harmonized files
+    harmonized_files = find_harmonized_outputs(extract_dir)
     
-    print(f"Found {len(harmonized_files)} potential harmonized files", flush=True)
+    if not harmonized_files:
+        print("⚠ No harmonized data files found in the output", flush=True)
+        return None
     
-    # Process each harmonized file
-    tabular_outputs = []
-    for file_path in harmonized_files:
-        if file_path.is_file() and file_path.stat().st_size > 0:
-            print(f"Processing: {file_path.name}", flush=True)
-            
-            # Create tabular output filename
-            output_file = output_dir / f"harmonized_tabular_{file_path.stem}.tsv"
-            
+    # Process the main harmonized file (largest file)
+    main_file = harmonized_files[0]
+    print(f"Using main harmonized file: {main_file.name}", flush=True)
+    
+    # Create output filename
+    output_file = output_dir / "harmonized_gwas_data.tsv"
+    
+    try:
+        # Try to read the file
+        if main_file.suffix == '.gz':
+            with gzip.open(main_file, 'rt') as f:
+                first_lines = [f.readline() for _ in range(5)]
+        else:
+            with open(main_file, 'r') as f:
+                first_lines = [f.readline() for _ in range(5)]
+        
+        print("File preview (first few lines):", flush=True)
+        for i, line in enumerate(first_lines):
+            if line.strip():
+                print(f"  Line {i+1}: {line.strip()}", flush=True)
+        
+        # Try different separators
+        separators = ['\t', ',', ' ', '|']
+        best_sep = None
+        best_cols = 0
+        
+        for sep in separators:
             try:
-                # Try to read the file
-                if file_path.suffix == '.gz':
-                    with gzip.open(file_path, 'rt') as f:
-                        first_line = f.readline()
+                if main_file.suffix == '.gz':
+                    df = pd.read_csv(main_file, compression='gzip', sep=sep, nrows=5, engine='python')
                 else:
-                    with open(file_path, 'r') as f:
-                        first_line = f.readline()
+                    df = pd.read_csv(main_file, sep=sep, nrows=5, engine='python')
                 
-                # Check if it's already tabular
-                if '\t' in first_line or ',' in first_line:
-                    # Copy as-is if already tabular
-                    shutil.copy2(file_path, output_file)
-                    print(f"✓ Copied tabular file: {output_file.name}", flush=True)
-                else:
-                    # Try to parse with pandas
-                    try:
-                        if file_path.suffix == '.gz':
-                            df = pd.read_csv(file_path, compression='gzip', sep='\s+', engine='python')
-                        else:
-                            df = pd.read_csv(file_path, sep='\s+', engine='python')
-                        
-                        # Save as proper TSV
-                        df.to_csv(output_file, sep='\t', index=False)
-                        print(f"✓ Converted to tabular: {output_file.name} ({len(df)} rows)", flush=True)
-                    except Exception as e:
-                        print(f"  Could not convert {file_path.name}: {e}", flush=True)
-                        continue
-                
-                tabular_outputs.append(output_file)
-                
-            except Exception as e:
-                print(f"  Error processing {file_path.name}: {e}", flush=True)
+                if len(df.columns) > best_cols:
+                    best_cols = len(df.columns)
+                    best_sep = sep
+            except:
                 continue
-    
-    return tabular_outputs
+        
+        if best_sep:
+            print(f"Detected separator: '{best_sep}' with {best_cols} columns", flush=True)
+            
+            # Read full file with detected separator
+            if main_file.suffix == '.gz':
+                df = pd.read_csv(main_file, compression='gzip', sep=best_sep, engine='python')
+            else:
+                df = pd.read_csv(main_file, sep=best_sep, engine='python')
+            
+            # Save as TSV
+            df.to_csv(output_file, sep='\t', index=False)
+            print(f"✓ Converted to tabular TSV: {output_file.name} ({len(df)} rows, {len(df.columns)} columns)", flush=True)
+            
+            # Show column names
+            print("Column names:", flush=True)
+            for col in df.columns:
+                print(f"  - {col}", flush=True)
+            
+            return output_file
+        else:
+            # If no separator detected, try space-separated with different engines
+            try:
+                if main_file.suffix == '.gz':
+                    df = pd.read_csv(main_file, compression='gzip', delim_whitespace=True, engine='python')
+                else:
+                    df = pd.read_csv(main_file, delim_whitespace=True, engine='python')
+                
+                df.to_csv(output_file, sep='\t', index=False)
+                print(f"✓ Converted space-separated file to TSV: {output_file.name} ({len(df)} rows, {len(df.columns)} columns)", flush=True)
+                return output_file
+            except Exception as e:
+                print(f"Could not parse file: {e}", flush=True)
+                return None
+                
+    except Exception as e:
+        print(f"Error processing harmonized file: {e}", flush=True)
+        return None
 
 def main():
     print("=== GWAS Harmonizer - Local Installation Mode ===", flush=True)
@@ -691,15 +781,13 @@ def main():
         sys.exit(5)
 
     # Extract and convert harmonized data to tabular format
-    print("\n=== EXTRACTING HARMONIZED DATA ===", flush=True)
-    tabular_files = extract_and_convert_harmonized_data(tarball, WORKDIR)
+    print("\n=== EXTRACTING HARMONIZED GWAS DATA ===", flush=True)
+    harmonized_file = extract_and_convert_harmonized_data(tarball, WORKDIR)
     
-    if tabular_files:
-        print(f"\n✓ Successfully created {len(tabular_files)} tabular output files:", flush=True)
-        for file in tabular_files:
-            print(f"  - {file.name}", flush=True)
+    if harmonized_file:
+        print(f"\n✓ Successfully created harmonized GWAS data: {harmonized_file.name}", flush=True)
     else:
-        print("\n⚠ No harmonized tabular files were created", flush=True)
+        print("\n⚠ Could not extract harmonized GWAS data", flush=True)
         print("The raw output tarball still contains all harmonized data", flush=True)
 
     # Copy main log for Galaxy
@@ -711,8 +799,8 @@ def main():
 
     print("\n=== SUCCESS ===")
     print(f"Raw output: {tarball}")
-    if tabular_files:
-        print(f"Tabular outputs: {len(tabular_files)} files")
+    if harmonized_file:
+        print(f"Harmonized GWAS data: {harmonized_file.name}")
     sys.exit(0)
 
 if __name__ == "__main__":
