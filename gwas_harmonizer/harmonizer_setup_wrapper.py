@@ -67,18 +67,30 @@ def ensure_nextflow(repo_dir: Path):
 
     print("⚠️  Nextflow not found. Installing locally...")
     installer = repo_dir / "nextflow_installer.sh"
+
     try:
+        # Download installer
         subprocess.run(["curl", "-sL", "https://get.nextflow.io", "-o", str(installer)], check=True)
-        subprocess.run(["bash", str(installer)], check=True)
-        shutil.move("nextflow", str(local_nf))
-        os.remove(installer)
-        os.chmod(local_nf, 0o755)
-        print(f"✅ Nextflow installed at {local_nf}")
-        return str(local_nf)
+
+        # Make installer executable
+        os.chmod(installer, 0o755)
+
+        # Run installer in repo_dir
+        subprocess.run(["bash", str(installer)], check=True, cwd=repo_dir)
+
+        # Detect downloaded binary
+        downloaded_nf = repo_dir / "nextflow"
+        if not downloaded_nf.exists():
+            sys.exit("❌ Nextflow binary not found after installation.")
+
+        # Make sure it's executable
+        os.chmod(downloaded_nf, 0o755)
+        print(f"✅ Nextflow installed at {downloaded_nf}")
+        return str(downloaded_nf)
+
     except subprocess.CalledProcessError as e:
         sys.exit(f"❌ Error installing Nextflow: {e}")
-    except FileNotFoundError:
-        sys.exit("❌ Nextflow binary not found after installation.")
+
 
 
 def main():
