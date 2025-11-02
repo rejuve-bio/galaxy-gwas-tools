@@ -317,10 +317,14 @@
 
 
 
+
+
+
+
 #!/usr/bin/env python3
 """
-gwas_sumstats_harmonizer.py
-Version that specifically targets GWAS harmonizer output files.
+gwas_sumstats_harmonizer_diagnostic.py
+Diagnostic version to understand the harmonizer output structure.
 """
 
 import argparse
@@ -331,8 +335,7 @@ import sys
 import time
 import urllib.request
 import tarfile
-import gzip
-import pandas as pd
+import json
 from pathlib import Path
 
 def run(cmd, cwd=None, env=None, check=True, capture=False):
@@ -411,208 +414,115 @@ def install_nextflow_locally(workdir, java_home):
     
     return None
 
-def find_harmonized_gwas_data(extract_dir):
-    """Find actual harmonized GWAS data files with specific patterns"""
-    print("Searching for harmonized GWAS data files...", flush=True)
+def analyze_output_structure(run_work_dir):
+    """Analyze the output structure to understand where files are located"""
+    print("\n=== ANALYZING OUTPUT STRUCTURE ===", flush=True)
     
-    # Look for Nextflow work directories which contain the actual outputs
-    work_dirs = list(extract_dir.rglob("work"))
-    
-    harmonized_files = []
-    
-    for work_dir in work_dirs:
-        if work_dir.is_dir():
-            print(f"Searching in work directory: {work_dir}", flush=True)
-            
-            # Look for harmonized output files in work directories
-            patterns = [
-                "*harmonised*",
-                "*harmonized*", 
-                "*.tsv",
-                "*.txt",
-                "*.csv",
-                "*.gz"
-            ]
-            
-            for pattern in patterns:
-                for file_path in work_dir.rglob(pattern):
-                    if (file_path.is_file() and 
-                        file_path.stat().st_size > 1000 and  # Filter small files
-                        "trace" not in file_path.name.lower() and
-                        "report" not in file_path.name.lower() and
-                        "log" not in file_path.name.lower() and
-                        ".nextflow" not in str(file_path)):
-                        
-                        # Check if file looks like GWAS data by reading first line
-                        try:
-                            if file_path.suffix == '.gz':
-                                with gzip.open(file_path, 'rt') as f:
-                                    first_line = f.readline().lower()
-                            else:
-                                with open(file_path, 'r') as f:
-                                    first_line = f.readline().lower()
-                            
-                            # Check for GWAS-related column headers
-                            gwas_keywords = ['snp', 'rsid', 'chr', 'pos', 'bp', 'a1', 'a2', 'beta', 'se', 'p', 'pval', 'or', 'effect', 'frequency']
-                            if any(keyword in first_line for keyword in gwas_keywords):
-                                harmonized_files.append(file_path)
-                                print(f"✓ Found GWAS data file: {file_path} ({file_path.stat().st_size} bytes)", flush=True)
-                                print(f"  First line: {first_line.strip()}", flush=True)
-                        except Exception as e:
-                            continue
-    
-    # If no files found in work directories, search the entire extracted directory
-    if not harmonized_files:
-        print("No files found in work directories, searching entire extract...", flush=True)
-        patterns = [
-            "*harmonised*",
-            "*harmonized*", 
-            "*.tsv", 
-            "*.txt", 
-            "*.csv",
-            "*.gz"
-        ]
-        
-        for pattern in patterns:
-            for file_path in extract_dir.rglob(pattern):
-                if (file_path.is_file() and 
-                    file_path.stat().st_size > 1000 and
-                    "trace" not in file_path.name.lower() and
-                    "report" not in file_path.name.lower() and
-                    "log" not in file_path.name.lower()):
-                    
-                    harmonized_files.append(file_path)
-                    print(f"Found file: {file_path} ({file_path.stat().st_size} bytes)", flush=True)
-    
-    # Sort by file size (largest first)
-    harmonized_files.sort(key=lambda x: x.stat().st_size, reverse=True)
-    
-    return harmonized_files
-
-def extract_harmonized_data_direct(run_work_dir, output_dir):
-    """Extract harmonized data directly from the run work directory before tar creation"""
-    print("Extracting harmonized data directly from run directory...", flush=True)
-    
-    # Look for the main harmonized output in the run work directory
-    potential_paths = [
-        run_work_dir / "harmonised",
-        run_work_dir / "harmonized", 
-        run_work_dir / "results",
-        run_work_dir / "output"
-    ]
-    
-    # Also look for any directory that might contain results
-    result_dirs = []
+    # First, let's see what directories exist
+    print("Directory structure:", flush=True)
     for item in run_work_dir.iterdir():
-        if item.is_dir() and item.name not in ['logs', 'work', '.nextflow']:
-            result_dirs.append(item)
+        if item.is_dir():
+            print(f"📁 {item.name}/", flush=True)
+            # Show subdirectories
+            for subitem in item.iterdir():
+                if subitem.is_dir():
+                    print(f"  └── 📁 {subitem.name}/", flush=True)
+                else:
+                    size = subitem.stat().st_size
+                    print(f"  └── 📄 {subitem.name} ({size} bytes)", flush=True)
+        else:
+            size = item.stat().st_size
+            print(f"📄 {item.name} ({size} bytes)", flush=True)
     
-    all_dirs = potential_paths + result_dirs
+    # Look for Nextflow work directory
+    work_dir = run_work_dir / "work"
+    if work_dir.exists():
+        print(f"\n📁 Nextflow work directory found: {work_dir}", flush=True)
+        
+        # Count work directories
+        work_subdirs = list(work_dir.iterdir())
+        print(f"Found {len(work_subdirs)} work subdirectories", flush=True)
+        
+        # Look in work directories for output files
+        for work_subdir in work_subdirs[:5]:  # Check first 5
+            if work_subdir.is_dir():
+                print(f"\nChecking work subdirectory: {work_subdir.name}", flush=True)
+                # Look for any output files
+                output_files = list(work_subdir.rglob("*"))
+                for file_path in output_files[:10]:  # Show first 10 files
+                    if file_path.is_file():
+                        size = file_path.stat().st_size
+                        print(f"  📄 {file_path.relative_to(work_subdir)} ({size} bytes)", flush=True)
     
-    harmonized_files = []
+    # Check for any harmonized output directories
+    harmonized_dirs = []
+    for pattern in ["*harmonised*", "*harmonized*", "*output*", "*results*"]:
+        harmonized_dirs.extend(run_work_dir.rglob(pattern))
     
-    for dir_path in all_dirs:
-        if dir_path.exists() and dir_path.is_dir():
-            print(f"Searching in: {dir_path}", flush=True)
-            
-            # Look for data files
-            patterns = ["*.tsv", "*.txt", "*.csv", "*.gz"]
-            for pattern in patterns:
-                for file_path in dir_path.rglob(pattern):
-                    if file_path.is_file() and file_path.stat().st_size > 1000:
-                        harmonized_files.append(file_path)
-                        print(f"Found: {file_path} ({file_path.stat().st_size} bytes)", flush=True)
+    print(f"\nFound {len(harmonized_dirs)} potential output directories:", flush=True)
+    for dir_path in harmonized_dirs:
+        if dir_path.is_dir():
+            print(f"📁 {dir_path.relative_to(run_work_dir)}/", flush=True)
+            # Show files in these directories
+            for file_path in dir_path.iterdir():
+                if file_path.is_file():
+                    size = file_path.stat().st_size
+                    print(f"  └── 📄 {file_path.name} ({size} bytes)", flush=True)
+
+def extract_from_tarball_diagnostic(tarball_path, output_dir):
+    """Extract and analyze the tarball contents"""
+    print(f"\n=== ANALYZING TARBALL CONTENTS ===", flush=True)
     
-    # Also search the run_work_dir itself
-    for pattern in ["*.tsv", "*.txt", "*.csv", "*.gz"]:
-        for file_path in run_work_dir.glob(pattern):
-            if file_path.is_file() and file_path.stat().st_size > 1000:
-                harmonized_files.append(file_path)
-                print(f"Found in root: {file_path} ({file_path.stat().st_size} bytes)", flush=True)
-    
-    if not harmonized_files:
-        print("No harmonized data files found in run directory", flush=True)
-        return None
-    
-    # Use the largest file
-    main_file = max(harmonized_files, key=lambda x: x.stat().st_size)
-    print(f"Using main file: {main_file}", flush=True)
-    
-    # Create output filename
-    output_file = output_dir / "harmonized_gwas_data.tsv"
+    extract_dir = output_dir / "tarball_analysis"
+    if extract_dir.exists():
+        shutil.rmtree(extract_dir)
+    extract_dir.mkdir(exist_ok=True)
     
     try:
-        # Try to read and convert the file
-        if main_file.suffix == '.gz':
-            with gzip.open(main_file, 'rt') as f:
-                first_lines = [f.readline() for _ in range(5)]
-        else:
-            with open(main_file, 'r') as f:
-                first_lines = [f.readline() for _ in range(5)]
-        
-        print("File preview:", flush=True)
-        for i, line in enumerate(first_lines):
-            if line.strip():
-                print(f"  Line {i+1}: {line.strip()}", flush=True)
-        
-        # Detect separator
-        separators = ['\t', ',', ' ', '|']
-        best_sep = None
-        best_cols = 0
-        
-        for sep in separators:
-            try:
-                if main_file.suffix == '.gz':
-                    df_sample = pd.read_csv(main_file, compression='gzip', sep=sep, nrows=5, engine='python')
-                else:
-                    df_sample = pd.read_csv(main_file, sep=sep, nrows=5, engine='python')
-                
-                if len(df_sample.columns) > best_cols and len(df_sample.columns) > 1:
-                    best_cols = len(df_sample.columns)
-                    best_sep = sep
-            except:
-                continue
-        
-        if best_sep:
-            print(f"Using separator: '{best_sep}' with {best_cols} columns", flush=True)
-            
-            # Read full file
-            if main_file.suffix == '.gz':
-                df = pd.read_csv(main_file, compression='gzip', sep=best_sep, engine='python')
-            else:
-                df = pd.read_csv(main_file, sep=best_sep, engine='python')
-            
-            # Save as TSV
-            df.to_csv(output_file, sep='\t', index=False)
-            print(f"✓ Created harmonized TSV: {output_file} ({len(df)} rows, {len(df.columns)} columns)", flush=True)
-            
-            # Show column info
-            print("Columns:", flush=True)
-            for col in df.columns:
-                print(f"  - {col}", flush=True)
-            
-            return output_file
-        else:
-            # Try space-separated
-            try:
-                if main_file.suffix == '.gz':
-                    df = pd.read_csv(main_file, compression='gzip', delim_whitespace=True, engine='python')
-                else:
-                    df = pd.read_csv(main_file, delim_whitespace=True, engine='python')
-                
-                df.to_csv(output_file, sep='\t', index=False)
-                print(f"✓ Created harmonized TSV: {output_file} ({len(df)} rows, {len(df.columns)} columns)", flush=True)
-                return output_file
-            except Exception as e:
-                print(f"Failed to parse file: {e}", flush=True)
-                return None
-                
+        with tarfile.open(tarball_path, 'r:gz') as tar:
+            tar.extractall(path=extract_dir)
+        print(f"✓ Tarball extracted to: {extract_dir}", flush=True)
     except Exception as e:
-        print(f"Error processing file: {e}", flush=True)
-        return None
+        print(f"Error extracting tarball: {e}", flush=True)
+        return
+    
+    # Analyze the extracted structure
+    analyze_output_structure(extract_dir)
+    
+    # Create a summary file
+    summary_file = output_dir / "output_structure_summary.txt"
+    with open(summary_file, 'w') as f:
+        f.write("GWAS Harmonizer Output Structure Analysis\n")
+        f.write("=========================================\n\n")
+        
+        # Count files by type
+        all_files = list(extract_dir.rglob("*"))
+        file_types = {}
+        total_size = 0
+        
+        for file_path in all_files:
+            if file_path.is_file():
+                size = file_path.stat().st_size
+                total_size += size
+                ext = file_path.suffix.lower()
+                file_types[ext] = file_types.get(ext, 0) + 1
+        
+        f.write(f"Total files: {len(all_files)}\n")
+        f.write(f"Total size: {total_size / (1024*1024):.2f} MB\n")
+        f.write("\nFile types:\n")
+        for ext, count in sorted(file_types.items()):
+            f.write(f"  {ext if ext else 'no extension'}: {count} files\n")
+        
+        f.write("\nLargest files:\n")
+        large_files = [(f.stat().st_size, f.relative_to(extract_dir)) 
+                      for f in all_files if f.is_file()]
+        large_files.sort(reverse=True)
+        
+        for size, file_path in large_files[:20]:
+            f.write(f"  {size:>10} bytes: {file_path}\n")
 
 def main():
-    print("=== GWAS Harmonizer - Local Installation Mode ===", flush=True)
+    print("=== GWAS Harmonizer - Diagnostic Mode ===", flush=True)
     
     p = argparse.ArgumentParser()
     p.add_argument("--input", required=True, help="Path to input GWAS sumstats file")
@@ -756,15 +666,10 @@ def main():
                 proc = subprocess.Popen(cmd, shell=True, cwd=str(run_work), env=env, stdout=fh, stderr=subprocess.STDOUT, text=True)
                 proc.wait()
                 if proc.returncode != 0:
-                    # Read and display the log for debugging
-                    log_content = read_log_file(setup_log)
-                    print(f"Reference preparation failed. Log content:\n{log_content}", file=sys.stderr)
                     raise subprocess.CalledProcessError(proc.returncode, cmd)
             print(f"Reference preparation completed; log: {setup_log}")
         except subprocess.CalledProcessError as e:
             print(f"Reference preparation failed with exit code {e.returncode}", file=sys.stderr)
-            print("This might be due to missing dependencies or network issues.", file=sys.stderr)
-            print("You can try preparing the reference directory manually or check the log above.", file=sys.stderr)
             sys.exit(3)
     else:
         print(f"Reference directory {ref_dir} appears ready; skipping preparation")
@@ -786,20 +691,15 @@ def main():
             proc = subprocess.Popen(cmd, shell=True, cwd=str(run_work), env=env, stdout=fh, stderr=subprocess.STDOUT, text=True)
             proc.wait()
             if proc.returncode != 0:
-                # Read and display the log for debugging
-                log_content = read_log_file(run_log)
-                print(f"Harmonization failed. Log content:\n{log_content}", file=sys.stderr)
                 raise subprocess.CalledProcessError(proc.returncode, cmd)
         print(f"Harmonisation completed; log: {run_log}")
     except subprocess.CalledProcessError as e:
         print("Harmonisation workflow failed.", file=sys.stderr)
-        print(f"Check detailed logs: {run_log}", file=sys.stderr)
         sys.exit(4)
 
-    # Extract harmonized data BEFORE creating tarball
-    print("\n=== EXTRACTING HARMONIZED GWAS DATA ===", flush=True)
-    harmonized_file = extract_harmonized_data_direct(run_work, WORKDIR)
-    
+    # Analyze the output structure BEFORE creating tarball
+    analyze_output_structure(run_work)
+
     # Package raw outputs
     tarball = WORKDIR / "harmonizer_output.tar.gz"
     print(f"Packaging raw outputs into {tarball}")
@@ -810,15 +710,8 @@ def main():
         print(f"Failed to create raw output package: {e}", file=sys.stderr)
         sys.exit(5)
 
-    if harmonized_file:
-        print(f"\n✓ Successfully created harmonized GWAS data: {harmonized_file.name}", flush=True)
-    else:
-        print("\n⚠ Could not extract harmonized GWAS data", flush=True)
-        print("The raw output tarball contains all harmonized data", flush=True)
-        # Create empty file to avoid Galaxy errors
-        empty_file = WORKDIR / "harmonized_gwas_data.tsv"
-        empty_file.write_text("# No harmonized data could be extracted automatically\n")
-        harmonized_file = empty_file
+    # Analyze the tarball contents
+    extract_from_tarball_diagnostic(tarball, WORKDIR)
 
     # Copy main log for Galaxy
     try:
@@ -827,9 +720,9 @@ def main():
     except Exception:
         pass
 
-    print("\n=== SUCCESS ===")
+    print("\n=== DIAGNOSTIC COMPLETE ===")
+    print(f"Check 'output_structure_summary.txt' for detailed analysis")
     print(f"Raw output: {tarball}")
-    print(f"Harmonized GWAS data: {harmonized_file.name}")
     sys.exit(0)
 
 if __name__ == "__main__":
