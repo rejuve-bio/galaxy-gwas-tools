@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<tool id="gwas_sumstats_harmonizer" name="GWAS Sumstats Harmoniser (Nextflow)" version="1.0.7">
+  <description>
+    Automates cloning/updating the GWAS harmoniser repository and running harmonisation on GWAS summary statistics.
+  </description>
+
+  <requirements>
+    <requirement type="package" version="3">python</requirement>
+    <requirement type="package">git</requirement>
+    <requirement type="package">curl</requirement>
+    <requirement type="package">tar</requirement>
+  </requirements>
+
+  <command detect_errors="exit_code"><![CDATA[
+python3 '$__tool_directory__/gwas_sumstats_harmonizer.py'
+  --input '$sumstats'
+  --build '$build'
+  --threshold '$threshold'
+  --ref-dir '$ref_dir'
+  --repo-url '$repo_url'
+  --repo-dir '$repo_dir'
+  --workdir '.'
+2>&1
+]]></command>
+
+  <inputs>
+    <!-- Input GWAS dataset -->
+    <param name="sumstats" type="data" format="txt,tsv,tabular" label="Input GWAS summary statistics"
+           help="Upload your GWAS summary statistics file (tab-delimited text)"/>
+
+    <!-- Genome build -->
+    <param name="build" type="select" label="Input genome build">
+      <option value="GRCh37">GRCh37 (b37/hg19)</option>
+      <option value="GRCh38">GRCh38 (b38/hg38)</option>
+    </param>
+
+    <!-- Palindromic threshold -->
+    <param name="threshold" type="float" value="0.99" min="0.0" max="1.0" label="Palindromic threshold"
+           help="Threshold for handling palindromic SNPs (default 0.99)"/>
+
+    <!-- Reference directory -->
+    <param name="ref_dir" type="text" value="/mnt/hdd_1/ofgeha/gwas-ref"
+           label="Reference directory (absolute path)" help="Writable directory for reference data">
+      <validator type="empty_field" message="Reference directory is required"/>
+    </param>
+
+    <!-- Harmoniser repo -->
+    <param name="repo_url" type="text" value="https://github.com/EBISPOT/gwas-sumstats-harmoniser.git"
+           label="Harmoniser repository URL" help="Git repository to clone or update"/>
+
+    <param name="repo_dir" type="text" value="gwas-sumstats-harmoniser"
+           label="Local repository folder" help="Directory to clone repository or reuse existing"/>
+
+  </inputs>
+
+  <outputs>
+    <data name="output_tar" format="tar.gz" from_work_dir="harmonizer_output.tar.gz"
+          label="Harmoniser output (tar.gz)"/>
+    <data name="run_log" format="txt" from_work_dir="harmonizer_run.log"
+          label="Combined stdout/stderr log"/>
+    <data name="nextflow_report" format="html" from_work_dir="harmonizer_run_work/harm-report.html"
+          label="Nextflow run report"/>
+  </outputs>
+
+  <help>
+<![CDATA[
+**GWAS Summary Statistics Harmoniser**
+
+This Galaxy tool automates the following workflow:
+
+1. **Cloning or updating** the GWAS harmoniser Nextflow repository
+2. **Installing Java and Nextflow** locally if not available
+3. **Preparing reference data** in the specified reference directory if absent
+4. **Running harmonisation** on the uploaded GWAS summary statistics file
+
+**Important Notes:**
+
+- The job user must have **write permission** to the reference directory
+- **Java and Nextflow** will be installed automatically if not available
+- **Internet access** is required for repository cloning and dependency installation
+
+**Outputs include:**
+
+- A **tar.gz archive** of harmonised files and run artifacts
+- A **combined run log** (stdout/stderr)
+- **Nextflow HTML report** with execution details
+
+Ensure that the input dataset is in **tab-delimited text format** compatible with the harmoniser.
+]]>
+  </help>
+</tool>
