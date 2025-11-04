@@ -1,194 +1,116 @@
+
 #!/usr/bin/env python3
-"""
-GWAS Harmonizer Setup Wrapper (Galaxy)
---------------------------------------
-Prepares and executes the EBISPOT GWAS Harmonizer Nextflow pipeline.
-
-Features:
-  • Ensures pyarrow / fastparquet dependencies
-  • Installs portable OpenJDK 17 if needed
-  • Installs or reuses Nextflow
-  • Configures runtime environment
-  • Runs the specified harmonization model with full reporting
-"""
-
 import os
 import sys
 import argparse
 import subprocess
 import shutil
-import tarfile
-import urllib.request
 from pathlib import Path
 
-
-def run(cmd, cwd=None, env=None, check=True):
-    """Run shell command with logging."""
-    print(f"> {cmd}", flush=True)
-    res = subprocess.run(cmd, shell=True, cwd=cwd, env=env)
-    if check and res.returncode != 0:
-        sys.exit(f"❌ Command failed: {cmd} (exit {res.returncode})")
-    return res
-
-
-def ensure_parquet():
-    """Ensure pyarrow and fastparquet are available."""
-    print("🔧 Checking Parquet dependencies (pyarrow / fastparquet)...")
-    try:
-        import pyarrow, fastparquet  # noqa
-        print("✅ Parquet support already available.")
-    except ImportError:
-        print("⚠️  Missing Parquet libraries. Installing pyarrow and fastparquet...")
-        subprocess.run(
-            [sys.executable, "-m", "pip", "install", "--quiet", "pyarrow", "fastparquet"],
-            check=False,
-        )
-        print("✅ Parquet libraries installed.")
-
-
-def install_java(workdir):
-    """Install or reuse portable OpenJDK 17."""
-    java_dir = Path(workdir) / "java17"
-    java_bin = java_dir / "bin" / "java"
-
-    if shutil.which("java"):
-        return shutil.which("java"), None
-
-    if java_bin.exists():
-        print(f"✅ Using existing local Java at {java_bin}")
-        return str(java_bin), str(java_dir)
-
-    print("⚠️  Java not found. Installing portable OpenJDK 17...")
-    java_dir.mkdir(parents=True, exist_ok=True)
-    url = (
-        "https://download.java.net/java/GA/jdk17.0.2/"
-        "dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz"
-    )
-    tar_path = java_dir / "openjdk17.tar.gz"
-    urllib.request.urlretrieve(url, tar_path)
-
-    with tarfile.open(tar_path, "r:gz") as tar:
-        tar.extractall(path=java_dir)
-    os.remove(tar_path)
-
-    extracted = [p for p in java_dir.iterdir() if p.is_dir() and "jdk" in p.name]
-    if not extracted:
-        sys.exit("❌ JDK extraction failed.")
-    jdk_home = extracted[0]
-    java_bin = jdk_home / "bin" / "java"
-    print(f"✅ Java installed at {java_bin}")
-    return str(java_bin), str(jdk_home)
-
-
-def install_nextflow(workdir, java_home=None):
-    """Install or reuse Nextflow binary."""
-    nf_path = shutil.which("nextflow")
-    if nf_path:
-        print(f"✅ Nextflow found: {nf_path}")
-        return nf_path
-
-    nf_local = Path(workdir) / "nextflow"
-    if nf_local.exists():
-        print(f"✅ Using existing local Nextflow: {nf_local}")
-        return str(nf_local)
-
-    print("⚠️  Nextflow not found. Installing locally...")
-    env = os.environ.copy()
-    if java_home:
-        env["JAVA_HOME"] = java_home
-        env["PATH"] = f"{Path(java_home)/'bin'}:{env['PATH']}"
-
-    run("curl -s https://get.nextflow.io | bash", cwd=workdir, env=env)
-    if not nf_local.exists():
-        sys.exit("❌ Nextflow binary missing after installation.")
-    nf_local.chmod(0o755)
-    print(f"✅ Nextflow installed at {nf_local}")
-    return str(nf_local)
-
-
-def verify_env(java_path, nf_path, env):
-    """Verify Java and Nextflow versions."""
-    print("🔍 Verifying environment...")
-    run(f"'{java_path}' -version", env=env)
-    run(f"'{nf_path}' -version", env=env)
-    print("✅ Environment verified successfully.")
-
-
 def main():
-    parser = argparse.ArgumentParser(description="GWAS Harmonizer Setup Wrapper")
-    parser.add_argument("--code-repo", required=True, help="Path to harmonizer repository")
-    parser.add_argument("--ref-dir", required=True, help="Reference data directory")
-    parser.add_argument("--chromlist", required=True, help="Comma-separated chromosome list")
-    parser.add_argument("--to-build", default="38", help="Target genome build (default: 38)")
-    parser.add_argument("--threshold", type=float, default=0.99, help="Imputation threshold (default: 0.99)")
-    parser.add_argument("--version", default="v1.1.9", help="Pipeline version (default: v1.1.9)")
-    parser.add_argument("--harm", default="ref", help="Harmonization model to run (e.g., ref, sumstats, full)")
+    parser = argparse.ArgumentParser(description='GWAS Harmonizer Setup Wrapper')
+    parser.add_argument('--code-repo', required=True, help='Path to harmonizer code repository')
+    parser.add_argument('--ref-dir', required=True, help='Reference data directory')
+    parser.add_argument('--chromlist', default='1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y,MT',
+                       help='Comma-separated list of chromosomes')
+    
     args = parser.parse_args()
-
-    repo = Path(args.code_repo).resolve()
-    ref_dir = Path(args.ref_dir).resolve()
-    log_dir = ref_dir / "logs"
-    ref_dir.mkdir(parents=True, exist_ok=True)
-    log_dir.mkdir(parents=True, exist_ok=True)
-
-    print("🧬 GWAS Harmonizer Setup")
-    print(f"Repository: {repo}")
-    print(f"Reference dir: {ref_dir}")
-    print(f"Chromosomes: {args.chromlist}")
-    print(f"Target build: {args.to_build}")
-    print(f"Threshold: {args.threshold}")
-    print(f"Version: {args.version}")
-    print(f"Harmonization model: {args.harm}")
-    print(f"Logs: {log_dir}")
-
-    ensure_parquet()
-    java_path, java_home = install_java(repo)
-    nf_path = install_nextflow(repo, java_home)
-
+    
+    # Validate inputs
+    if not os.path.isdir(args.code_repo):
+        sys.exit(f"Error: Code repository not found: {args.code_repo}")
+    
+    # Create reference directory (ensure it's the main dir, not logs)
+    os.makedirs(args.ref_dir, exist_ok=True)
+    
+    # Use absolute path to nextflow
+    nextflow_path = os.path.join(args.code_repo, 'nextflow')
+    if not os.path.exists(nextflow_path):
+        sys.exit(f"Error: Nextflow not found at {nextflow_path}")
+    
+    # Set up environment
     env = os.environ.copy()
-    if java_home:
-        env["JAVA_HOME"] = java_home
-        env["PATH"] = f"{Path(java_home)/'bin'}:{env['PATH']}"
-    env["PATH"] = f"{repo}:{env['PATH']}"
+    env['PATH'] = f"{args.code_repo}:{env['PATH']}"
+    
+    # Create log directory INSIDE reference directory
+    log_dir = os.path.join(args.ref_dir, "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    
+    print(f"Starting GWAS Harmonizer Setup")
+    print(f"Code repo: {args.code_repo}")
+    print(f"Reference dir: {args.ref_dir}")  # This should be the main directory
+    print(f"Log dir: {log_dir}")  # This is the subdirectory for logs
+    print(f"Chromosomes: {args.chromlist}")
+    print(f"Nextflow path: {nextflow_path}")
+    
+    # Build Nextflow command - CRITICAL FIX: use args.ref_dir (main dir) not log_dir
+    cmd = [
+        nextflow_path, 'run', args.code_repo,
+        '-profile', 'standard',
+        '--reference',
+        '--ref', args.ref_dir,  # FIXED: Use main reference directory, not logs
+        '--chromlist', args.chromlist,
+        '-with-report', os.path.join(log_dir, 'ref-report.html'),
+        '-with-timeline', os.path.join(log_dir, 'ref-timeline.html'),
+        '-with-trace', os.path.join(log_dir, 'ref-trace.txt'),
+        '-with-dag', os.path.join(log_dir, 'ref-dag.html')
+    ]
+    
+    print(f"Nextflow command: {' '.join(cmd)}")
+    
+    # Run Nextflow
+    log_file = os.path.join(log_dir, 'ref.log')
+    try:
+        with open(log_file, 'w') as log_f:
+            log_f.write(f"Command: {' '.join(cmd)}\n")
+            log_f.write(f"Reference directory: {args.ref_dir}\n")
+            log_f.write(f"Log directory: {log_dir}\n")
+            log_f.flush()
+            
+            process = subprocess.Popen(cmd, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            
+            # Stream output with timestamps
+            import datetime
+            line_count = 0
+            for line in process.stdout:
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                output_line = f"[{timestamp}] {line}"
+                print(output_line, end='')
+                log_f.write(output_line)
+                log_f.flush()
+                
+                line_count += 1
+                if line_count % 50 == 0:
+                    print(f"=== Processed {line_count} lines of output ===")
+            
+            return_code = process.wait()
+            
+        if return_code != 0:
+            print(f"Nextflow process failed with return code: {return_code}")
+            sys.exit(return_code)
+            
+        print("Harmonizer setup completed successfully!")
+            
+        # Create output files for Galaxy
+        with open('log_dir.txt', 'w') as f:
+            f.write(log_dir)
+            
+        # Copy report files to current directory for Galaxy outputs
+        report_files = {
+            'ref-report.html': 'report',
+            'ref-timeline.html': 'timeline'
+        }
+        
+        for src_file, dest_name in report_files.items():
+            src = os.path.join(log_dir, src_file)
+            if os.path.exists(src):
+                shutil.copy2(src, dest_name)
+                print(f"Copied {src} to {dest_name}")
+            else:
+                print(f"Warning: {src} not found")
+                
+    except Exception as e:
+        sys.exit(f"Error running harmonizer setup: {str(e)}")
 
-    verify_env(java_path, nf_path, env)
-
-    cmd = (
-        f"'{nf_path}' run '{repo}' "
-        f"-profile standard "
-        f"--harm '{args.harm}' "
-        f"--ref '{ref_dir}' "
-        f"--chrom '{args.chromlist}' "
-        f"--to_build '{args.to_build}' "
-        f"--threshold '{args.threshold}' "
-        f"--version '{args.version}' "
-        f"-with-report '{log_dir}/ref-report.html' "
-        f"-with-timeline '{log_dir}/ref-timeline.html' "
-        f"-with-trace '{log_dir}/ref-trace.txt' "
-        f"-with-dag '{log_dir}/ref-dag.html'"
-    )
-
-    print("🚀 Running Nextflow pipeline...")
-    with open(log_dir / "ref.log", "w") as log_f:
-        process = subprocess.Popen(
-            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env
-        )
-        for line in process.stdout:
-            print(line, end="")
-            log_f.write(line)
-        process.wait()
-
-    if process.returncode != 0:
-        print("💡 Hint: Check config/default_params.config or input parameters.")
-        sys.exit(f"❌ Nextflow failed with exit code {process.returncode}")
-
-    print("✅ Harmonizer setup completed successfully!")
-
-    with open("log_dir.txt", "w") as f:
-        f.write(str(log_dir))
-    shutil.copy2(log_dir / "ref-report.html", "report.html")
-    shutil.copy2(log_dir / "ref-timeline.html", "timeline.html")
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

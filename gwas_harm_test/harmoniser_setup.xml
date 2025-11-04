@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<tool id="harmoniser_setup_2" name="Harmoniser Setup" version="1.0.0">
+    <description>Sets up reference data for GWAS harmonization using Nextflow</description>
+
+    <inputs>
+        <param name="ref_dir" type="data" format="directory" label="Reference Directory" 
+               help="Empty directory to download/store reference data" />
+        <param name="code_repo" type="data" format="directory" label="Code Repository" 
+               help="Directory containing main.nf and Nextflow pipeline" />
+    </inputs>
+
+    <outputs>
+        <data name="log_file" format="txt" from_work_dir="ref.log">
+            <label>Setup Log</label>
+        </data>
+        <data name="timeline_report" format="html" from_work_dir="ref-timeline.html">
+            <label>Timeline Report</label>
+        </data>
+        <data name="reference_report" format="html" from_work_dir="ref-report.html">
+            <label>Reference Report</label>
+        </data>
+    </outputs>
+
+    <command detect_errors="exit_code"><![CDATA[
+#!/bin/bash
+set -e
+
+REF_DIR=$(realpath "$ref_dir")
+CODE_REPO=$(realpath "$code_repo")
+LOG_DIR="$REF_DIR/logs"
+mkdir -p "$LOG_DIR"
+
+echo "Reference Dir: $REF_DIR"
+echo "Code Repo: $CODE_REPO"
+
+command -v nextflow >/dev/null || { echo "Nextflow not found! Install it first."; exit 1; }
+
+nextflow run "$CODE_REPO" -profile standard \
+    --reference \
+    --ref "$REF_DIR" \
+    --chromlist "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y,MT" \
+    -with-report "$LOG_DIR/ref-report.html" \
+    -with-timeline "$LOG_DIR/ref-timeline.html" \
+    -with-trace "$LOG_DIR/ref-trace.txt" \
+    |& tee "$LOG_DIR/ref.log"
+
+# Copy outputs to job working directory
+cp "$LOG_DIR/ref.log" "$log_file"
+cp "$LOG_DIR/ref-timeline.html" "$timeline_report"
+cp "$LOG_DIR/ref-report.html" "$reference_report"
+
+echo "Setup complete. Logs in $LOG_DIR"
+    ]]></command>
+
+    <help>
+This tool downloads and prepares reference data for GWAS harmonization using a Nextflow pipeline.
+    </help>
+</tool>

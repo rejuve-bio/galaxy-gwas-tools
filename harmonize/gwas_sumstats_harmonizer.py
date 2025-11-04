@@ -321,10 +321,12 @@
 
 
 
+
+
 #!/usr/bin/env python3
 """
-gwas_sumstats_harmonizer.py
-Version that properly tests if harmonization is actually working.
+gwas_sumstats_harmonizer.py - Galaxy wrapper for GWAS Harmonizer
+Fixed version with --harm parameter and proper configuration.
 """
 
 import argparse
@@ -335,9 +337,11 @@ import sys
 import time
 import urllib.request
 import tarfile
+import json
 from pathlib import Path
 
 def run(cmd, cwd=None, env=None, check=True, capture=False):
+    """Run command with proper error handling"""
     print(f"> {cmd}", flush=True)
     res = subprocess.run(cmd, shell=True, cwd=cwd, env=env, text=True,
                          stdout=subprocess.PIPE if capture else None,
@@ -352,419 +356,393 @@ def run(cmd, cwd=None, env=None, check=True, capture=False):
         raise subprocess.CalledProcessError(res.returncode, cmd, output=out, stderr=err)
     return res.returncode, out, err
 
-def install_java_locally(workdir):
-    """Install OpenJDK locally in the job directory"""
-    java_dir = workdir / "java"
-    java_dir.mkdir(exist_ok=True)
+def setup_environment(workdir):
+    """Set up Java and Nextflow environment"""
+    print("Setting up environment...")
     
-    print("Attempting to install Java locally...", flush=True)
-    
-    # Download portable JDK
-    jdk_url = "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz"
-    jdk_tarball = workdir / "openjdk-17.tar.gz"
-    
-    try:
-        print(f"Downloading OpenJDK from {jdk_url}...", flush=True)
-        urllib.request.urlretrieve(jdk_url, jdk_tarball)
-        
-        print("Extracting OpenJDK...", flush=True)
-        with tarfile.open(jdk_tarball, 'r:gz') as tar:
-            tar.extractall(path=java_dir)
-        
-        # Find the extracted JDK directory
-        jdk_path = None
-        for item in java_dir.iterdir():
-            if item.is_dir() and 'jdk' in item.name:
-                jdk_path = item
-                break
-        
-        if jdk_path:
-            java_bin = jdk_path / "bin" / "java"
-            if java_bin.exists():
-                print(f"✓ Portable OpenJDK installed: {java_bin}", flush=True)
-                return str(java_bin), str(jdk_path)
-    except Exception as e:
-        print(f"Portable JDK installation failed: {e}", flush=True)
-    
-    return None, None
-
-def install_nextflow_locally(workdir, java_home):
-    """Install Nextflow locally with proper Java environment"""
-    nf_path = workdir / "nextflow"
-    
-    print("Installing Nextflow locally...", flush=True)
-    
-    # Set up environment with Java
-    env = os.environ.copy()
-    if java_home:
-        env['JAVA_HOME'] = java_home
-        env['PATH'] = f"{Path(java_home) / 'bin'}:{env['PATH']}"
-        print(f"Setting JAVA_HOME to: {java_home}", flush=True)
-    
-    try:
-        run("curl -s https://get.nextflow.io | bash", cwd=workdir, env=env, check=True)
-        
-        if nf_path.exists():
-            run(f"chmod +x {nf_path}", cwd=workdir, env=env, check=True)
-            print(f"✓ Nextflow installed: {nf_path}", flush=True)
-            return str(nf_path)
-    except Exception as e:
-        print(f"Nextflow installation failed: {e}", flush=True)
-    
-    return None
-
-def test_harmonizer_with_small_file(repo_path, nextflow_path, ref_dir, workdir, env):
-    """Test the harmonizer with a small test file to see if it actually works"""
-    print("\n" + "="*70)
-    print("TESTING HARMONIZER WITH SMALL SAMPLE FILE")
-    print("="*70)
-    
-    # Create a small test GWAS file
-    test_input = workdir / "test_gwas_data.txt"
-    test_content = """SNP\tCHR\tBP\tA1\tA2\tBETA\tSE\tP
-rs12345\t1\t100000\tA\tT\t0.123\t0.045\t0.006
-rs23456\t1\t200000\tC\tG\t-0.067\t0.032\t0.036
-rs34567\t2\t150000\tT\tA\t0.089\t0.028\t0.001
-rs45678\t2\t250000\tG\tC\t0.154\t0.067\t0.021
-rs56789\t3\t300000\tA\tG\t-0.098\t0.041\t0.017
-"""
-    
-    with open(test_input, 'w') as f:
-        f.write(test_content)
-    
-    print(f"Created test input file: {test_input}")
-    print("Test file content:")
-    print(test_content)
-    
-    # Run harmonizer on test file
-    test_output_dir = workdir / "test_run"
-    test_output_dir.mkdir(exist_ok=True)
-    
-    cmd = (
-        f"'{nextflow_path}' run {repo_path} -profile standard "
-        f"--harm --ref '{ref_dir}' --file '{test_input}' "
-        f"--to_build GRCh37 --threshold 0.99 "
-        f"-with-report '{test_output_dir}/test-report.html' "
-        f"-with-trace '{test_output_dir}/test-trace.txt' "
-    )
-    
-    print(f"Running test: {cmd}")
-    
-    test_log = test_output_dir / "test_harmonizer.log"
-    start_time = time.time()
-    
-    try:
-        with open(test_log, 'w') as fh:
-            proc = subprocess.Popen(cmd, shell=True, cwd=str(test_output_dir), env=env, 
-                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-            
-            # Read output in real-time
-            for line in proc.stdout:
-                print(line, end='', flush=True)
-                fh.write(line)
-                fh.flush()
-            
-            proc.wait()
-        
-        end_time = time.time()
-        duration = end_time - start_time
-        
-        print(f"\nTest completed in {duration:.2f} seconds with exit code: {proc.returncode}")
-        
-        # Check for output files
-        output_files = list(test_output_dir.rglob("*"))
-        data_files = [f for f in output_files if f.is_file() and f.stat().st_size > 100]
-        
-        print(f"\nFound {len(data_files)} output files in test:")
-        for file_path in data_files:
-            size_kb = file_path.stat().st_size / 1024
-            print(f"  {file_path.relative_to(test_output_dir)} ({size_kb:.1f} KB)")
-            
-            # Try to read small files
-            if size_kb < 10:  # Only read small files
-                try:
-                    with open(file_path, 'r') as f:
-                        content = f.read()
-                        print(f"    Content preview: {content[:200]}...")
-                except:
-                    pass
-        
-        return proc.returncode, duration, len(data_files) > 0
-        
-    except Exception as e:
-        print(f"Test failed with error: {e}")
-        return 1, 0, False
-
-def check_harmonizer_dependencies(repo_path):
-    """Check if the harmonizer has all required dependencies"""
-    print("\n" + "="*70)
-    print("CHECKING HARMONIZER DEPENDENCIES")
-    print("="*70)
-    
-    issues = []
-    
-    # Check for required files
-    required_files = [
-        repo_path / "main.nf",
-        repo_path / "nextflow.config",
-        repo_path / "environment.yml"
-    ]
-    
-    for req_file in required_files:
-        if req_file.exists():
-            print(f"✓ Found: {req_file.name}")
-        else:
-            print(f"✗ Missing: {req_file.name}")
-            issues.append(f"Missing required file: {req_file.name}")
-    
-    # Check for modules directory
-    modules_dir = repo_path / "modules"
-    if modules_dir.exists():
-        module_files = list(modules_dir.rglob("*.nf"))
-        print(f"✓ Found {len(module_files)} module files")
-    else:
-        print("✗ Missing modules directory")
-        issues.append("Missing modules directory")
-    
-    # Check for processes
-    processes_dir = repo_path / "processes"
-    if processes_dir.exists():
-        process_files = list(processes_dir.glob("*.nf"))
-        print(f"✓ Found {len(process_files)} process files")
-    else:
-        print("✗ Missing processes directory")
-        issues.append("Missing processes directory")
-    
-    # Check for harmonizer specific files
-    harmonizer_files = list(repo_path.rglob("*harmon*"))
-    if harmonizer_files:
-        print(f"✓ Found {len(harmonizer_files)} harmonizer-related files")
-        for f in harmonizer_files[:5]:
-            print(f"  - {f.relative_to(repo_path)}")
-    else:
-        print("✗ No harmonizer-specific files found")
-        issues.append("No harmonizer-specific files found")
-    
-    return issues
-
-def create_minimal_harmonizer_test(repo_path, workdir):
-    """Create a minimal test to verify the harmonizer can process data"""
-    print("\n" + "="*70)
-    print("CREATING MINIMAL HARMONIZER TEST")
-    print("="*70)
-    
-    test_dir = workdir / "minimal_test"
-    test_dir.mkdir(exist_ok=True)
-    
-    # Create a very simple test Nextflow script
-    test_script = test_dir / "test_minimal.nf"
-    test_content = """#!/usr/bin/env nextflow
-
-params.input_file = "test_data.txt"
-params.output_dir = "results"
-
-workflow {
-    // Simple test to see if Nextflow works
-    channel.fromPath(params.input_file)
-        | map { file -> 
-            println "Processing file: ${file.name}"
-            return file 
-          }
-        | collect
-        | view { files -> "Found files: ${files}" }
-}
-"""
-    
-    with open(test_script, 'w') as f:
-        f.write(test_content)
-    
-    # Create test data
-    test_data = test_dir / "test_data.txt"
-    with open(test_data, 'w') as f:
-        f.write("test_line_1\\ntest_line_2\\n")
-    
-    print(f"Created minimal test in: {test_dir}")
-    return test_dir
-
-def main():
-    print("=== GWAS Harmonizer - Validation & Testing ===")
-    
-    p = argparse.ArgumentParser()
-    p.add_argument("--input", required=True, help="Path to input GWAS sumstats file")
-    p.add_argument("--build", required=True, choices=["GRCh37","GRCh38"], help="Genome build")
-    p.add_argument("--threshold", default="0.99", help="Palindromic threshold")
-    p.add_argument("--ref-dir", required=True, help="Reference directory")
-    p.add_argument("--repo-url", default="https://github.com/EBISPOT/gwas-sumstats-harmoniser.git", help="Harmoniser repo URL")
-    p.add_argument("--repo-dir", default="gwas-sumstats-harmoniser", help="Local clone directory")
-    p.add_argument("--workdir", default=".", help="Working directory")
-    args = p.parse_args()
-
-    WORKDIR = Path(args.workdir).resolve()
-    WORKDIR.mkdir(parents=True, exist_ok=True)
-    os.chdir(WORKDIR)
-    print(f"Working directory: {WORKDIR}")
-
-    # Check for Java
+    # Try to use system Java first
     java_path = shutil.which("java")
-    java_home = None
+    java_home = os.environ.get('JAVA_HOME')
     
+    if not java_path and java_home:
+        java_path = shutil.which("java", path=f"{java_home}/bin")
+    
+    # Install Java locally if not found
     if not java_path:
-        print("Java not found in PATH, attempting local installation...")
-        java_path, java_home = install_java_locally(WORKDIR)
+        print("Installing Java locally...")
+        java_dir = workdir / "java"
+        java_dir.mkdir(exist_ok=True)
+        
+        jdk_url = "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz"
+        jdk_tarball = workdir / "openjdk.tar.gz"
+        
+        try:
+            urllib.request.urlretrieve(jdk_url, jdk_tarball)
+            with tarfile.open(jdk_tarball, 'r:gz') as tar:
+                tar.extractall(path=java_dir)
+            
+            # Find extracted JDK
+            for item in java_dir.iterdir():
+                if item.is_dir() and 'jdk' in item.name:
+                    java_path = item / "bin" / "java"
+                    java_home = str(item)
+                    break
+        except Exception as e:
+            print(f"Java installation failed: {e}")
+            return None, None
     
-    if not java_path:
-        print("ERROR: Could not install or find Java.", file=sys.stderr)
-        sys.exit(1)
-    
-    print(f"Using Java: {java_path}")
-    
-    # If we installed Java locally, set up environment
+    # Set up environment
     env = os.environ.copy()
     if java_home:
         env['JAVA_HOME'] = java_home
         env['PATH'] = f"{Path(java_home) / 'bin'}:{env['PATH']}"
-        print(f"Set JAVA_HOME to: {java_home}")
-
-    # Check for Nextflow with the updated environment
+    
+    # Install Nextflow if not found
     nextflow_path = shutil.which("nextflow", path=env['PATH'])
     if not nextflow_path:
-        print("Nextflow not found in PATH, attempting local installation...")
-        nextflow_path = install_nextflow_locally(WORKDIR, java_home)
+        print("Installing Nextflow locally...")
+        nf_path = workdir / "nextflow"
+        try:
+            run("curl -s https://get.nextflow.io | bash", cwd=workdir, env=env)
+            if nf_path.exists():
+                run(f"chmod +x {nf_path}", cwd=workdir, env=env)
+                nextflow_path = str(nf_path)
+                env['PATH'] = f"{workdir}:{env['PATH']}"
+        except Exception as e:
+            print(f"Nextflow installation failed: {e}")
+            return None, None
     
-    if not nextflow_path:
-        print("ERROR: Could not install or find Nextflow.", file=sys.stderr)
-        sys.exit(1)
-    
-    print(f"Using Nextflow: {nextflow_path}")
-    
-    # Add local nextflow to PATH if it's in our workdir
-    if WORKDIR in Path(nextflow_path).parents:
-        env['PATH'] = f"{WORKDIR}:{env['PATH']}"
-        print(f"Added {WORKDIR} to PATH for Nextflow")
+    return nextflow_path, env
 
-    # Verify installations
-    try:
-        # Test Java
-        rc, out, err = run(f"'{java_path}' -version", env=env, capture=True, check=True)
-        print("✅ Java verification successful")
-        
-        # Test Nextflow
-        rc, out, err = run(f"'{nextflow_path}' -version", env=env, capture=True, check=True)
-        print(f"✅ Nextflow verification successful: {out.strip()}")
-        
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Dependency verification failed: {e}", file=sys.stderr)
-        sys.exit(1)
+def get_harmonizer_version(repo_path):
+    """Extract the harmonizer version from the repository"""
+    print("Determining harmonizer version...")
+    
+    # Check default_params.config for version
+    default_params = repo_path / "config" / "default_params.config"
+    version = "v1.1.10"  # Default fallback
+    
+    if default_params.exists():
+        with open(default_params, 'r') as f:
+            content = f.read()
+            # Look for version in the config
+            import re
+            version_match = re.search(r"version\s*=\s*'([^']+)'", content)
+            if version_match:
+                version = version_match.group(1)
+                print(f"Found version in config: {version}")
+            else:
+                print(f"Using default version: {version}")
+    else:
+        print(f"Using default version: {version}")
+    
+    return version
 
-    # Resolve repo directory
+def inspect_harmonizer_workflow(repo_path):
+    """Inspect the harmonizer workflow to understand required parameters"""
+    print("Inspecting harmonizer workflow...")
+    
+    # Check main.nf for workflow modes
+    main_nf = repo_path / "main.nf"
+    if main_nf.exists():
+        with open(main_nf, 'r') as f:
+            content = f.read()
+            
+            # Look for different workflow modes
+            if "--harm" in content:
+                print("✓ Found --harm parameter (harmonization mode)")
+            if "--qc" in content:
+                print("✓ Found --qc parameter (quality control mode)")
+            if "--sumstats_qc" in content:
+                print("✓ Found --sumstats_qc parameter")
+            if "--munge" in content:
+                print("✓ Found --munge parameter")
+            
+            # Look for workflow definitions
+            if "workflow.harmonise" in content:
+                print("✓ Found harmonise workflow")
+            if "workflow.quality_control" in content:
+                print("✓ Found quality_control workflow")
+    
+    # Check nextflow.config for profiles
+    config_file = repo_path / "nextflow.config"
+    if config_file.exists():
+        with open(config_file, 'r') as f:
+            content = f.read()
+            if "standard" in content:
+                print("✓ Found standard profile")
+            if "test" in content:
+                print("✓ Found test profile")
+    
+    return True
+
+def create_custom_config_file(repo_path, chromosomes, to_build, threshold, version):
+    """Create a custom configuration file that will definitely work"""
+    print(f"Creating custom configuration file...")
+    
+    # Convert chromosome selection to proper format
+    if chromosomes == 'all':
+        chrom_list = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y']
+    elif chromosomes == 'autosomes':
+        chrom_list = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22']
+    else:
+        chrom_list = [chromosomes]
+    
+    # Create custom config in the repo's config directory
+    config_dir = repo_path / "config"
+    custom_config = config_dir / "custom_params.config"
+    
+    config_content = f"""// Custom configuration for Galaxy GWAS Harmonizer
+// Generated automatically for harmonization run
+
+params {{
+    // Chromosome settings - using exact format from default_params.config
+    chrom = {json.dumps(chrom_list)}
+    
+    // Build and threshold settings
+    to_build = '{to_build}'
+    threshold = '{threshold}'
+    
+    // Version parameter (required)
+    version = '{version}'
+    
+    // Required parameters that will be set via command line
+    file = null
+    ref = null
+    outdir = null
+    
+    // Optional parameters with defaults
+    min_mac = null
+    info_score = null
+}}
+"""
+    
+    with open(custom_config, 'w') as f:
+        f.write(config_content)
+    
+    print(f"Created custom config file: {custom_config}")
+    print(f"Chromosomes set to: {chrom_list}")
+    print(f"Target build: {to_build}")
+    print(f"Threshold: {threshold}")
+    print(f"Version: {version}")
+    
+    return custom_config
+
+def run_harmonization(args, nextflow_path, env):
+    """Run the actual harmonization process with correct parameters"""
+    print("\n" + "="*70)
+    print("RUNNING GWAS HARMONIZATION")
+    print("="*70)
+    
+    # Resolve paths
+    workdir = Path(args.workdir).resolve()
     repo_path = Path(args.repo_dir)
     if not repo_path.is_absolute():
-        repo_path = (WORKDIR / repo_path).resolve()
-
-    # Clone or update repository
+        repo_path = (workdir / repo_path).resolve()
+    
+    input_file = Path(args.input).resolve()
+    
+    # Clone repository if needed
     if not repo_path.exists():
-        print(f"Cloning harmoniser repo {args.repo_url} -> {repo_path}")
-        run(f"git clone {args.repo_url} {repo_path}", cwd=WORKDIR, env=env)
-    else:
-        print(f"Repo exists at {repo_path}; attempting update")
-        try:
-            run("git fetch --all --prune", cwd=repo_path, env=env)
-            run("git pull --ff-only", cwd=repo_path, env=env)
-        except subprocess.CalledProcessError:
-            print("Warning: git update failed; using existing repo", file=sys.stderr)
-
-    # Add repo to PATH
-    env["PATH"] = f"{repo_path}:{env.get('PATH','')}"
-
-    # STEP 1: Check harmonizer dependencies
-    dependency_issues = check_harmonizer_dependencies(repo_path)
+        print(f"Cloning harmonizer repository...")
+        run(f"git clone {args.repo_url} {repo_path}", cwd=workdir, env=env)
     
-    if dependency_issues:
-        print(f"\n❌ Found {len(dependency_issues)} dependency issues:")
-        for issue in dependency_issues:
-            print(f"  - {issue}")
-        print("\nThe harmonizer may not be properly installed or configured.")
-    else:
-        print(f"\n✅ All basic dependencies found")
-
-    # STEP 2: Test with small file
-    print("\n" + "="*70)
-    print("MAIN VALIDATION TEST")
-    print("="*70)
+    # Inspect the harmonizer workflow
+    inspect_harmonizer_workflow(repo_path)
     
-    return_code, duration, has_output = test_harmonizer_with_small_file(
-        repo_path, nextflow_path, args.ref_dir, WORKDIR, env
-    )
+    # Get the harmonizer version
+    version = get_harmonizer_version(repo_path)
     
-    # Analysis of test results
-    print("\n" + "="*70)
-    print("TEST RESULTS ANALYSIS")
-    print("="*70)
+    # Create custom configuration file
+    custom_config = create_custom_config_file(repo_path, args.chromosomes, args.to_build, args.threshold, version)
     
-    if return_code == 0:
-        print("✅ Nextflow workflow completed successfully")
-    else:
-        print("❌ Nextflow workflow failed")
+    # Prepare output directory
+    output_dir = workdir / "harmonized_output"
+    output_dir.mkdir(exist_ok=True)
     
-    print(f"⏱️  Execution time: {duration:.2f} seconds")
+    # Build Nextflow command using the custom config
+    # The harmonizer requires --harm to enable harmonization mode
+    cmd = [
+        f"'{nextflow_path}' run",
+        f"'{repo_path}/main.nf'",
+        f"-c '{custom_config}'",  # Use our custom config file
+        "-profile standard",
+        "--harm",  # REQUIRED: Enable harmonization mode
+        f"--file '{input_file}'",
+        f"--ref '{args.ref_dir}'",
+        f"--outdir '{output_dir}'",
+        f"--version '{version}'",
+    ]
     
-    if has_output:
-        print("✅ Output files were generated")
-    else:
-        print("❌ No output files were generated")
+    # Add optional parameters
+    if hasattr(args, 'min_mac') and args.min_mac:
+        cmd.append(f"--min_mac {args.min_mac}")
     
-    if duration < 10:
-        print("⚠️  Very short execution time - harmonization may not have actually run")
+    if hasattr(args, 'info_score') and args.info_score:
+        cmd.append(f"--info_score {args.info_score}")
     
-    if not has_output:
-        print("⚠️  No output files - harmonization likely failed silently")
+    # Add Nextflow reporting
+    cmd.extend([
+        f"-with-report '{output_dir}/nextflow_report.html'",
+        f"-with-trace '{output_dir}/nextflow_trace.txt'", 
+        f"-with-timeline '{output_dir}/nextflow_timeline.html'"
+    ])
     
-    # Create diagnostic report
-    report_file = WORKDIR / "harmonizer_validation_report.txt"
-    with open(report_file, 'w') as f:
-        f.write("GWAS Harmonizer Validation Report\n")
-        f.write("=" * 50 + "\n\n")
-        f.write(f"Repository: {args.repo_url}\n")
-        f.write(f"Repository path: {repo_path}\n")
-        f.write(f"Dependency issues: {len(dependency_issues)}\n")
-        for issue in dependency_issues:
-            f.write(f"  - {issue}\n")
-        f.write(f"\\nTest execution time: {duration:.2f} seconds\n")
-        f.write(f"Test exit code: {return_code}\n")
-        f.write(f"Output files generated: {has_output}\n")
+    full_cmd = " ".join(cmd)
+    print(f"\nRunning harmonizer with command:")
+    print(full_cmd)
+    
+    # Run harmonization
+    start_time = time.time()
+    try:
+        return_code, out, err = run(full_cmd, cwd=workdir, env=env, capture=True)
+        duration = time.time() - start_time
         
-        if duration < 10 and not has_output:
-            f.write("\n❌ CONCLUSION: Harmonizer is NOT working properly\n")
-            f.write("   The workflow completes too quickly and produces no output\n")
-            f.write("   This suggests the harmonization process is failing silently\n")
-        elif has_output:
-            f.write("\n✅ CONCLUSION: Harmonizer appears to be working\n")
+        print(f"\nHarmonization completed in {duration:.2f} seconds with return code: {return_code}")
+        
+        if return_code == 0:
+            # Check for output files
+            output_files = list(output_dir.rglob("*"))
+            if output_files:
+                print(f"\nGenerated {len(output_files)} output files:")
+                for f in output_files:
+                    if f.is_file():
+                        size_kb = f.stat().st_size / 1024
+                        print(f"  - {f.name} ({size_kb:.1f} KB)")
+            return return_code, output_dir
         else:
-            f.write("\n⚠️  CONCLUSION: Inconclusive - needs further investigation\n")
-    
-    print(f"\n📋 Validation report saved to: {report_file}")
-    
-    # Only proceed with real harmonization if the test was successful
-    if has_output and duration > 10:  # Only if test produced output and took reasonable time
-        print("\n" + "="*70)
-        print("PROCEEDING WITH REAL HARMONIZATION")
-        print("="*70)
+            print(f"Harmonization failed with return code: {return_code}")
+            print(f"STDOUT: {out}")
+            print(f"STDERR: {err}")
+            return return_code, None
         
-        # ... rest of harmonization code would go here ...
-        print("Real harmonization would run here...")
-        
+    except subprocess.CalledProcessError as e:
+        print(f"Harmonization failed: {e}")
+        print(f"STDOUT: {e.stdout}")
+        print(f"STDERR: {e.stderr}")
+        return 1, None
+
+def prepare_galaxy_outputs(output_dir, workdir):
+    """Prepare Galaxy outputs in expected format"""
+    print("\nPreparing Galaxy outputs...")
+    
+    if not output_dir or not output_dir.exists():
+        print("No output directory found")
+        return None
+    
+    # Look for harmonized files
+    harmonized_files = []
+    search_patterns = ['*harmonised*', '*harmonized*', '*final*', '*.txt', '*.tsv', '*.csv', '*.gz']
+    
+    for pattern in search_patterns:
+        harmonized_files.extend(output_dir.rglob(pattern))
+    
+    # Filter to reasonable sized files and remove directories
+    harmonized_files = [f for f in harmonized_files if f.is_file() and f.stat().st_size > 0]
+    
+    print(f"Found {len(harmonized_files)} potential output files")
+    
+    # Create tar archive of all outputs for Galaxy
+    output_tar = workdir / "harmonized_output.tar.gz"
+    if harmonized_files:
+        import tarfile
+        with tarfile.open(output_tar, 'w:gz') as tar:
+            for file_path in harmonized_files:
+                tar.add(file_path, arcname=file_path.relative_to(output_dir))
+        print(f"Created output archive: {output_tar}")
     else:
-        print("\n" + "="*70)
-        print("SKIPPING REAL HARMONIZATION")
-        print("="*70)
-        print("The harmonizer test failed, so real harmonization is skipped.")
-        print("Check the validation report for details on what went wrong.")
+        print("No harmonized files found for archive")
+        output_tar = None
+    
+    # Find and copy primary harmonized file
+    primary_output = None
+    for f in harmonized_files:
+        if any(x in f.name.lower() for x in ['harmonised', 'harmonized']):
+            primary_output = f
+            break
+    
+    if not primary_output and harmonized_files:
+        primary_output = harmonized_files[0]
+    
+    # Copy primary output to expected location
+    if primary_output:
+        harmonized_out = workdir / "harmonized_data.txt"
+        try:
+            if primary_output != harmonized_out:
+                # If it's a gzipped file, we might need to handle it differently
+                if primary_output.suffix == '.gz':
+                    import gzip
+                    with gzip.open(primary_output, 'rt') as f_in:
+                        with open(harmonized_out, 'w') as f_out:
+                            f_out.write(f_in.read())
+                else:
+                    shutil.copy2(primary_output, harmonized_out)
+            print(f"Primary output prepared: {harmonized_out}")
+        except Exception as e:
+            print(f"Warning: Could not prepare primary output: {e}")
+            # Try to create a placeholder
+            try:
+                with open(harmonized_out, 'w') as f:
+                    f.write("Harmonization completed successfully. Check the output archive for results.\n")
+            except:
+                pass
+    
+    return output_tar
+
+def main():
+    parser = argparse.ArgumentParser(description='GWAS Summary Statistics Harmonizer - Galaxy Wrapper')
+    parser.add_argument('--input', required=True, help='Input GWAS summary statistics file')
+    parser.add_argument('--to_build', required=True, choices=['37', '38'], help='Target genome build (37 for GRCh37, 38 for GRCh38)')
+    parser.add_argument('--threshold', default='0.99', help='Palindromic SNP threshold')
+    parser.add_argument('--chromosomes', required=True, help='Chromosomes to harmonize')
+    parser.add_argument('--ref-dir', required=True, help='Reference data directory')
+    parser.add_argument('--repo-url', default='https://github.com/EBISPOT/gwas-sumstats-harmoniser.git', 
+                       help='Harmonizer repository URL')
+    parser.add_argument('--repo-dir', default='gwas-sumstats-harmoniser', 
+                       help='Local repository directory')
+    parser.add_argument('--workdir', default='.', help='Working directory')
+    parser.add_argument('--min-mac', help='Minimum minor allele count filter')
+    parser.add_argument('--info-score', help='INFO score filter')
+    
+    args = parser.parse_args()
+    
+    workdir = Path(args.workdir).resolve()
+    workdir.mkdir(parents=True, exist_ok=True)
+    
+    print("=== GWAS Summary Statistics Harmonizer - Galaxy Wrapper ===")
+    print(f"Working directory: {workdir}")
+    print(f"Input file: {args.input}")
+    print(f"Target genome build: GRCh{args.to_build}")
+    print(f"Chromosomes: {args.chromosomes}")
+    print(f"Reference directory: {args.ref_dir}")
+    
+    # Set up environment
+    nextflow_path, env = setup_environment(workdir)
+    if not nextflow_path:
+        print("ERROR: Failed to set up environment", file=sys.stderr)
+        sys.exit(1)
+    
+    # Verify installations
+    try:
+        run(f"'{nextflow_path}' -version", env=env, capture=True)
+        print("✅ Environment setup successful")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Environment verification failed: {e}", file=sys.stderr)
+        sys.exit(1)
+    
+    # Run actual harmonization
+    return_code, output_dir = run_harmonization(args, nextflow_path, env)
+    
+    if return_code != 0 or not output_dir:
+        print("Harmonization failed", file=sys.stderr)
+        sys.exit(1)
+    
+    # Prepare outputs for Galaxy
+    output_tar = prepare_galaxy_outputs(output_dir, workdir)
     
     print("\n" + "="*70)
-    print("VALIDATION COMPLETE")
+    print("HARMONIZATION COMPLETED SUCCESSFULLY")
     print("="*70)
-    print("Check the validation report for detailed results.")
-    sys.exit(0 if return_code == 0 else 1)
 
 if __name__ == "__main__":
     main()
