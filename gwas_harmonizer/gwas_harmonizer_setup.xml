@@ -5,14 +5,31 @@
         <requirement type="package" version="3.8">python</requirement>
         <requirement type="package" version="15.0.1">pyarrow</requirement>
     </requirements>
-    <command detect_errors="exit_code">
-        <![CDATA[
-        python '$__tool_directory__/harmonizer_setup_wrapper.py'
-            --code-repo '$code_repo'
-            --ref-dir '$ref_dir'
-            --chromlist '$chromlist'
-        ]]>
-    </command>
+<command detect_errors="exit_code">
+<![CDATA[
+    # Create directories
+    mkdir -p '$ref_dir'/logs &&
+    
+    # Run nextflow directly
+    '$code_repo'/nextflow run '$code_repo' \
+        -profile standard \
+        --reference \
+        --ref '$ref_dir' \
+        --chromlist '$chromlist' \
+        -with-report '$ref_dir'/logs/ref-report.html \
+        -with-timeline '$ref_dir'/logs/ref-timeline.html \
+        -with-trace '$ref_dir'/logs/ref-trace.txt \
+        -with-dag '$ref_dir'/logs/ref-dag.html \
+        2>&1 | tee '$ref_dir'/logs/ref.log &&
+    
+    # Create output files
+    echo '$ref_dir'/logs > log_dir.txt &&
+    
+    # Copy reports
+    cp '$ref_dir'/logs/ref-report.html report.html 2>/dev/null || echo "Report not found" &&
+    cp '$ref_dir'/logs/ref-timeline.html timeline.html 2>/dev/null || echo "Timeline not found"
+]]>
+</command>
     <inputs>
         <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Harmonizer code repository path"/>
         <param name="ref_dir" type="text" label="Reference data directory" help="Directory where reference data will be stored"/>
