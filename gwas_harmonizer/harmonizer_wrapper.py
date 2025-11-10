@@ -736,7 +736,9 @@ def main():
                 'id': 'variant_id',
                 'marker': 'variant_id',
                 'markername': 'variant_id',
-                'variant': 'variant_id'  # Added this
+                'variant': 'variant_id',  # Added this
+                'pval': 'p_value',
+                'tstat': 't-stat'  # If needed, adjust based on pipeline requirements
             }
             df.rename(columns=column_map, inplace=True)
             
