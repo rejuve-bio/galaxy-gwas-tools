@@ -615,8 +615,6 @@
 
 
 
-
-
 #!/usr/bin/env python3
 import os
 import sys
@@ -867,8 +865,20 @@ def main():
                     
                 print("Harmonizer completed successfully!")
                 
-                # Find the harmonized output file (assuming pattern *.h.tsv.gz)
+                # Debug: Print directory tree after Nextflow to locate files
+                print("Directory tree after Nextflow:")
+                for root, dirs, files in os.walk(args.output_dir):
+                    level = root.replace(args.output_dir, '').count(os.sep)
+                    indent = ' ' * 4 * level
+                    print(f"{indent}{os.path.basename(root)}/")
+                    subindent = ' ' * 4 * (level + 1)
+                    for f in files:
+                        print(f"{subindent}{f}")
+                
+                # Find the harmonized output file recursively (assuming pattern *.h.tsv.gz)
                 harmonized_files = list(Path(args.output_dir).rglob('*.h.tsv.gz'))
+                if not harmonized_files:
+                    harmonized_files = list(Path(args.output_dir).rglob('*.harmonised.tsv.gz'))
                 if not harmonized_files:
                     print("Warning: No harmonized output file found")
                 else:
