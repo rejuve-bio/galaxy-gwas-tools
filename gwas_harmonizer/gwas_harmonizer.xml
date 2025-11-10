@@ -9,7 +9,7 @@
         <requirement type="package" version="15.0.1">pyarrow</requirement>
         <requirement type="package" version="0.4">pyliftover</requirement>
         <requirement type="package" version="2.2.3">pandas</requirement>
-        <requirement type="package" version="1.2.0">gwas_sumstats_tools</requirement>
+        <requirement type="package" version="1.2.0">gwas-sumstats-tools</requirement>
     </requirements>
     <command detect_errors="exit_code">
         <![CDATA[
