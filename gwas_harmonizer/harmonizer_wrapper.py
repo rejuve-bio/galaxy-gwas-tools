@@ -1268,7 +1268,7 @@ from pathlib import Path
 import datetime
 import hashlib
 import yaml
-import importlib
+# importlib is no longer needed
 import pandas as pd
 import tempfile
 
@@ -1293,28 +1293,10 @@ def main():
     args.code_repo = os.path.abspath(args.code_repo)
     
     # --- THIS IS THE FIX ---
-    # The 'pip install' list now has the correct version, 1.0.5,
-    # which we know works with Python 3.12.
-    packages = [
-        ('duckdb', '1.1.1'),
-        ('pyarrow', '15.0.1'),
-        ('pyliftover', '0.4'),
-        ('pandas', '2.2.3'),
-        ('gwas-sumstats-tools', '1.0.5') 
-    ]
+    # The 'pip install' loop has been REMOVED.
+    # We will trust the XML <requirements> to build the correct environment.
+    # This prevents the Python 3.12 incompatibility.
     # --- END OF FIX ---
-
-    for pkg, version in packages:
-        try:
-            importlib.import_module(pkg.replace('-', '_'))
-        except ImportError:
-            print(f"Installing {pkg}=={version}")
-            try:
-                subprocess.check_call([sys.executable, '-m', 'pip', 'install', f"{pkg}=={version}"])
-            except subprocess.CalledProcessError as e:
-                # This will now catch the error if pip fails
-                print(f"CRITICAL: Failed to install {pkg}=={version}. Error: {e}")
-                sys.exit(1)
     
     # Set environment
     env = os.environ.copy()
