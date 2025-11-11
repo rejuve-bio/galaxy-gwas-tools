@@ -1,16 +1,16 @@
-<tool id="gwas_harmonizer" name="GWAS Harmonizer" version="0.4.4"> <description>Harmonize GWAS summary statistics</description>
+<tool id="gwas_harmonizer" name="GWAS Harmonizer" version="0.4.0">
+    <description>Harmonize GWAS summary statistics</description>
     <requirements>
         <requirement type="package" version="22.10.6">nextflow</requirement>
-        <requirement type="package" version="3.11">python</requirement>
-        <requirement type="package" version="1.19.2">htslib</requirement> 
+        <requirement type="package" version="3.8">python</requirement>
+        <requirement type="package" version="1.19.2">htslib</requirement> <!-- For tabix -->
         <requirement type="package" version="5.3.0">pyyaml</requirement>
         <requirement type="package" version="1.1.1">python-duckdb</requirement>
         <requirement type="package" version="15.0.1">pyarrow</requirement>
         <requirement type="package" version="0.4">pyliftover</requirement>
         <requirement type="package" version="2.2.3">pandas</requirement>
-        <requirement type="package" version="1.0.5">gwas-sumstats-tools</requirement>
+        <requirement type="package" version="1.2.0">gwas-sumstats-tools</requirement>
     </requirements>
-    
     <command detect_errors="exit_code">
         <![CDATA[
         python '$__tool_directory__/harmonizer_wrapper.py'
@@ -25,10 +25,9 @@
             --output-dir '$output_dir'
         ]]>
     </command>
-    
     <inputs>
         <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Harmonizer code repository path"/>
-        <param name="ref_dir" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref" label="Reference data directory" help="Directory with prepared reference data."/>
+        <param name="ref_dir" type="text" label="Reference data directory" help="Directory with prepared reference data from setup tool"/>
         <param name="data_file" type="data" format="txt,tsv" label="Input GWAS data file (TSV or TXT)"/>
         <param name="meta_file" type="data" format="yaml" optional="true" label="Metadata YAML file (optional)" help="If not provided, a default will be generated."/>
         <param name="genome_assembly" type="select" label="Genome Assembly (if no meta YAML)" value="GRCh38">
@@ -41,7 +40,6 @@
         </param>
         <param name="output_dir" type="text" value="harmonized_output" label="Output directory" optional="true"/>
     </inputs>
-    
     <outputs>
         <data name="harmonized_output" format="gz" label="Harmonized GWAS output" from_work_dir="harmonized_output.tsv.gz"/>
         <data name="harmonized_index" format="tbi" label="Harmonized output index" from_work_dir="harmonized_output.tsv.gz.tbi" optional="true"/>
@@ -49,7 +47,6 @@
         <data name="report" format="html" label="Nextflow report" from_work_dir="report"/>
         <data name="timeline" format="html" label="Nextflow timeline" from_work_dir="timeline"/>
     </outputs>
-    
     <help>
         <![CDATA[
         Harmonizes GWAS summary statistics using prepared reference data.
