@@ -1377,11 +1377,7 @@ def main():
                 'id': 'variant_id',
                 'marker': 'variant_id',
                 'markername': 'variant_id',
-                'variant': 'variant_id',  # Added this
-                'pval': 'p_value',
-                'p': 'p_value',
-                'p-value': 'p_value',
-                'tstat': 'z_score'  # If needed, adjust based on pipeline requirements
+                'variant': 'variant_id'  # Added this
             }
             df.rename(columns=column_map, inplace=True)
             
@@ -1401,12 +1397,6 @@ def main():
                         df['base_pair_location'] = pd.to_numeric(df['base_pair_location'], errors='coerce')
                 except Exception as e:
                     print(f"Warning: Could not parse variant_id: {str(e)}")
-            
-            # Validate required columns
-            required_cols = ['chromosome', 'base_pair_location', 'effect_allele', 'other_allele', 'p_value']
-            missing = [col for col in required_cols if col not in df.columns]
-            if missing:
-                sys.exit(f"Error: Missing required columns for harmonization: {missing}")
             
             # Save the preprocessed file
             df.to_csv(data_target, sep='\t', index=False)
@@ -1471,7 +1461,7 @@ def main():
                 '-profile', 'standard',
                 '--harm',
                 '--ref', args.ref_dir,
-                '--file', data_target,
+                '--file', meta_target,  # Use YAML as input
                 '--outdir', args.output_dir,
                 '-with-report', os.path.join(log_dir, 'harm-report.html'),
                 '-with-timeline', os.path.join(log_dir, 'harm-timeline.html'),
