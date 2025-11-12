@@ -1461,7 +1461,7 @@ def main():
                 '-profile', 'standard',
                 '--harm',
                 '--ref', args.ref_dir,
-                '--file', meta_target,  # Use YAML as input
+                '--file', data_target,
                 '--outdir', args.output_dir,
                 '-with-report', os.path.join(log_dir, 'harm-report.html'),
                 '-with-timeline', os.path.join(log_dir, 'harm-timeline.html'),
