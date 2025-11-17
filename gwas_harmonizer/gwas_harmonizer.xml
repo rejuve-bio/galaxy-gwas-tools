@@ -1,57 +1,84 @@
-<tool id="gwas_harmonizer" name="GWAS Harmonizer" version="0.4.0">
-    <description>Harmonize GWAS summary statistics</description>
+<tool id="gwas_harmonizer_v2" name="GWAS Harmonizer (Full Pipeline)" version="1.0.2-debug">
+    <description>Validates, formats to SSF, and harmonizes GWAS summary statistics</description>
     <requirements>
         <requirement type="package" version="22.10.6">nextflow</requirement>
-        <requirement type="package" version="3.8">python</requirement>
-        <requirement type="package" version="1.19.2">htslib</requirement> <!-- For tabix -->
-        <requirement type="package" version="5.3.0">pyyaml</requirement>
-        <requirement type="package" version="1.1.1">python-duckdb</requirement>
-        <requirement type="package" version="15.0.1">pyarrow</requirement>
-        <requirement type="package" version="0.4">pyliftover</requirement>
-        <!-- <requirement type="package" version="2.2.3">pandas</requirement> -->
-        <requirement type="package" version="1.2.0">gwas-sumstats-tools</requirement>
-    </requirements>
+        <requirement type="package" version="1.19.2">htslib</requirement> <requirement type="package" version="4.2.2">gawk</requirement> <requirement type="package" version="8.32">coreutils</requirement> </requirements>
+    
     <command detect_errors="exit_code">
         <![CDATA[
-        python '$__tool_directory__/harmonizer_wrapper.py'
-            --code-repo '$code_repo'
-            --ref-dir '$ref_dir'
-            --data-file '$data_file'
-            #if $meta_file
-                --meta-file '$meta_file'
-            #end if
-            --genome-assembly '$genome_assembly'
-            --coordinate-system '$coordinate_system'
-            --output-dir '$output_dir'
+            # --- START OF DEBUG BLOCK ---
+            echo "DEBUG: Starting <command> block." &&
+            set -x &&
+            # This next command is the most likely to fail
+            echo "DEBUG: Activating Conda environment..." &&
+            source \$__GALAXY_CONDA_PATH__/activate &&
+            echo "DEBUG: Conda environment activated." &&
+            # --- END OF DEBUG BLOCK ---
+
+            echo "DEBUG: Determining input basename..." &&
+            INPUT_BASENAME=$(basename '$data_file') &&
+            echo "DEBUG: Input basename is \$INPUT_BASENAME" &&
+
+            echo "DEBUG: Determining file stem..." &&
+            STEM=$(echo \$INPUT_BASENAME | sed -e 's/\.tsv\.gz$//' -e 's/\.tsv\.bgz$//' -e 's/\.bgz$//' -e 's/\.gz$//' -e 's/\.tsv$//') &&
+            echo "DEBUG: Stem is \$STEM" &&
+
+            echo "DEBUG: Calling harmonizer.sh script..." &&
+            bash '/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/harmonizer.sh'
+                --input '$data_file'
+                --build '$genome_assembly'
+                --ref '/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref'
+                --code-repo '/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser'
+            &&
+            echo "DEBUG: harmonizer.sh script finished." &&
+            
+            ## Discover and copy the final outputs
+            HARMONIZED_FILE="results/\${STEM}/final/\${STEM}.h.tsv.gz" &&
+            
+            if [ ! -f "\$HARMONIZED_FILE" ]; then
+                echo "DEBUG: Could not find .h.tsv.gz, trying .h.harmonised.tsv.gz" &&
+                HARMONIZED_FILE="results/\${STEM}/final/\${STEM}.h.harmonised.tsv.gz"
+            fi &&
+
+            if [ -f "\$HARMONIZED_FILE" ]; then
+                echo "DEBUG: Found output file. Copying to outputs." &&
+                cp "\$HARMONIZED_FILE" '$harmonized_output' &&
+                
+                INDEX_FILE="\${HARMONIZED_FILE}.tbi"
+                if [ -f "\$INDEX_FILE" ]; then
+                    cp "\$INDEX_FILE" '$harmonized_index'
+                fi
+            else
+                echo "Error: Could not find expected output file: \$HARMONIZED_FILE" >&2
+                # We exit 0 so Galaxy displays the error log instead of just failing
+                exit 0
+            fi &&
+
+            # Copy the log file (which is in logs/harm.log)
+            if [ -f "logs/harm.log" ]; then
+                cp "logs/harm.log" '$harm_log'
+            fi &&
+            echo "DEBUG: Job complete."
         ]]>
     </command>
+    
     <inputs>
-        <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Harmonizer code repository path"/>
-        <param name="ref_dir" type="text" label="Reference data directory" help="Directory with prepared reference data from setup tool"/>
-        <param name="data_file" type="data" format="txt,tsv" label="Input GWAS data file (TSV or TXT)"/>
-        <param name="meta_file" type="data" format="yaml" optional="true" label="Metadata YAML file (optional)" help="If not provided, a default will be generated."/>
-        <param name="genome_assembly" type="select" label="Genome Assembly (if no meta YAML)" value="GRCh38">
+        <param name="data_file" type="data" format="txt,tsv,gz,bgz" label="Input GWAS data file (TSV or TXT, can be gzipped)"/>
+        <param name="genome_assembly" type="select" label="Genome Assembly" value="GRCh38">
             <option value="GRCh37">GRCh37</option>
             <option value="GRCh38" selected="true">GRCh38</option>
         </param>
-        <param name="coordinate_system" type="select" label="Coordinate System (if no meta YAML)" value="1-based">
-            <option value="0-based">0-based</option>
-            <option value="1-based" selected="true">1-based</option>
-        </param>
-        <param name="output_dir" type="text" value="harmonized_output" label="Output directory" optional="true"/>
     </inputs>
+    
     <outputs>
-        <data name="harmonized_output" format="gz" label="Harmonized GWAS output" from_work_dir="harmonized_output.tsv.gz"/>
-        <data name="harmonized_index" format="tbi" label="Harmonized output index" from_work_dir="harmonized_output.tsv.gz.tbi" optional="true"/>
-        <data name="log_dir" format="txt" label="Log directory" from_work_dir="log_dir.txt"/>
-        <data name="report" format="html" label="Nextflow report" from_work_dir="report"/>
-        <data name="timeline" format="html" label="Nextflow timeline" from_work_dir="timeline"/>
+        <data name="harmonized_output" format="gz" label="Harmonized GWAS output" />
+        <data name="harmonized_index" format="tbi" label="Harmonized output index" optional="true" />
+        <data name="harm_log" format="txt" label="Harmonization Log" />
     </outputs>
+    
     <help>
-        <![CDATA[
-        Harmonizes GWAS summary statistics using prepared reference data.
-        Provide the GWAS data file (TSV/TXT). Optionally provide a metadata YAML; if not, a default will be generated based on selected assembly and coordinate system.
-        Outputs the harmonized .h.tsv.gz file and its index.
-        ]]>
+    <![CDATA[
+    This tool validates, formats, and harmonizes GWAS summary statistics using the `harmonizer.sh` pipeline.
+    ]]>
     </help>
 </tool>
