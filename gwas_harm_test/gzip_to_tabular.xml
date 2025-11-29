@@ -1,0 +1,35 @@
+<tool id="gzip_to_tabular" name="GZIP to Tabular Converter" version="1.0.0">
+    <description>Decompress a GZIP file and convert its contents into CSV or TSV format.</description>
+
+    <requirements>
+        <requirement type="package">python</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code">
+        <![CDATA[
+        python3 '$__tool_directory__/gzip_to_tabular.py'
+            --input '$input_gz'
+            --output '$output_tabular'
+            --format '$format'
+        ]]>
+    </command>
+
+    <inputs>
+        <param name="input_gz" type="data" format="gz" label="Input GZIP file"/>
+        
+        <param name="format" type="select" label="Output format">
+            <option value="tsv" selected="true">TSV (Tab Separated)</option>
+            <option value="csv">CSV (Comma Separated)</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <data name="output_tabular" format="tabular" label="Converted Tabular File"/>
+    </outputs>
+
+    <help>
+        This tool decompresses a GZIP file and converts its data to a tabular format
+        (CSV or TSV). It streams large files to avoid memory issues and validates the
+        file structure.
+    </help>
+</tool>
