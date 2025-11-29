@@ -15,7 +15,7 @@
     </command>
 
     <inputs>
-        <param name="input_gz" type="data" format="gz,bgz,bz2" label="Input GZIP file"/>
+        <param name="input_gz" type="data" format="auto" label="Input GZIP file"/>
         
         <param name="format" type="select" label="Output format">
             <option value="tsv" selected="true">TSV (Tab Separated)</option>
