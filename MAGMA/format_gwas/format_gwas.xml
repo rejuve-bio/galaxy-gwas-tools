@@ -1,0 +1,31 @@
+<tool id="magma_format_gwas" name="MAGMA: Format GWAS Input" version="1.0">
+    <command>
+        python3 $__tool_directory__/format_gwas.py
+        --gwas $gwas
+        --chr $chromosome
+        --snp_loc $snp_loc
+        --pval $pval
+        --snp_col $snp_col
+        --chr_col $chr_col
+        --pos_col $pos_col
+        --p_col $p_col
+        #if $p_is_log10:
+        --p_is_log10
+        #end if
+    </command>
+
+    <inputs>
+        <param name="gwas" type="data" format="txt,txt.gz" label="GWAS summary statistics"/>
+        <param name="chromosome" type="integer" label="Chromosome"/>
+        <param name="snp_col" type="integer" label="SNP column index (1-based)"/>
+        <param name="chr_col" type="integer" label="Chromosome column index"/>
+        <param name="pos_col" type="integer" label="Position column index"/>
+        <param name="p_col" type="integer" label="P-value or -log10(P) column index"/>
+        <param name="p_is_log10" type="boolean" label="Is P value -log10 transformed?"/>
+    </inputs>
+
+    <outputs>
+        <data name="snp_loc" format="txt" label="SNP location file"/>
+        <data name="pval" format="txt" label="SNP p-value file"/>
+    </outputs>
+</tool>
