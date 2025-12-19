@@ -2,151 +2,181 @@
 import argparse
 import gzip
 import sys
+import os
 
-def auto_detect_columns(header_line):
-    """Detect column indices based on common GWAS header names."""
-    header = header_line.strip().split()
-    header_lower = [h.lower().replace('_', '').replace('-', '').replace('#', '') for h in header]
+def open_file(filename, mode="rt"):
+    """Automatically handle .gz files"""
+    return gzip.open(filename, mode) if str(filename).endswith(".gz") else open(filename, mode)
 
-    col_map = {}
+def detect_columns(header):
+    """Detect column indices from header using common synonyms"""
+    fields = header.strip().split()
+    lower_fields = [f.lower().replace('_', '').replace('-', '').replace('#', '') for f in fields]
+    
+    col = {'snp': None, 'chr': None, 'pos': None, 'p': None, 'n': None}
+    
+    snp_synonyms = ['snp', 'rsid', 'rs', 'marker', 'markername', 'variant', 'variantid', 'id']
+    chr_synonyms = ['chr', 'chrom', 'chromosome', 'chrm']
+    pos_synonyms = ['pos', 'bp', 'position', 'basepair', 'start']
+    p_synonyms = ['p', 'pval', 'pvalue', 'p_val', 'p_bolt_lmm', 'pval_bolt', 'log10p', 'minuslog10p']
+    n_synonyms = ['n', 'neff', 'n_eff', 'ncase', 'ncases', 'ncontrol', 'ncontrols', 'samplesize', 'sample_size']
 
-    # Common variants for each column
-    snp_names = ['snp', 'rsid', 'rs', 'marker', 'markername', 'variant', 'variantid', 'id']
-    chr_names = ['chr', 'chrom', 'chromosome', 'chrm']
-    pos_names = ['pos', 'bp', 'position', 'basepair', 'start', 'end']
-    p_names = ['p', 'pval', 'pvalue', 'p_val', 'p_bolt', 'p_lmm', 'log10p', 'minuslog10p']
+    for i, name in enumerate(lower_fields):
+        if col['snp'] is None and any(s in name for s in snp_synonyms):
+            col['snp'] = i
+        if col['chr'] is None and any(s in name for s in chr_synonyms):
+            col['chr'] = i
+        if col['pos'] is None and any(s in name for s in pos_synonyms):
+            col['pos'] = i
+        if col['p'] is None and any(s in name for s in p_synonyms):
+            col['p'] = i
+        if col['n'] is None and any(s in name for s in n_synonyms):
+            col['n'] = i
 
-    for i, h in enumerate(header_lower):
-        if any(name in h for name in snp_names):
-            col_map['snp'] = i
-        if any(name in h for name in chr_names):
-            col_map['chr'] = i
-        if any(name in h for name in pos_names):
-            col_map['pos'] = i
-        if any(name in h for name in p_names):
-            col_map['p'] = i
+    return col, fields
 
-    return col_map, header  # return original header too for error messages
+def is_log10_p(p_values, sample_size=1000):
+    """Guess if p-values are -log10 transformed"""
+    valid_p = [p for p in p_values if p > 0]
+    if len(valid_p) < 10:
+        return False
+    return sum(p > 10 for p in valid_p) > len(valid_p) * 0.7  # most values >10 → likely -log10
 
+def main():
+    parser = argparse.ArgumentParser(description="Auto-format GWAS for MAGMA")
+    parser.add_argument("--gwas", required=True, help="Input GWAS file (txt or txt.gz)")
+    parser.add_argument("--out_prefix", required=True, help="Prefix for output files")
+    args = parser.parse_args()
 
-def is_log10_p(p_values):
-    """Heuristic: if most p-values > 20, assume they are -log10(p)"""
-    large_count = sum(1 for p in p_values if p > 20)
-    return large_count > len(p_values) * 0.5  # majority rule
+    gwas_file = args.gwas
+    prefix = args.out_prefix
 
+    # Output filenames
+    snp_loc_file = f"{prefix}.snp.chr.pos.txt"
+    pval_file = f"{prefix}.pval.txt"
+    meta_file = f"{prefix}.meta.txt"
 
-parser = argparse.ArgumentParser(description="Format GWAS for MAGMA")
-parser.add_argument("--gwas", required=True, help="Input GWAS summary statistics file")
-parser.add_argument("--chr", type=int, required=True, help="Chromosome to extract")
-parser.add_argument("--snp_loc", required=True, help="Output SNP location file")
-parser.add_argument("--pval", required=True, help="Output p-value file")
+    try:
+        with open_file(gwas_file, "rt") as f:
+            header_line = next(f)
+    except Exception as e:
+        sys.exit(f"Error: Cannot read GWAS file: {e}")
 
-# Optional manual overrides (only used if provided)
-parser.add_argument("--snp_col", type=int, help="SNP column index (1-based)")
-parser.add_argument("--chr_col", type=int, help="CHR column index (1-based)")
-parser.add_argument("--pos_col", type=int, help="Position column index (1-based)")
-parser.add_argument("--p_col", type=int, help="P-value column index (1-based)")
-parser.add_argument("--p_is_log10", action="store_true", help="Force treat p-column as -log10(p)")
+    # Detect columns
+    col_indices, original_header = detect_columns(header_line)
 
-args = parser.parse_args()
+    missing = [name for name, idx in col_indices.items() if idx is None and name != 'n']
+    if missing:
+        sys.exit(
+            f"Error: Could not auto-detect required columns: {', '.join(missing)}\n"
+            f"Header line: {header_line.strip()}\n"
+            "Please ensure your file has recognizable headers for SNP, CHR, POS, and P-value."
+        )
 
-# Determine file opener
-open_func = gzip.open if str(args.gwas).endswith(".gz") else open
-
-try:
-    with open_func(args.gwas, "rt") as f:
-        header_line = next(f)
-except Exception as e:
-    sys.exit(f"Error reading GWAS file: {e}")
-
-# Auto-detect columns
-detected, original_header = auto_detect_columns(header_line)
-
-# Use manual overrides only if provided
-snp_idx = (args.snp_col - 1) if args.snp_col else detected.get('snp')
-chr_idx = (args.chr_col - 1) if args.chr_col else detected.get('chr')
-pos_idx = (args.pos_col - 1) if args.pos_col else detected.get('pos')
-p_idx   = (args.p_col - 1)   if args.p_col   else detected.get('p')
-
-missing = []
-if snp_idx is None: missing.append("SNP (rsid/marker)")
-if chr_idx is None: missing.append("CHR (chromosome)")
-if pos_idx is None: missing.append("POS (position/bp)")
-if p_idx is None:   missing.append("P-value")
-
-if missing:
-    sys.exit(
-        f"Error: Could not auto-detect required columns: {', '.join(missing)}\n"
-        f"Header line was: {header_line.strip()}\n"
-        "Please use Advanced Options to manually specify column indices."
-    )
-
-# Determine if p-values are -log10 (only auto-detect if user didn't force it)
-force_log10 = args.p_is_log10
-auto_log10_guess = False
-
-if not force_log10:
-    # Sample first 1000 p-values to guess
+    # Sample p-values to detect -log10
     p_sample = []
     try:
-        with open_func(args.gwas, "rt") as f:
+        with open_file(gwas_file, "rt") as f:
             next(f)  # skip header
-            for i, line in enumerate(f):
-                if i >= 1000:
+            for _ in range(2000):
+                line = f.readline()
+                if not line:
                     break
-                cols = line.strip().split()
-                if len(cols) <= p_idx:
+                parts = line.strip().split()
+                if len(parts) <= col_indices['p']:
                     continue
                 try:
-                    p_val = float(cols[p_idx])
-                    if p_val > 0:  # ignore 0 or negative
+                    p_val = float(parts[col_indices['p']])
+                    if p_val > 0:
                         p_sample.append(p_val)
                 except:
                     pass
-        if p_sample:
-            auto_log10_guess = is_log10_p(p_sample)
     except:
-        pass  # fall back to assuming raw p-values
+        pass
 
-use_log10 = force_log10 or auto_log10_guess
+    p_is_log10 = is_log10_p(p_sample)
 
-# Now process the file
-with open_func(args.gwas, "rt") as f, \
-     open(args.snp_loc, "w") as snp_out, \
-     open(args.pval, "w") as p_out:
-
-    next(f)  # skip header
-
-    for line in f:
-        cols = line.strip().split()
-        if len(cols) < max(snp_idx, chr_idx, pos_idx, p_idx) + 1:
-            continue  # malformed line
-
+    # Estimate N if not present (use median if available)
+    estimated_n = "NA"
+    if col_indices['n'] is not None:
+        n_values = []
         try:
-            line_chr = int(cols[chr_idx])
-        except ValueError:
-            continue  # non-numeric chromosome
+            with open_file(gwas_file, "rt") as f:
+                next(f)
+                for _ in range(1000):
+                    line = f.readline()
+                    if not line:
+                        break
+                    parts = line.strip().split()
+                    if len(parts) > col_indices['n']:
+                        try:
+                            n_values.append(float(parts[col_indices['n']]))
+                        except:
+                            pass
+            if n_values:
+                estimated_n = f"{sum(n_values)/len(n_values):.1f} (from N column)"
+        except:
+            pass
 
-        if line_chr != args.chr:
-            continue
+    # Write metadata summary
+    with open(meta_file, "w") as meta:
+        meta.write("MAGMA GWAS Formatting Summary\n")
+        meta.write(f"Input file: {os.path.basename(gwas_file)}\n")
+        meta.write(f"Detected columns:\n")
+        meta.write(f"  SNP column: {original_header[col_indices['snp']]} (index {col_indices['snp']+1})\n")
+        meta.write(f"  CHR column: {original_header[col_indices['chr']]} (index {col_indices['chr']+1})\n")
+        meta.write(f"  POS column: {original_header[col_indices['pos']]} (index {col_indices['pos']+1})\n")
+        meta.write(f"  P column:   {original_header[col_indices['p']]} (index {col_indices['p']+1})\n")
+        meta.write(f"  N column:   {'Detected' if col_indices['n'] else 'Not found'}\n")
+        meta.write(f"P-value format: {'-log10(P)' if p_is_log10 else 'raw P'}\n")
+        meta.write(f"Effective N: {estimated_n}\n")
 
-        snp = cols[snp_idx]
-        pos = cols[pos_idx]
-        try:
-            p = float(cols[p_idx])
-        except ValueError:
-            continue  # invalid p-value
+    # Process and write output files
+    with open_file(gwas_file, "rt") as f, \
+         open(snp_loc_file, "w") as snp_out, \
+         open(pval_file, "w") as p_out:
 
-        if use_log10:
-            if p <= 0:
+        next(f)  # skip header
+
+        for line in f:
+            parts = line.strip().split()
+            if len(parts) < max(col_indices.values()) + 1:
+                continue
+
+            snp = parts[col_indices['snp']]
+            try:
+                chr_val = int(parts[col_indices['chr']])
+                pos = int(parts[col_indices['pos']])
+            except ValueError:
+                continue
+
+            try:
+                p_raw = float(parts[col_indices['p']])
+            except ValueError:
+                continue
+
+            if p_raw <= 0 and p_is_log10:
                 continue  # avoid log(0)
-            p = 10 ** (-p)
 
-        # Write outputs in MAGMA format
-        snp_out.write(f"{snp}\t{line_chr}\t{pos}\n")
-        p_out.write(f"{snp}\t{p:.10g}\n")  # scientific notation, clean output
+            p_final = 10 ** (-p_raw) if p_is_log10 else p_raw
+            if p_final <= 0 or p_final > 1:
+                continue  # invalid p-value
 
-print("Formatting complete.")
-if not force_log10:
-    print(f"P-values treated as {'-log10(p)' if use_log10 else 'raw p-values'} "
-          f"(auto-detected: {'yes' if auto_log10_guess else 'no'})")
+            n_val = "NA"
+            if col_indices['n'] is not None:
+                try:
+                    n_val = parts[col_indices['n']]
+                except:
+                    pass
+
+            # MAGMA SNP location: SNP CHR POS
+            snp_out.write(f"{snp}\t{chr_val}\t{pos}\n")
+
+            # MAGMA p-value file: SNP N P
+            p_out.write(f"{snp}\t{n_val}\t{p_final:.10g}\n")
+
+    print("Formatting complete!")
+    print(f"Outputs written with prefix: {prefix}")
+
+if __name__ == "__main__":
+    main()
