@@ -1,31 +1,49 @@
 <tool id="magma_format_gwas" name="MAGMA: Format GWAS Input" version="1.0">
-    <command>
+    <description>Format GWAS summary statistics for MAGMA gene analysis</description>
+    <command detect_errors="exit_code">
         python3 $__tool_directory__/format_gwas.py
         --gwas $gwas
-        --chr $chromosome
-        --snp_loc $snp_loc
-        --pval $pval
-        --snp_col $snp_col
-        --chr_col $chr_col
-        --pos_col $pos_col
-        --p_col $p_col
-        #if $p_is_log10:
-        --p_is_log10
+        --chromosome $chromosome
+        #if $advanced_options.advanced:
+            --snp_col $advanced_options.snp_col
+            --chr_col $advanced_options.chr_col
+            --pos_col $advanced_options.pos_col
+            --p_col $advanced_options.p_col
+            --p_is_log10 $advanced_options.p_is_log10
         #end if
     </command>
-
     <inputs>
-        <param name="gwas" type="data" format="txt,txt.gz" label="GWAS summary statistics"/>
-        <param name="chromosome" type="integer" label="Chromosome"/>
-        <param name="snp_col" type="integer" label="SNP column index (1-based)"/>
-        <param name="chr_col" type="integer" label="Chromosome column index"/>
-        <param name="pos_col" type="integer" label="Position column index"/>
-        <param name="p_col" type="integer" label="P-value or -log10(P) column index"/>
-        <param name="p_is_log10" type="boolean" label="Is P value -log10 transformed?"/>
-    </inputs>
+        <param name="gwas" type="data" format="txt,tabular,txt.gz" label="GWAS summary statistics file" help="Plain text or gzipped file with header"/>
+        
+        <param name="chromosome" type="integer" min="1" max="25" label="Chromosome to process" help="Specify which chromosome (1-22, 23=X, 24=Y, 25=MT). Run separately for each if needed."/>
 
+        <!-- Optional advanced section - collapsed by default -->
+        <section name="advanced_options" title="Advanced Options" expanded="false">
+            <param name="advanced" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Manually specify column indices?" help="Only enable if auto-detection fails."/>
+
+            <conditional name="cond" when="advanced">
+                <param name="snp_col" type="integer" label="SNP column index (1-based)" optional="true"/>
+                <param name="chr_col" type="integer" label="Chromosome column index" optional="true"/>
+                <param name="pos_col" type="integer" label="Position column index" optional="true"/>
+                <param name="p_col" type="integer" label="P-value column index" optional="true"/>
+                <param name="p_is_log10" type="boolean" truevalue="--p_is_log10" falsevalue="" label="P-values are already -log10 transformed?" checked="false"/>
+            </conditional>
+        </section>
+    </inputs>
     <outputs>
-        <data name="snp_loc" format="txt" label="SNP location file"/>
-        <data name="pval" format="txt" label="SNP p-value file"/>
+        <data name="snp_loc" format="tabular" label="${gwas.name} - MAGMA SNP location (chr ${chromosome})"/>
+        <data name="pval" format="tabular" label="${gwas.name} - MAGMA P-value file (chr ${chromosome})"/>
     </outputs>
+    <help>
+<![CDATA[
+This tool formats your GWAS summary statistics into the two files required by MAGMA:
+
+- SNP location file (SNP, CHR, POS)
+- P-value file (SNP, P)
+
+**Auto-detection**: The tool automatically finds columns by common header names (e.g., SNP, RSID, CHR, BP, POS, P, PVAL, etc.).
+
+Only enable Advanced Options if auto-detection fails on your file.
+]]>
+    </help>
 </tool>
