@@ -1,0 +1,21 @@
+<tool id="magma_gene_analysis" name="MAGMA: Gene-based Analysis" version="1.0">
+    <command>
+        python3 $__tool_directory__/gene_analysis.py
+        --bfile $bfile
+        --pval $pval
+        --gene_annot $gene_annot
+        --N $sample_size
+        --out output
+    </command>
+
+    <inputs>
+        <param name="bfile" type="data" format="bed,bim,fam" label="LD reference (PLINK prefix)"/>
+        <param name="pval" type="data" format="txt" label="SNP p-values"/>
+        <param name="gene_annot" type="data" format="txt" label="Gene annotation file"/>
+        <param name="sample_size" type="integer" label="GWAS sample size"/>
+    </inputs>
+
+    <outputs>
+        <data name="genes_raw" format="txt" from_work_dir="output.genes.raw"/>
+    </outputs>
+</tool>
