@@ -1,0 +1,21 @@
+<tool id="magma_annotate" name="MAGMA: Annotate SNPs" version="1.0">
+    <command>
+        python3 $__tool_directory__/annotate_snps.py
+        --snp_loc $snp_loc
+        --gene_loc $gene_loc
+        --out output
+        #if $window:
+        --window $window
+        #end if
+    </command>
+
+    <inputs>
+        <param name="snp_loc" type="data" format="txt" label="SNP location file"/>
+        <param name="gene_loc" type="data" format="txt" label="Gene location file"/>
+        <param name="window" type="text" optional="true" label="Upstream,Downstream window (kb)"/>
+    </inputs>
+
+    <outputs>
+        <data name="annot" format="txt" from_work_dir="output.genes.annot"/>
+    </outputs>
+</tool>
