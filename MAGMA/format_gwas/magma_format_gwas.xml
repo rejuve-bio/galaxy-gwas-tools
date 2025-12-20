@@ -1,9 +1,5 @@
 <tool id="magma_format_gwas" name="MAGMA Format GWAS" version="1.0.0">
   <description>Prepare SNP location and p-value files from GWAS summary stats</description>
-  <requirements>
-    <requirement type="package" version="3.9">python</requirement>
-    <requirement type="package" version="2.2.2">pandas</requirement>
-  </requirements>
 <command interpreter="bash">magma_format_gwas.sh '$gwas_file' '$chrom_selection.chromosome' '$chrom_selection.specific_chr'</command>
   <inputs>
     <param name="gwas_file" type="data" format="tabular.gz,txt.gz" label="GWAS Summary Statistics File (.gz)" />
