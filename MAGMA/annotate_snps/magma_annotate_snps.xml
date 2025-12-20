@@ -1,0 +1,30 @@
+<tool id="magma_annotate_snps" name="MAGMA Annotate SNPs" version="1.0.0">
+  <description>Map SNPs to genes</description>
+  <requirements>
+    <requirement type="package" version="1.09">magma</requirement>
+  </requirements>
+  <command detect_errors="exit_code"><![CDATA[
+    python '$__tool_directory__/magma_annotate_snps.py'
+      --snp_loc '$snp_loc'
+      --gene_loc '$gene_loc'
+      --window_upstream '$window_upstream'
+      --window_downstream '$window_downstream'
+      --output '$output'
+  ]]></command>
+  <inputs>
+    <param name="snp_loc" type="data" format="txt" label="SNP Location File (from Format Tool)" />
+    <param name="gene_loc" type="data" format="txt" label="NCBI Gene Location File (e.g., NCBI37.3.gene.loc)" />
+    <param name="window_upstream" type="integer" value="10" min="0" label="Upstream Window (kb)" help="Include SNPs this many kb upstream of genes. Default: 10" />
+    <param name="window_downstream" type="integer" value="5" min="0" label="Downstream Window (kb)" help="Include SNPs this many kb downstream of genes. Default: 5" />
+  </inputs>
+  <outputs>
+    <data name="output" format="txt" label="Genes Annotation File" />
+  </outputs>
+  <citations>
+    <citation type="doi">10.1371/journal.pcbi.1004219</citation>
+  </citations>
+  <help><![CDATA[
+**What it does**: Annotates SNPs to genes using MAGMA, with optional window for regulatory regions (default enabled).
+Set windows to 0 for strict gene body only.
+  ]]></help>
+</tool>
