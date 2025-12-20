@@ -2,14 +2,14 @@
   <description>Prepare SNP location and p-value files from GWAS summary stats</description>
 
 
-<command detect_errors="exit_code" interpreter="bash"><![CDATA[
-'$__tool_directory__/magma_format_gwas.sh' \
-  '$gwas_file' \
-  '$chrom_selection.chromosome'
+<command detect_errors="exit_code"><![CDATA[
+bash "$__tool_directory__/magma_format_gwas.sh" \
+  "$gwas_file" \
+  "$chrom_selection.chromosome"
 #if str($chrom_selection.chromosome) == "specific"
-  '$chrom_selection.specific_chr'
+  "$chrom_selection.specific_chr"
 #end if
-]]></command> 
+]]></command>
 
 <inputs>
     <param name="gwas_file" type="data" format="tabular.gz,txt.gz" label="GWAS Summary Statistics File (.gz)" />
