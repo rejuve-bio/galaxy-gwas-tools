@@ -1,18 +1,24 @@
 #!/bin/bash
-set -e  # Exit on error
+set -euo pipefail
 
-GWAS_FILE=$1
-CHROM=$2
-SPECIFIC_CHR=$3  # Or "" if all
+GWAS_FILE="$1"
+MODE="$2"
+SPECIFIC_CHR="${3:-}"  # Default to empty if not provided
 
-if [ "$CHROM" = "specific" ]; then
-    FILTER="&& \$3==$SPECIFIC_CHR"
+# Build filter
+if [ "$MODE" = "specific" ] && [ -n "$SPECIFIC_CHR" ]; then
+    FILTER="NR>1 && \$3==$SPECIFIC_CHR"
 else
-    FILTER=""
+    FILTER="NR>1"
 fi
 
-# SNP loc file
-zcat "$GWAS_FILE" | awk -F' ' "NR>1 $FILTER {print \$2, \$3, \$4}" > snp_loc.txt
+# SNP location file
+zcat "$GWAS_FILE" | awk -F' ' "$FILTER {print \$2, \$3, \$4}" > snp_loc.txt
 
 # P-value file
-zcat "$GWAS_FILE" | awk -F' ' "NR>1 $FILTER {print \$2, \$15}" > pval.txt
+zcat "$GWAS_FILE" | awk -F' ' "$FILTER {print \$2, \$15}" > pval.txt
+
+echo "MAGMA formatting complete."
+echo "  Mode: $MODE$( [ -n "$SPECIFIC_CHR" ] && echo " (chr$SPECIFIC_CHR)" || echo " (all)" )"
+echo "  SNP loc lines: $(wc -l < snp_loc.txt)"
+echo "  P-value lines: $(wc -l < pval.txt)"
