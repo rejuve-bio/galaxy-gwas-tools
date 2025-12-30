@@ -1,49 +1,33 @@
-<tool id="gwas_harmonizer_setup" name="GWAS Harmonizer Setup" version="0.1.0">
+<tool id="gwas_harmonizer_setup" name="GWAS Harmonizer Setup" version="0.1.4">
     <description>Prepare reference data for GWAS summary statistics harmonization</description>
-    <requirements>
-        <requirement type="package" version="22.10.6">nextflow</requirement>
-        <requirement type="package" version="3.8">python</requirement>
-        <requirement type="package" version="15.0.1">pyarrow</requirement>
-    </requirements>
-<command detect_errors="exit_code">
-<![CDATA[
-    # Create directories
-    mkdir -p '$ref_dir'/logs &&
-    
-    # Run nextflow directly
-    '$code_repo'/nextflow run '$code_repo' \
-        -profile standard \
-        --reference \
-        --ref '$ref_dir' \
-        --chromlist '$chromlist' \
-        -with-report '$ref_dir'/logs/ref-report.html \
-        -with-timeline '$ref_dir'/logs/ref-timeline.html \
-        -with-trace '$ref_dir'/logs/ref-trace.txt \
-        -with-dag '$ref_dir'/logs/ref-dag.html \
-        2>&1 | tee '$ref_dir'/logs/ref.log &&
-    
-    # Create output files
-    echo '$ref_dir'/logs > log_dir.txt &&
-    
-    # Copy reports
-    cp '$ref_dir'/logs/ref-report.html report.html 2>/dev/null || echo "Report not found" &&
-    cp '$ref_dir'/logs/ref-timeline.html timeline.html 2>/dev/null || echo "Timeline not found"
-]]>
-</command>
+    <command detect_errors="exit_code">
+        <![CDATA[
+        bash '$__tool_directory__/run_harmonizer.sh'
+            '$code_repo'
+            '$ref_dir'
+            '$chromlist'
+        ]]>
+    </command>
     <inputs>
         <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Harmonizer code repository path"/>
-        <param name="ref_dir" type="text" label="Reference data directory" help="Directory where reference data will be stored"/>
-        <param name="chromlist" type="text" value="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y,MT" label="Chromosome list"/>
+        <param name="ref_dir" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref" label="Reference data directory"/>
+        <param name="chromlist" type="text" value="22,X,Y,MT" label="Chromosome list"/>
     </inputs>
     <outputs>
-        <data name="log_dir" format="txt" label="Log directory" from_work_dir="logs"/>
-        <data name="report" format="html" label="Nextflow report" from_work_dir="logs/ref-report.html"/>
-        <data name="timeline" format="html" label="Nextflow timeline" from_work_dir="logs/ref-timeline.html"/>
+        <data name="report" format="html" label="Nextflow report">
+            <filter>ref_dir + '/logs/ref-report.html'</filter>
+        </data>
+        <data name="timeline" format="html" label="Nextflow timeline">
+            <filter>ref_dir + '/logs/ref-timeline.html'</filter>
+        </data>
+        <data name="trace" format="txt" label="Nextflow trace">
+            <filter>ref_dir + '/logs/ref-trace.txt'</filter>
+        </data>
+        <data name="dag" format="html" label="Nextflow DAG">
+            <filter>ref_dir + '/logs/ref-dag.html'</filter>
+        </data>
+        <data name="log" format="txt" label="Job Log">
+            <filter>ref_dir + '/galaxy_job.log'</filter>
+        </data>
     </outputs>
-    <help>
-        <![CDATA[
-        Prepares reference data for GWAS summary statistics harmonization.
-        This tool downloads and processes reference genomes and datasets needed for harmonization.
-        ]]>
-    </help>
 </tool>
