@@ -2,9 +2,10 @@
     <description>Conditional(updated) and joint association analysis (COJO) using GCTA</description>
 
     <command><![CDATA[
-        cp '${plink_files.bed}' plink_input.bed &&
-        cp '${plink_files.bim}' plink_input.bim &&
-        cp '${plink_files.fam}' plink_input.fam &&
+        cp '${bed}' plink_input.bed &&
+        cp '${bim}' plink_input.bim &&
+        cp '${fam}' plink_input.fam &&
+
 
         awk 'NR==1 {print "SNP\tA1\tA2\tfreq\tb\tse\tp\tN"} NR>1 {print $1"\t"$4"\t"$5"\t"$6"\t"$11"\t"$12"\t"$14"\t"$8}' $gwas > cojo_input.dat &&
 
