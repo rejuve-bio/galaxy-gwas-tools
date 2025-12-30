@@ -1,39 +1,57 @@
-<tool id="gwas_harmonizer" name="GWAS Harmonizer" version="0.1.0">
-    <description>Harmonize GWAS summary statistics to target genome build</description>
+<tool id="gwas_harmonizer" name="GWAS Harmonizer" version="0.4.0">
+    <description>Harmonize GWAS summary statistics</description>
     <requirements>
         <requirement type="package" version="22.10.6">nextflow</requirement>
         <requirement type="package" version="3.8">python</requirement>
-        <requirement type="package" version="0.4.1">pyliftover</requirement>
+        <requirement type="package" version="1.19.2">htslib</requirement> <!-- For tabix -->
+        <requirement type="package" version="5.3.0">pyyaml</requirement>
+        <requirement type="package" version="1.1.1">python-duckdb</requirement>
+        <requirement type="package" version="15.0.1">pyarrow</requirement>
+        <requirement type="package" version="0.4">pyliftover</requirement>
+        <requirement type="package" version="2.2.3">pandas</requirement>
+        <requirement type="package" version="1.2.0">gwas-sumstats-tools</requirement>
     </requirements>
     <command detect_errors="exit_code">
         <![CDATA[
         python '$__tool_directory__/harmonizer_wrapper.py'
-            --input '$input_file'
-            --build '$build'
-            --threshold '$threshold'
-            --ref-dir '$ref_dir'
             --code-repo '$code_repo'
+            --ref-dir '$ref_dir'
+            --data-file '$data_file'
+            #if $meta_file
+                --meta-file '$meta_file'
+            #end if
+            --genome-assembly '$genome_assembly'
+            --coordinate-system '$coordinate_system'
+            --output-dir '$output_dir'
         ]]>
     </command>
     <inputs>
-        <param name="input_file" type="data" format="txt,tsv,tabular,csv" label="GWAS Summary Statistics"/>
-        <param name="build" type="select" label="Target genome build">
-            <option value="GRCh38">GRCh38/hg38</option>
-            <option value="GRCh37">GRCh37/hg19</option>
-        </param>
-        <param name="threshold" type="float" value="0.99" min="0.01" max="0.999" label="Palindromic variants threshold"/>
-        <param name="ref_dir" type="text" label="Reference data directory" help="Path to prepared reference data"/>
         <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Harmonizer code repository path"/>
+        <param name="ref_dir" type="text" label="Reference data directory" help="Directory with prepared reference data from setup tool"/>
+        <param name="data_file" type="data" format="txt,tsv" label="Input GWAS data file (TSV or TXT)"/>
+        <param name="meta_file" type="data" format="yaml" optional="true" label="Metadata YAML file (optional)" help="If not provided, a default will be generated."/>
+        <param name="genome_assembly" type="select" label="Genome Assembly (if no meta YAML)" value="GRCh38">
+            <option value="GRCh37">GRCh37</option>
+            <option value="GRCh38" selected="true">GRCh38</option>
+        </param>
+        <param name="coordinate_system" type="select" label="Coordinate System (if no meta YAML)" value="1-based">
+            <option value="0-based">0-based</option>
+            <option value="1-based" selected="true">1-based</option>
+        </param>
+        <param name="output_dir" type="text" value="harmonized_output" label="Output directory" optional="true"/>
     </inputs>
     <outputs>
-        <data name="harmonized_output" format="tsv" label="Harmonized sumstats" from_work_dir="harmonized_output.tsv"/>
-        <data name="logs" format="txt" label="Harmonization logs" from_work_dir="harmonization_logs.txt"/>
-        <data name="report" format="html" label="Nextflow report" from_work_dir="harm_report.html"/>
+        <data name="harmonized_output" format="gz" label="Harmonized GWAS output" from_work_dir="harmonized_output.tsv.gz"/>
+        <data name="harmonized_index" format="tbi" label="Harmonized output index" from_work_dir="harmonized_output.tsv.gz.tbi" optional="true"/>
+        <data name="log_dir" format="txt" label="Log directory" from_work_dir="log_dir.txt"/>
+        <data name="report" format="html" label="Nextflow report" from_work_dir="report"/>
+        <data name="timeline" format="html" label="Nextflow timeline" from_work_dir="timeline"/>
     </outputs>
     <help>
         <![CDATA[
-        Harmonizes GWAS summary statistics to target genome build (GRCh37 or GRCh38).
-        Handles strand alignment, allele flipping, and coordinate conversion.
+        Harmonizes GWAS summary statistics using prepared reference data.
+        Provide the GWAS data file (TSV/TXT). Optionally provide a metadata YAML; if not, a default will be generated based on selected assembly and coordinate system.
+        Outputs the harmonized .h.tsv.gz file and its index.
         ]]>
     </help>
 </tool>
