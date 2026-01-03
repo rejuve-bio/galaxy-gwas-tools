@@ -59,14 +59,10 @@ bash "$__tool_directory__/magma_format_gwas.sh" \
     </conditional>
   </inputs>
   
-  <outputs>
-    <data name="snp_loc" format="txt" label="MAGMA SNP Location File (SNP CHR POS)">
-      <discover_datasets pattern="snp_loc\.txt" directory="." ext="txt" />
-    </data>
-    <data name="pval" format="txt" label="MAGMA P-Value File (SNP P)">
-      <discover_datasets pattern="pval\.txt" directory="." ext="txt" />
-    </data>
-  </outputs>
+ <outputs>
+  <data name="snp_loc" format="txt" label="MAGMA SNP Location File (SNP CHR POS)" from_work_dir="snp_loc.txt" />
+  <data name="pval" format="txt" label="MAGMA P-Value File (SNP P)" from_work_dir="pval.txt" />
+</outputs>
   
   <help><![CDATA[
 **MAGMA Format GWAS** (Generalized)
