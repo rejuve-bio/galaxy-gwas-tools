@@ -1,5 +1,6 @@
 .venv
 *.gz
+*.bgz
 *.csv
 */test-data
 *.log
