@@ -1,7 +1,5 @@
-<tool id="magma_format_gwas" name="MAGMA Format GWAS" version="1.0.0">
-  <description>Prepare SNP location and p-value files from GWAS summary stats</description>
-
-
+<tool id="magma_format_gwas" name="MAGMA: Format GWAS Summary Statistics" version="1.2.0">
+  <description>Prepare SNP location and p-value files for MAGMA from GWAS summary stats</description>
 <command detect_errors="exit_code"><![CDATA[
 bash "$__tool_directory__/magma_format_gwas.sh" \
   "$gwas_file" \
@@ -9,38 +7,77 @@ bash "$__tool_directory__/magma_format_gwas.sh" \
 #if str($chrom_selection.chromosome) == "specific"
   "$chrom_selection.specific_chr"
 #end if
+  "$source_selection.source_type"
+#if str($source_selection.source_type) == "custom"
+  "$source_selection.snp_col_num" \
+  "$source_selection.chr_col_num" \
+  "$source_selection.pos_col_num" \
+  "$source_selection.p_col_num" \
+  "$source_selection.p_type"
+#end if
 ]]></command>
-
-<inputs>
-    <param name="gwas_file" type="data" format="tabular.gz,txt.gz" label="GWAS Summary Statistics File (.gz)" />
+  <inputs>
+    <param name="gwas_file" type="data" format="txt.gz,tabular.gz" label="GWAS Summary Statistics File (gzipped)" help="Input file with header row for column names." />
+    
     <conditional name="chrom_selection">
-      <param name="chromosome" type="select" label="Process Whole Genome or Specific Chromosome?">
-        <option value="all" selected="true">Whole Genome (All Chromosomes)</option>
+      <param name="chromosome" type="select" label="Process All Chromosomes or Specific One?" help="For quick testing, use specific chromosome">
+        <option value="all" selected="true">All Chromosomes (Full Genome)</option>
         <option value="specific">Specific Chromosome</option>
       </param>
       <when value="all" />
       <when value="specific">
-        <param name="specific_chr" type="integer" value="3" min="1" max="23" label="Specific Chromosome Number (1-22 or 23 for X)" />
+        <param name="specific_chr" type="integer" value="3" min="1" max="23" label="Chromosome Number" help="1–22 or 23 for X (for testing)" />
+      </when>
+    </conditional>
+    
+    <conditional name="source_selection">
+      <param name="source_type" type="select" optional="true" label="GWAS Source Type (Optional)" help="Select a preset for automatic column and p-value type selection; leave blank for default (BBJ/BOLT-LMM).">
+        <option value="default" selected="true">Default (BBJ/BOLT-LMM, raw P)</option>
+        <option value="plink">PLINK (raw P)</option>
+        <option value="ukbb">UK Biobank (raw P)</option>
+        <option value="saige">SAIGE (raw P)</option>
+        <option value="regenie">REGENIE (-log10(P))</option>
+        <option value="gwas_catalog">GWAS Catalog (raw P default)</option>
+        <option value="custom">Custom (specify below)</option>
+      </param>
+      <when value="default" />
+      <when value="plink" />
+      <when value="ukbb" />
+      <when value="saige" />
+      <when value="regenie" />
+      <when value="gwas_catalog" />
+      <when value="custom">
+        <param name="snp_col_num" type="integer" value="2" label="SNP ID Column Number (1-based, e.g., rsID or variant)" optional="true" />
+        <param name="chr_col_num" type="integer" value="3" label="Chromosome Column Number (1-based)" optional="true" />
+        <param name="pos_col_num" type="integer" value="4" label="Position Column Number (1-based, e.g., BP or POS)" optional="true" />
+        <param name="p_col_num" type="integer" value="15" label="P-Value Column Number (1-based)" optional="true" />
+        <param name="p_type" type="select" label="P-Value Type" help="If -log10(P), script will convert to raw P.">
+          <option value="raw" selected="true">Raw P-Value</option>
+          <option value="log10">-log10(P-Value)</option>
+        </param>
       </when>
     </conditional>
   </inputs>
-
-
+  
   <outputs>
-    <collection name="outputs" type="list" label="Formatted Files">
-      <data name="snp_loc" format="txt" label="SNP Location File" from_work_dir="snp_loc.txt" />
-      <data name="pval" format="txt" label="P-Value File" from_work_dir="pval.txt" />
-    </collection>
+    <data name="snp_loc" format="txt" label="MAGMA SNP Location File (SNP CHR POS)">
+      <discover_datasets pattern="snp_loc\.txt" directory="." ext="txt" />
+    </data>
+    <data name="pval" format="txt" label="MAGMA P-Value File (SNP P)">
+      <discover_datasets pattern="pval\.txt" directory="." ext="txt" />
+    </data>
   </outputs>
-
-
-  <citations>
-    <citation type="doi">10.1371/journal.pcbi.1004219</citation> <!-- MAGMA paper -->
-  </citations>
-
   
   <help><![CDATA[
-**What it does**: Extracts SNP locations (rsID, CHR, POS) and p-values from BBJ-style GWAS summary stats. Defaults to whole genome; option for specific chromosome for testing.
-Assumes columns: 2=rsID, 3=CHR, 4=POS, 15=P (skip header).
+**MAGMA Format GWAS** (Generalized)
+
+Prepares SNP location and p-value files for MAGMA.
+- Optional presets for common sources with auto column/P-type.
+- Custom: Override column numbers and P-type.
+- If no source selected, uses default BBJ/BOLT-LMM (SNP col2, CHR col3, POS col4, P col15, raw P).
   ]]></help>
+  
+  <citations>
+    <citation type="doi">10.1371/journal.pcbi.1004219</citation> <!-- MAGMA -->
+  </citations>
 </tool>
