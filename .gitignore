@@ -1,5 +1,6 @@
 .venv
 *.gz
+*.csv
 */test-data
 *.log
 *.sqlite3
@@ -13,6 +14,7 @@ dist/
 build/
 .eggs/
 *.egg
+Data/
 
 calculate_ld/test-data/
 finampping/test-data/
