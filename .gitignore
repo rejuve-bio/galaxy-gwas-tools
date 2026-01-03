@@ -21,3 +21,4 @@ calculate_ld/test-data/
 finampping/test-data/
 
 py312
+*.chain
