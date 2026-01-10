@@ -1,0 +1,229 @@
+2026/01/10 13:45:12 Sumstats Object created.
+2026/01/10 13:45:12 GWASLab v4.0.4 https://cloufield.github.io/gwaslab/
+2026/01/10 13:45:12 (C) 2022-2026, Yunye He, Kamatani Lab, GPL-3.0 license, gwaslab@gmail.com
+2026/01/10 13:45:12 Python version: 3.12.12 | packaged by conda-forge | (main, Oct 22 2025, 23:25:55) [GCC 14.3.0]
+2026/01/10 13:45:12 Start to initialize gl.Sumstats from file :/home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz
+2026/01/10 13:45:14  -Reading columns          : N,P,CHR,SNPID,BETA,EA,EAF,NEA,SE,POS
+2026/01/10 13:45:14  -Renaming columns to      : N,P,CHR,SNPID,BETA,EA,EAF,NEA,SE,POS
+2026/01/10 13:45:14  -Current Dataframe shape : 1103020  x  10
+2026/01/10 13:45:14  -Initiating a status column: STATUS ...
+2026/01/10 13:45:14 #WARNING! Version of genomic coordinates is unknown for homo sapiens (build: 99)...
+2026/01/10 13:45:14  -NEAF is specified...
+2026/01/10 13:45:14  -Checking if 0<= NEAF <=1 ...
+2026/01/10 13:45:15  -Converted NEAF to EAF.
+2026/01/10 13:45:15  -Removed 0 variants with bad NEAF.
+2026/01/10 13:45:15 Start to reorder the columns ...(v4.0.4)
+2026/01/10 13:45:15  -Reordering columns to    : SNPID,CHR,POS,EA,NEA,STATUS,EAF,BETA,SE,P,N
+2026/01/10 13:45:15 Finished reordering the columns.
+2026/01/10 13:45:15  -Trying to convert datatype for CHR: string -> Int64...Failed...
+2026/01/10 13:45:15  -Column  : SNPID  CHR    POS   EA       NEA      STATUS EAF     BETA    SE      P       N    
+2026/01/10 13:45:15  -DType   : object string int64 category category int64  float64 float64 float64 float64 int64
+2026/01/10 13:45:15  -Verified: T      F      T     T        T        T      T       T       T       T       T    
+2026/01/10 13:45:15 #WARNING! Columns with possibly incompatible dtypes: CHR
+2026/01/10 13:45:15 #WARNING! Consider using Sumstats.fix_chr() to fix CHR dtype
+2026/01/10 13:45:15  -Current Dataframe memory usage: 87.32 MB
+2026/01/10 13:45:15 Finished loading data successfully!
+2026/01/10 13:45:15 #WARNING! Version of genomic coordinates is unknown for homo sapiens (build: 99)...
+2026/01/10 13:45:15 Path component detected: ['131035561203408']
+2026/01/10 13:45:15 Creating path: ./131035561203408
+2026/01/10 13:45:15  -Genomic coordinates are based on GRCh37/hg19...
+2026/01/10 13:45:15 Start to infer genome build version using hapmap3 SNPs ...(v4.0.4)
+2026/01/10 13:45:15  -Current Dataframe shape : 1103020 x 11 ; Memory usage: 87.32 MB
+2026/01/10 13:45:15 #WARNING! Data types were not fixed for : CHR 
+2026/01/10 13:45:15 Start to fix chromosome notation (CHR) ...(v4.0.4)
+2026/01/10 13:45:15  -Checking CHR data type...
+2026/01/10 13:45:15  -Variants with standardized chromosome notation: 1100517
+2026/01/10 13:45:15  -Variants with fixable chromosome notations: 2503
+2026/01/10 13:45:15  -No unrecognized chromosome notations...
+2026/01/10 13:45:15  -Identifying non-autosomal chromosomes : X, Y, and MT ...
+2026/01/10 13:45:15  -Identified 2503 variants on sex chromosomes...
+2026/01/10 13:45:15  -Standardizing first sex chromosome chromosome notations: X to 23...
+2026/01/10 13:45:15 Finished fixing chromosome notation (CHR).
+2026/01/10 13:45:15  -Dtype fixes applied successfully for requested columns.
+2026/01/10 13:45:15  -Loading Hapmap3 variants data...
+2026/01/10 13:45:19  -CHR and POS will be used for matching...
+2026/01/10 13:45:19  -Matching variants for hg19: num_hg19 =  1093200
+2026/01/10 13:45:19  -Matching variants for hg38: num_hg38 =  10807
+2026/01/10 13:45:19  -Since num_hg19 >> num_hg38, set the genome build to hg19 for the STATUS code....
+2026/01/10 13:45:19  -Genomic coordinates are based on GRCh37/hg19...
+2026/01/10 13:45:19  -Genomic coordinates are based on GRCh37/hg19...
+2026/01/10 13:45:19 Finished inferring genome build version using hapmap3 SNPs.
+2026/01/10 13:45:19 Start to check SNPID/rsID ...(v4.0.4)
+2026/01/10 13:45:19  -Checking SNPID data type...
+2026/01/10 13:45:19  -Converted datatype for SNPID: object -> string
+2026/01/10 13:45:20  -Checking if SNPID contains NA strings :na,NA,Na,Nan,NaN,<NA>,null,NULL,#N/A,#VALUE!,N/A,n/a,missing,...
+2026/01/10 13:45:20  -Checking if SNPID is CHR:POS:NEA:EA...(separator: - ,: , _)
+2026/01/10 13:45:20 Finished checking SNPID/rsID.
+2026/01/10 13:45:20 Start to fix chromosome notation (CHR) ...(v4.0.4)
+2026/01/10 13:45:20  -Checking CHR data type...
+2026/01/10 13:45:21  -Variants with standardized chromosome notation: 1103020
+2026/01/10 13:45:21  -All CHR are already fixed...
+2026/01/10 13:45:21 Finished fixing chromosome notation (CHR).
+2026/01/10 13:45:21 Start to fix basepair positions (POS) ...(v4.0.4)
+2026/01/10 13:45:21  -Trying to convert datatype for POS: int64 -> Int64...
+2026/01/10 13:45:21  -Position bound:(0 , 250,000,000)
+2026/01/10 13:45:21  -No outlier variants were removed.
+2026/01/10 13:45:21 Finished fixing basepair positions (POS).
+2026/01/10 13:45:21 Start to fix alleles (EA and NEA) ...(v4.0.4)
+2026/01/10 13:45:21  -Converted all bases to string datatype and UPPERCASE
+2026/01/10 13:45:22  -All variants have valid alleles (EA and NEA are A/C/T/G, not NA, and different).
+2026/01/10 13:45:22 Finished fixing alleles (EA and NEA).
+2026/01/10 13:45:22 Start to perform sanity check for statistics ...(v4.0.4)
+2026/01/10 13:45:22  -Comparison tolerance for floats: 1e-07
+2026/01/10 13:45:22  -Checking if any columns are empty...
+2026/01/10 13:45:23  -Checking if 0 <= N <= 2147483647 : removed 0 variants.
+2026/01/10 13:45:23  -Checking if -1e-07 < EAF < 1.0000001 : removed 0 variants.
+2026/01/10 13:45:23  -Checking if -1e-07 < P < 1.0000001 : removed 0 variants.
+2026/01/10 13:45:23  -Checking if -100.0000001 < BETA < 100.0000001 : removed 0 variants.
+2026/01/10 13:45:23  -Checking if -1e-07 < SE < inf : removed 0 variants.
+2026/01/10 13:45:23  -Checking STATUS and converting STATUS to Int64....
+2026/01/10 13:45:23  -No variants were removed with bad statistics in total.
+2026/01/10 13:45:23 Finished sanity check for statistics.
+2026/01/10 13:45:23 Start to check data consistency across columns ...(v4.0.4)
+2026/01/10 13:45:23  -Tolerance: 0.001 (Relative) and 0.001 (Absolute)
+2026/01/10 13:45:23  -Checking if BETA/SE-derived-P is consistent with P...
+2026/01/10 13:45:23   -Potentially inconsistent (likely due to rounding): 380165 variant(s)
+2026/01/10 13:45:23   -Variant SNPID with max fold change: X:33592708_C_T with 1.05x
+2026/01/10 13:45:23   -Note: Minor differences are typically due to rounding.
+2026/01/10 13:45:23    -If the max difference is greater than expected, please check your original sumstats.
+2026/01/10 13:45:23 Finished checking data consistency across columns.
+2026/01/10 13:45:23 Start to normalize indels ...(v4.0.4)
+2026/01/10 13:45:23  -Number of threads/cores to use: 4
+2026/01/10 13:45:24  -No available variants to normalize..
+2026/01/10 13:45:24 Finished normalizing indels.
+2026/01/10 13:45:24 Start to remove duplicated/multiallelic variants ...(v4.0.4)
+2026/01/10 13:45:24  -Removing mode:dm
+2026/01/10 13:45:24 Start to sort the sumstats using P ...
+2026/01/10 13:45:24 Start to remove duplicated variants based on snpid ...(v4.0.4)
+2026/01/10 13:45:24  -Which variant to keep:  first
+2026/01/10 13:45:25  -Removed variants based on SNPID: 770
+2026/01/10 13:45:25 Start to remove duplicated variants based on CHR,POS,EA and NEA ...
+2026/01/10 13:45:25  -Current Dataframe shape : 1102250 x 11 ; Memory usage: 88.32 MB
+2026/01/10 13:45:25  -Which variant to keep:  first
+2026/01/10 13:45:26  -Removed variants based on CHR,POS,EA and NEA: 0
+2026/01/10 13:45:26 Start to remove multiallelic variants based on chr:pos ...
+2026/01/10 13:45:26  -Which variant to keep:  first
+2026/01/10 13:45:26  -Removed variants multiallelic variants: 4
+2026/01/10 13:45:26  -Removed variants in total: 774
+2026/01/10 13:45:26  -Sort the coordinates based on CHR and POS...
+2026/01/10 13:45:27 Finished removing duplicated/multiallelic variants.
+2026/01/10 13:45:27 Start to sort the genome coordinates ...(v4.0.4)
+2026/01/10 13:45:27 Finished sorting coordinates.
+2026/01/10 13:45:27 Start to reorder the columns ...(v4.0.4)
+2026/01/10 13:45:27  -Reordering columns to    : SNPID,CHR,POS,EA,NEA,STATUS,EAF,BETA,SE,P,N
+2026/01/10 13:45:27 Finished reordering the columns.
+2026/01/10 13:45:33 Start to check if NEA is aligned with reference sequence ...(v4.0.4)
+2026/01/10 13:45:33  -Reference genome FASTA file: /home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/chr7.fasta.gz
+2026/01/10 13:45:33    -Loading and building numpy fasta records:
+2026/01/10 13:45:34  -Variants allele on given reference sequence :  0
+2026/01/10 13:45:34  -Variants flipped :  0
+2026/01/10 13:45:34   -Raw Matching rate :  0.00%
+2026/01/10 13:45:34 #WARNING! Matching rate is low, please check if the right reference genome is used.
+2026/01/10 13:45:34  -Variants inferred reverse_complement :  0
+2026/01/10 13:45:34  -Variants inferred reverse_complement_flipped :  0
+2026/01/10 13:45:34  -Both allele on genome + unable to distinguish :  0
+2026/01/10 13:45:34  -Variants not on given reference sequence :  0
+2026/01/10 13:45:34 Finished checking if NEA is aligned with reference sequence.
+2026/01/10 13:45:34 Start to adjust statistics based on STATUS code ...(v4.0.4)
+2026/01/10 13:45:34  -No statistics have been changed.
+2026/01/10 13:45:34 Finished adjusting statistics based on STATUS code.
+2026/01/10 13:45:34 Start to annotate and infer strand orientation using allele frequencies ...(v4.0.4)
+2026/01/10 13:45:34  -Number of threads/cores to use: 4
+2026/01/10 13:45:34 Start to annotate GWAS summary statistics ...(v4.0.4)
+2026/01/10 13:45:34  -Number of threads/cores to use: 4
+2026/01/10 13:45:34  -Annotating AF from /home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/1kg_eas_hg19.chr7_126253550_128253550.vcf.gz
+2026/01/10 13:45:34  -Determining reference mode: vcf/bcf...
+2026/01/10 13:45:34  -Creating lookup table from VCF: /home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/1kg_eas_hg19.chr7_126253550_128253550.vcf.gz...
+2026/01/10 13:45:34 Start to extract lookup table from vcf/bcf ...(v4.0.4)
+2026/01/10 13:45:34  -Number of threads/cores to use: 4
+2026/01/10 13:45:34  -Current Dataframe shape : 1102246 x 2 ; Memory usage: 27.33 MB
+2026/01/10 13:45:34  -Converting chromosome notation to reference notation...
+2026/01/10 13:45:35  -Running multiprocessing: 4 workers, 23 chromosomes
+2026/01/10 13:45:35  -Calling: bcftools view -r <CHR> -T <TARGETS> -Ou <VCF>| bcftools query -f '<FMT>'
+2026/01/10 13:45:36  -Finished:
+2026/01/10 13:45:53  -Converting chromosome notation back to sumstats notation...
+2026/01/10 13:45:53  -Lookup table created: /tmp/tmpkbzz9ikw.lookup.txt.gz
+2026/01/10 13:45:53 Finished extracting lookup table from vcf/bcf.
+2026/01/10 13:45:53 Start to assign from lookup table ...(v4.0.4)
+2026/01/10 13:45:53  -Current Dataframe shape : 1102246 x 14 ; Memory usage: 97.78 MB
+2026/01/10 13:45:53  -Detected allele mode: REF_ALT using ALT(EA/ALT) / REF(NEA/REF)...
+2026/01/10 13:45:53  -Loaded 8,093 lookup rows...
+2026/01/10 13:45:54  -Found 4480 flipped variants in this chunk
+2026/01/10 13:45:54  -Updated ALLELE_FLIPPED=True for 4480 variants in this chunk
+2026/01/10 13:45:54  -Newly annotated sumstats rows: 8,081 (chunk lookup rows: 8,093) | New flips: 8,081
+2026/01/10 13:45:54  -Total unique sumstats rows annotated: 8,081
+2026/01/10 13:45:54  -Total unique rows with allele flips: 4,480
+2026/01/10 13:45:54 Finished assigning from lookup table.
+2026/01/10 13:45:54 Finished annotating GWAS summary statistics.
+2026/01/10 13:45:54  -Renaming AF in reference to RAF in Sumstats
+2026/01/10 13:45:54 Start to infer strand orientation using allele frequencies ...(v4.0.4)
+2026/01/10 13:45:54  -WARNING: 1094165 variants have NA in RAF column...
+2026/01/10 13:45:54  -Initialized new STRAND column...
+2026/01/10 13:45:54  -Current Dataframe shape : 1102246 x 15 ; Memory usage: 106.19 MB
+2026/01/10 13:45:54 Finished inferring strand orientation using allele frequencies.
+2026/01/10 13:45:54  -Current Dataframe shape : 1102246 x 14 ; Memory usage: 105.14 MB
+2026/01/10 13:45:54 Finished annotating and inferring strand orientation using allele frequencies.
+2026/01/10 13:45:54 Start to adjust statistics based on STATUS code ...(v4.0.4)
+2026/01/10 13:45:54  -No statistics have been changed.
+2026/01/10 13:45:54 Finished adjusting statistics based on STATUS code.
+2026/01/10 13:45:54 Start to check SNPID/rsID ...(v4.0.4)
+2026/01/10 13:45:54  -Checking rsID data type...
+2026/01/10 13:45:54  -Checking SNPID data type...
+2026/01/10 13:45:54  -Checking if SNPID contains NA strings :na,NA,Na,Nan,NaN,<NA>,null,NULL,#N/A,#VALUE!,N/A,n/a,missing,...
+2026/01/10 13:45:54  -Checking if rsID contains NA strings :na,NA,Na,Nan,NaN,<NA>,null,NULL,#N/A,#VALUE!,N/A,n/a,missing,...
+2026/01/10 13:45:54  -Checking if SNPID is CHR:POS:NEA:EA...(separator: - ,: , _)
+2026/01/10 13:45:55  -Checking if rsID is rsxxxxxx...
+2026/01/10 13:45:56  -Checking if CHR:POS:NEA:EA is mixed in rsID column ...
+2026/01/10 13:45:56  -Number of CHR:POS:NEA:EA mixed in rsID column : 0
+2026/01/10 13:45:56  -Number of Unrecognized rsID : 2562
+2026/01/10 13:45:56  -A look at the unrecognized rsID : {<NA>} ...
+2026/01/10 13:45:56  -Replacing separators in SNPID with ":" ...
+2026/01/10 13:45:58     Filling SNPID from CHR:POS (using CHR, POS)...
+2026/01/10 13:45:58     Filling SNPID from CHR:POS:NEA:EA (using CHR, POS, EA, NEA)...
+2026/01/10 13:45:58  -Fixed 0 variants ID...
+2026/01/10 13:45:58 Finished checking SNPID/rsID.
+2026/01/10 13:45:59 Start to assign rsID using reference file ...(v4.0.4)
+2026/01/10 13:45:59  -Number of threads/cores to use: 4
+2026/01/10 13:45:59  -2562 rsID could be possibly fixed...
+2026/01/10 13:45:59  -Setting block size:  5000000
+2026/01/10 13:45:59  -Loading block: 0   
+2026/01/10 13:46:02  -rsID annotation for 2562 variants needed to be fixed!
+2026/01/10 13:46:02  -Annotated 0 rsID successfully!
+2026/01/10 13:46:02 Finished assign rsID using reference file.
+2026/01/10 13:46:02 Start to sort the genome coordinates ...(v4.0.4)
+2026/01/10 13:46:02 Finished sorting coordinates.
+2026/01/10 13:46:02 Start to reorder the columns ...(v4.0.4)
+2026/01/10 13:46:02  -Reordering columns to    : SNPID,rsID,CHR,POS,EA,NEA,STATUS,EAF,RAF,BETA,SE,P,N,STRAND
+2026/01/10 13:46:02 Finished reordering the columns.
+2026/01/10 13:46:03 Start to adjust statistics based on STATUS code ...(v4.0.4)
+2026/01/10 13:46:03  -No statistics have been changed.
+2026/01/10 13:46:03 Finished adjusting statistics based on STATUS code.
+2026/01/10 15:46:01 Start to convert the output sumstats in:  ldsc  format
+2026/01/10 15:46:02 Start to exclude variants in HLA regions ...(v4.0.4)
+2026/01/10 15:46:02  -Excluded 2757 variants in HLA region (chr6: 25000000-34000000 )...
+2026/01/10 15:46:02  -Filtered out variants: 2757
+2026/01/10 15:46:02  -Current Dataframe shape : 1099489 x 14 ; Memory usage: 113.26 MB
+2026/01/10 15:46:02 Finished filtering variants.
+2026/01/10 15:46:14  -Extract 1089664 variants in Hapmap3 datasets for build 19.
+2026/01/10 15:46:14  -Formatting statistics ...
+2026/01/10 15:46:17  -Float statistics formats:
+2026/01/10 15:46:17   - Columns       : ['EAF', 'BETA', 'SE', 'P']
+2026/01/10 15:46:17   - Output formats: ['{:.4g}', '{:.4f}', '{:.4f}', '{:.4e}']
+2026/01/10 15:46:17  -Start outputting sumstats in ldsc format...
+2026/01/10 15:46:17  -ldsc format will be loaded...
+2026/01/10 15:46:17  -ldsc format meta info:
+2026/01/10 15:46:17   - format_name  : ldsc
+2026/01/10 15:46:17   - format_source  : https://github.com/bulik/ldsc/wiki/Summary-Statistics-File-Format
+2026/01/10 15:46:17   - format_source2  : https://github.com/bulik/ldsc/blob/master/munge_sumstats.py
+2026/01/10 15:46:17   - format_version  :  20150306
+2026/01/10 15:46:17  -gwaslab to ldsc format dictionary:
+2026/01/10 15:46:17   - gwaslab keys: rsID,NEA,EA,EAF,N,BETA,P,Z,INFO,OR,CHR,POS
+2026/01/10 15:46:17   - ldsc values: SNP,A2,A1,Frq,N,Beta,P,Z,INFO,OR,CHR,POS
+2026/01/10 15:46:17  -Output path: clean_harmonized.hapmap3.noMHC.ldsc.tsv.gz
+2026/01/10 15:46:17  -Output columns: SNP,CHR,POS,A1,A2,Frq,Beta,P,N
+2026/01/10 15:46:17  -Writing sumstats to: clean_harmonized.hapmap3.noMHC.ldsc.tsv.gz...
+2026/01/10 15:46:35  -md5sum hashing for the file: clean_harmonized.hapmap3.noMHC.ldsc.tsv.gz
+2026/01/10 15:46:35  -md5sum path: clean_harmonized.hapmap3.noMHC.ldsc.tsv.gz.md5sum
+2026/01/10 15:46:35  -md5sum: cc0aebbeed3129eb886ab60e1edda24f
+2026/01/10 15:46:36  -Saving log file to: clean_harmonized.hapmap3.noMHC.ldsc.log
+2026/01/10 15:46:36 Finished outputting successfully!
