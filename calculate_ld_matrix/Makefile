@@ -25,3 +25,4 @@ upload-shed:
 
 update-shed:
 	-@bash $(GALAXY_ROOT)/upload_shed.sh $(GALAXY_ROOT) $(MAIN_SHED)
+	
