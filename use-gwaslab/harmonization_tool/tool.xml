@@ -1,9 +1,9 @@
 <tool id="gwaslab_harmonization" name="GWASLab Harmonization" version="1.2.1">
     <description>Harmonize GWAS summary statistics using GWASLab (references required)</description>
-    <requirements>
-        <requirement type="package" version="4.0.4">gwaslab</requirement>
-        <requirement type="package" version="3.12">python</requirement>
-    </requirements>
+<requirements>
+    <requirement type="pip" version="4.0.4">gwaslab</requirement>
+    <requirement type="package" version="3.12">python</requirement>
+</requirements>
 <command detect_errors="exit_code"><![CDATA[
 python '$__tool_directory__/harmonize_gwas.py' \
     --input '$input' \

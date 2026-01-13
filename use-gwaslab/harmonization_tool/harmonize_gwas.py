@@ -3,7 +3,6 @@ import gwaslab as gl
 import logging
 import os
 
-# Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', required=True)
 parser.add_argument('--format', default='auto')
@@ -27,45 +26,30 @@ args = parser.parse_args()
 
 # Logging
 logging.basicConfig(filename=args.log, level=logging.INFO, format='%(asctime)s %(message)s')
-logging.info("GWASLab Harmonization Tool started")
+logging.info("Tool started")
 
-# Download rsID if keyword provided
+# Handle rsID keyword download
 if args.ref_rsid_tsv_keyword:
     gl.download_ref(args.ref_rsid_tsv_keyword)
     args.ref_rsid_tsv = gl.get_path(args.ref_rsid_tsv_keyword)
 
-# Load with manual columns if provided
+# Load kwargs for manual columns
 load_kwargs = {}
-if args.snpid: load_kwargs['snpid'] = args.snpid
-if args.chrom: load_kwargs['chrom'] = args.chrom
-if args.pos: load_kwargs['pos'] = args.pos
-if args.ea: load_kwargs['ea'] = args.ea
-if args.nea: load_kwargs['nea'] = args.nea
-if args.eaf: load_kwargs['neaf'] = args.eaf  # GWASLab uses neaf for EAF
-if args.beta: load_kwargs['beta'] = args.beta
-if args.se: load_kwargs['se'] = args.se
-if args.p: load_kwargs['p'] = args.p
-if args.n: load_kwargs['n'] = args.n
+for k, v in vars(args).items():
+    if k in ['snpid', 'chrom', 'pos', 'ea', 'nea', 'eaf', 'beta', 'se', 'p', 'n'] and v:
+        load_kwargs[k] = v
 
-logging.info("Loading sumstats")
 ss = gl.Sumstats(args.input, fmt=args.format, **load_kwargs)
 
-# Infer build
 ss.infer_build()
 build = ss.meta.get('genome_build', 'unknown')
-logging.info(f"Build detected/inferred: {build}")
+logging.info(f"Build: {build}")
 
-# QC
-logging.info("Running basic_check")
 ss.basic_check(remove_dup=True, threads=4)
 
-# rsID annotation if provided
 if args.ref_rsid_tsv:
-    logging.info("Annotating rsIDs")
     ss.assign_rsid2(path=args.ref_rsid_tsv, threads=4, overwrite="all")
 
-# Harmonize (references are mandatory)
-logging.info("Harmonizing")
 ss.harmonize(
     basic_check=False,
     ref_seq=args.ref_seq,
@@ -78,8 +62,6 @@ ss.harmonize(
 )
 ss.flip_allele_stats()
 
-# Save
-logging.info("Saving harmonized output")
-ss.to_format(args.output[:-7], fmt="ldsc", hapmap3=True, exclude_hla=True, md5sum=True)
+ss.to_format(args.output[:-3], fmt="ldsc", hapmap3=True, exclude_hla=True, md5sum=True)  # .gz handled by Galaxy
 
-logging.info("Tool finished successfully")
+logging.info("Finished")
