@@ -1,123 +1,103 @@
-<tool id="gwaslab_harmonization" name="GWASLab Harmonization" version="1.0.0">
-    <description>Harmonize GWAS summary statistics using GWASLab</description>
+<tool id="gwaslab_harmonization" name="GWASLab Harmonization" version="1.2.1">
+    <description>Harmonize GWAS summary statistics using GWASLab (references required)</description>
     <requirements>
         <requirement type="package" version="4.0.4">gwaslab</requirement>
         <requirement type="package" version="3.12">python</requirement>
     </requirements>
-    <command detect_errors="exit_code"><![CDATA[
-        python '$__tool_directory__/harmonize_gwas.py'
-        --input '$input'
-        #if $format.format_selector == 'custom'
-            --format '$format.format_custom'
-        #else
-            --format 'auto'
-        #end if
-        #if $columns.columns_selector == 'yes'
-            --snpid_col '$columns.snpid_col'
-            --chrom_col '$columns.chrom_col'
-            --pos_col '$columns.pos_col'
-            --ea_col '$columns.ea_col'
-            --nea_col '$columns.nea_col'
-            --eaf_col '$columns.eaf_col'
-            --beta_col '$columns.beta_col'
-            --se_col '$columns.se_col'
-            --p_col '$columns.p_col'
-            --n_col '$columns.n_col'
-        #end if
-        #if $ref_seq.ref_seq_selector == 'path'
-            --ref_seq '$ref_seq.ref_seq_path'
-        #elif $ref_seq.ref_seq_selector == 'keyword'
-            --ref_seq_keyword '$ref_seq.ref_seq_keyword'
-        #end if
-        #if $ref_infer.ref_infer_selector == 'path'
-            --ref_infer '$ref_infer.ref_infer_path'
-        #elif $ref_infer.ref_infer_selector == 'keyword'
-            --ref_infer_keyword '$ref_infer.ref_infer_keyword'
-        #end if
-        #if $ref_rsid_tsv.ref_rsid_tsv_selector == 'path'
-            --ref_rsid_tsv '$ref_rsid_tsv.ref_rsid_tsv_path'
-        #elif $ref_rsid_tsv.ref_rsid_tsv_selector == 'keyword'
-            --ref_rsid_tsv_keyword '$ref_rsid_tsv.ref_rsid_tsv_keyword'
-        #end if
-        --output '$output'
-        --log '$log'
-    ]]></command>
+<command detect_errors="exit_code"><![CDATA[
+python '$__tool_directory__/harmonize_gwas.py' \
+    --input '$input' \
+    --format '#if $format.format_selector == "custom"#$format.format_custom#else#$format.format_selector#end if#' \
+    #if $format.format_selector == "manual"
+        --snpid '$format.snpid' \
+        --chrom '$format.chrom' \
+        --pos '$format.pos' \
+        --ea '$format.ea' \
+        --nea '$format.nea' \
+        --eaf '$format.eaf' \
+        --beta '$format.beta' \
+        --se '$format.se' \
+        --p '$format.p' \
+        --n '$format.n' \
+    #end if
+    --ref_seq '#if $references.ref_seq.ref_seq_selector == "path"#$references.ref_seq.ref_seq_path#else#$references.ref_seq.ref_seq_keyword#end if#' \
+    --ref_infer '#if $references.ref_infer.ref_infer_selector == "path"#$references.ref_infer.ref_infer_path#else#$references.ref_infer.ref_infer_keyword#end if#' \
+    #if $references.ref_rsid_tsv.ref_rsid_tsv_selector == "path"
+        --ref_rsid_tsv '$references.ref_rsid_tsv.ref_rsid_tsv_path' \
+    #elif $references.ref_rsid_tsv.ref_rsid_tsv_selector == "keyword"
+        --ref_rsid_tsv_keyword '$references.ref_rsid_tsv.ref_rsid_tsv_keyword' \
+    #end if
+    --output '$output' \
+    --log '$log'
+]]></command>
     <inputs>
-        <param name="input" type="data" format="txt,tsv,csv,gz" label="GWAS Summary Statistics File" />
-        <section name="format" title="Format Options" expanded="false">
+        <param name="input" type="data" format="txt,tsv,csv,gz" label="GWAS Summary Statistics File" help="Tab-separated or gzipped" />
+
+        <section name="format" title="Format &amp; Column Specification" expanded="true">
             <conditional name="format">
-                <param name="format_selector" type="select" label="Format Source">
-                    <option value="auto" selected="true">Auto-Detect (default)</option>
-                    <option value="custom">Custom Format</option>
+                <param name="format_selector" type="select" label="Format / Column Specification">
+                    <option value="auto" selected="true">Auto-detect (default)</option>
+                    <option value="custom">Use format keyword from formatbook</option>
+                    <option value="manual">Manually specify column names</option>
                 </param>
                 <when value="auto" />
                 <when value="custom">
-                    <param name="format_custom" type="text" value="auto" label="Custom Format Keyword (from formatbook)" help="e.g., 'plink2', 'saige'" />
+                    <param name="format_custom" type="text" label="Format keyword" help="e.g., plink2, saige, metal" />
+                </when>
+                <when value="manual">
+                    <param name="snpid" type="text" optional="true" label="SNPID column" />
+                    <param name="chrom" type="text" optional="true" label="CHR column" />
+                    <param name="pos" type="text" optional="true" label="POS column" />
+                    <param name="ea" type="text" optional="true" label="EA column" />
+                    <param name="nea" type="text" optional="true" label="NEA column" />
+                    <param name="eaf" type="text" optional="true" label="EAF column" />
+                    <param name="beta" type="text" optional="true" label="BETA column" />
+                    <param name="se" type="text" optional="true" label="SE column" />
+                    <param name="p" type="text" optional="true" label="P column" />
+                    <param name="n" type="text" optional="true" label="N column" />
                 </when>
             </conditional>
         </section>
-        <section name="columns" title="Column Labels (Optional)" expanded="false">
-            <conditional name="columns">
-                <param name="columns_selector" type="select" label="Map Custom Column Names?">
-                    <option value="no" selected="true">No (use defaults)</option>
-                    <option value="yes">Yes</option>
-                </param>
-                <when value="no" />
-                <when value="yes">
-                    <param name="snpid_col" type="text" optional="true" label="SNPID Column Name" />
-                    <param name="chrom_col" type="text" optional="true" label="CHR Column Name" />
-                    <param name="pos_col" type="text" optional="true" label="POS Column Name" />
-                    <param name="ea_col" type="text" optional="true" label="EA Column Name" />
-                    <param name="nea_col" type="text" optional="true" label="NEA Column Name" />
-                    <param name="eaf_col" type="text" optional="true" label="EAF Column Name" />
-                    <param name="beta_col" type="text" optional="true" label="BETA Column Name" />
-                    <param name="se_col" type="text" optional="true" label="SE Column Name" />
-                    <param name="p_col" type="text" optional="true" label="P Column Name" />
-                    <param name="n_col" type="text" optional="true" label="N Column Name" />
-                </when>
-            </conditional>
-        </section>
-        <section name="references" title="Reference Files (Optional)" expanded="true">
+
+        <section name="references" title="Reference Files (Required)" expanded="true">
             <conditional name="ref_seq">
                 <param name="ref_seq_selector" type="select" label="Reference Genome FASTA (ref_seq)">
-                    <option value="none" selected="true">None (skip)</option>
-                    <option value="path">Provide Path</option>
+                    <option value="path">Provide Path (upload or history)</option>
                     <option value="keyword">Download by Keyword</option>
                 </param>
-                <when value="none" />
                 <when value="path">
-                    <param name="ref_seq_path" type="data" format="fasta,gz" label="FASTA File Path" optional="true" />
+                    <param name="ref_seq_path" type="data" format="fasta,gz" label="FASTA File" />
                 </when>
                 <when value="keyword">
-                    <param name="ref_seq_keyword" type="text" label="FASTA Keyword (e.g., 'ucsc_genome_hg19')" optional="true" />
+                    <param name="ref_seq_keyword" type="text" label="FASTA Keyword" help="e.g., ucsc_genome_hg19" />
                 </when>
             </conditional>
+
             <conditional name="ref_infer">
-                <param name="ref_infer_selector" type="select" label="Inference VCF (ref_infer)">
-                    <option value="none" selected="true">None (skip)</option>
-                    <option value="path">Provide Path</option>
+                <param name="ref_infer_selector" type="select" label="Inference VCF with AF (ref_infer)">
+                    <option value="path">Provide Path (upload or history)</option>
                     <option value="keyword">Download by Keyword</option>
                 </param>
-                <when value="none" />
                 <when value="path">
-                    <param name="ref_infer_path" type="data" format="vcf,gz" label="VCF File Path" optional="true" />
+                    <param name="ref_infer_path" type="data" format="vcf,gz" label="VCF File" />
                 </when>
                 <when value="keyword">
-                    <param name="ref_infer_keyword" type="text" label="VCF Keyword (e.g., '1kg_pan_hg19')" optional="true" />
+                    <param name="ref_infer_keyword" type="text" label="VCF Keyword" help="e.g., 1kg_pan_hg19" />
                 </when>
             </conditional>
+
             <conditional name="ref_rsid_tsv">
-                <param name="ref_rsid_tsv_selector" type="select" label="rsID TSV (ref_rsid_tsv)">
-                    <option value="none" selected="true">None (skip)</option>
+                <param name="ref_rsid_tsv_selector" type="select" label="rsID TSV (optional)">
+                    <option value="none" selected="true">None</option>
                     <option value="path">Provide Path</option>
                     <option value="keyword">Download by Keyword</option>
                 </param>
                 <when value="none" />
                 <when value="path">
-                    <param name="ref_rsid_tsv_path" type="data" format="tsv,gz" label="TSV File Path" optional="true" />
+                    <param name="ref_rsid_tsv_path" type="data" format="txt,tsv,gz" label="rsID TSV Path" />
                 </when>
                 <when value="keyword">
-                    <param name="ref_rsid_tsv_keyword" type="text" label="TSV Keyword (e.g., '1kg_dbsnp151_hg19_auto')" optional="true" />
+                    <param name="ref_rsid_tsv_keyword" type="text" label="rsID TSV Keyword" help="e.g., 1kg_dbsnp151_hg19_auto" />
                 </when>
             </conditional>
         </section>
@@ -130,10 +110,14 @@
 **GWASLab Harmonization Tool**
 
 Harmonizes GWAS summary statistics using GWASLab v4.0.4.
-- Input: GWAS file
-- Optional: Format, column mappings, references (path or download)
-- Output: Harmonized LDSC file + log
 
-For big data, uses multi-threading and sweep mode.
+**Important**:
+- Reference FASTA (ref_seq) and Inference VCF (ref_infer) are **required**.
+- Choose either: upload file (path) or provide keyword (auto-download).
+- rsID TSV is optional.
+- Format: Auto, keyword, or manual column names.
+- Output: Clean LDSC file + log.
+
+Designed for large datasets with multi-threading.
     ]]></help>
 </tool>
