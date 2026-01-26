@@ -1,35 +1,37 @@
-<tool id="gwaslab_harmonization" name="GWASLab Harmonization" version="1.2.1">
-    <description>Harmonize GWAS summary statistics using GWASLab (references required)</description>
-<requirements>
-    <requirement type="pip" version="4.0.4">gwaslab</requirement>
-    <requirement type="package" version="3.12">python</requirement>
-</requirements>
+<tool id="gwaslab_harmonization" name="GWASLab Harmonization" version="1.3.1">
+    <description>Harmonize GWAS summary statistics using GWASLab (references by upload)</description>
+    <requirements>
+        <requirement type="pip" version="4.0.4">gwaslab</requirement>
+        <requirement type="package" version="3.12">python</requirement>
+    </requirements>
 <command detect_errors="exit_code"><![CDATA[
-python '$__tool_directory__/harmonize_gwas.py' \
-    --input '$input' \
-    --format '#if $format.format_selector == "custom"#$format.format_custom#else#$format.format_selector#end if#' \
-    #if $format.format_selector == "manual"
-        --snpid '$format.snpid' \
-        --chrom '$format.chrom' \
-        --pos '$format.pos' \
-        --ea '$format.ea' \
-        --nea '$format.nea' \
-        --eaf '$format.eaf' \
-        --beta '$format.beta' \
-        --se '$format.se' \
-        --p '$format.p' \
-        --n '$format.n' \
-    #end if
-    --ref_seq '#if $references.ref_seq.ref_seq_selector == "path"#$references.ref_seq.ref_seq_path#else#$references.ref_seq.ref_seq_keyword#end if#' \
-    --ref_infer '#if $references.ref_infer.ref_infer_selector == "path"#$references.ref_infer.ref_infer_path#else#$references.ref_infer.ref_infer_keyword#end if#' \
-    #if $references.ref_rsid_tsv.ref_rsid_tsv_selector == "path"
-        --ref_rsid_tsv '$references.ref_rsid_tsv.ref_rsid_tsv_path' \
-    #elif $references.ref_rsid_tsv.ref_rsid_tsv_selector == "keyword"
-        --ref_rsid_tsv_keyword '$references.ref_rsid_tsv.ref_rsid_tsv_keyword' \
-    #end if
-    --output '$output' \
-    --log '$log'
+python '$__tool_directory__/harmonize_gwas.py'
+--input '$input'
+--format '$format.format_selector'
+#if $format.format_selector == "custom"
+--format '$format.format_custom'
+#end if
+#if $format.format_selector == "manual"
+--snpid '$format.snpid'
+--chrom '$format.chrom'
+--pos '$format.pos'
+--ea '$format.ea'
+--nea '$format.nea'
+--eaf '$format.eaf'
+--beta '$format.beta'
+--se '$format.se'
+--p '$format.p'
+--n '$format.n'
+#end if
+--ref_seq '$references.ref_seq'
+--ref_infer '$references.ref_infer'
+#if $references.ref_rsid_tsv
+--ref_rsid_tsv '$references.ref_rsid_tsv'
+#end if
+--output '$output'
+--log '$log'
 ]]></command>
+
     <inputs>
         <param name="input" type="data" format="txt,tsv,csv,gz" label="GWAS Summary Statistics File" help="Tab-separated or gzipped" />
 
@@ -60,46 +62,9 @@ python '$__tool_directory__/harmonize_gwas.py' \
         </section>
 
         <section name="references" title="Reference Files (Required)" expanded="true">
-            <conditional name="ref_seq">
-                <param name="ref_seq_selector" type="select" label="Reference Genome FASTA (ref_seq)">
-                    <option value="path">Provide Path (upload or history)</option>
-                    <option value="keyword">Download by Keyword</option>
-                </param>
-                <when value="path">
-                    <param name="ref_seq_path" type="data" format="fasta,gz" label="FASTA File" />
-                </when>
-                <when value="keyword">
-                    <param name="ref_seq_keyword" type="text" label="FASTA Keyword" help="e.g., ucsc_genome_hg19" />
-                </when>
-            </conditional>
-
-            <conditional name="ref_infer">
-                <param name="ref_infer_selector" type="select" label="Inference VCF with AF (ref_infer)">
-                    <option value="path">Provide Path (upload or history)</option>
-                    <option value="keyword">Download by Keyword</option>
-                </param>
-                <when value="path">
-                    <param name="ref_infer_path" type="data" format="vcf,gz" label="VCF File" />
-                </when>
-                <when value="keyword">
-                    <param name="ref_infer_keyword" type="text" label="VCF Keyword" help="e.g., 1kg_pan_hg19" />
-                </when>
-            </conditional>
-
-            <conditional name="ref_rsid_tsv">
-                <param name="ref_rsid_tsv_selector" type="select" label="rsID TSV (optional)">
-                    <option value="none" selected="true">None</option>
-                    <option value="path">Provide Path</option>
-                    <option value="keyword">Download by Keyword</option>
-                </param>
-                <when value="none" />
-                <when value="path">
-                    <param name="ref_rsid_tsv_path" type="data" format="txt,tsv,gz" label="rsID TSV Path" />
-                </when>
-                <when value="keyword">
-                    <param name="ref_rsid_tsv_keyword" type="text" label="rsID TSV Keyword" help="e.g., 1kg_dbsnp151_hg19_auto" />
-                </when>
-            </conditional>
+            <param name="ref_seq" type="data" format="fasta,gz" label="Reference Genome FASTA (required)" help="Upload ucsc_genome_hg19.fasta.gz or hg38" />
+            <param name="ref_infer" type="data" format="vcf,gz" label="Inference VCF with AF (required)" help="Upload 1kg_pan_hg19.vcf.gz or similar (must have AF in INFO)" />
+            <param name="ref_rsid_tsv" type="data" format="txt,tsv,gz" label="rsID TSV (optional)" help="Upload e.g., 1kg_dbsnp151_hg19_auto.txt.gz — leave blank to skip" optional="true" />
         </section>
     </inputs>
     <outputs>
@@ -112,10 +77,9 @@ python '$__tool_directory__/harmonize_gwas.py' \
 Harmonizes GWAS summary statistics using GWASLab v4.0.4.
 
 **Important**:
-- Reference FASTA (ref_seq) and Inference VCF (ref_infer) are **required**.
-- Choose either: upload file (path) or provide keyword (auto-download).
-- rsID TSV is optional.
-- Format: Auto, keyword, or manual column names.
+- Reference FASTA (ref_seq) and Inference VCF (ref_infer) are **required** — upload files from local or history.
+- rsID TSV is optional (leave blank to skip).
+- Format: Auto-detect, keyword, or manual column names.
 - Output: Clean LDSC file + log.
 
 Designed for large datasets with multi-threading.
