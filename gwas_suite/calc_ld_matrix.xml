@@ -1,0 +1,88 @@
+<tool id="calc_ld" name="Calculate LD Matrix" version="1.1.0">
+    <description>Calculate LD matrix using PLINK (per chromosome or region around SNP)</description>
+
+    <requirements>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+    </requirements>
+
+    <stdio>
+        <exit_code range="1:" level="fatal" description="Error calculating LD matrix. See log for details." />
+    </stdio>
+
+    <command detect_errors="exit_code"><![CDATA[
+        mkdir -p plink_ref &&
+        ln -sf '$plink_bed' "plink_ref/${population}.${chromosome}.bed" &&
+        ln -sf '$plink_bim' "plink_ref/${population}.${chromosome}.bim" &&
+        ln -sf '$plink_fam' "plink_ref/${population}.${chromosome}.fam" &&
+
+        python3 "$__tool_directory__/calc_ld_matrix.py"
+            --sumstats "$sumstats_file"
+            --plink_ref_dir "plink_ref"
+            --chromosome $chromosome
+            --population "$population"
+            --output_ld "$output_ld"
+            --output_snps "$output_snps"
+            #if $lead_variant
+                --lead_variant "$lead_variant"
+                --window $window
+            #end if
+    ]]></command>
+
+    <inputs>
+        <param name="sumstats_file" type="data" format="tsv" label="Summary Statistics with SNP IDs"/>
+        <param name="plink_bed" type="data" format="binary" label="PLINK BED file"/>
+        <param name="plink_bim" type="data" format="tabular" label="PLINK BIM file"/>
+        <param name="plink_fam" type="data" format="tabular" label="PLINK FAM file"/>
+        <param name="chromosome" type="select" label="Chromosome of Reference Panel">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22" selected="true">22</option>
+        </param>
+
+        <param name="population" type="text" value="EUR" label="Population Prefix"/>
+        <param name="lead_variant" type="text" optional="true" label="Lead Variant ID (optional)"/>
+        <param name="window" type="integer" value="500" label="Window Size (in kb, used if lead_variant provided)" optional="true"/>
+    </inputs>
+
+    <outputs>
+        <data name="output_ld" format="tabular" label="${tool.name}: LD Matrix"/>
+        <data name="output_snps" format="tabular" label="${tool.name}: SNP List"/>
+    </outputs>
+
+    <help>
+        This tool calculates the Linkage Disequilibrium (LD) matrix for a region or a whole chromosome.
+
+        **Modes:**
+        - **Mode A (lead SNP mode):** If a lead variant is provided, a region around it will be used (defined by the window size).
+        - **Mode B (default):** If no lead variant is provided, LD is calculated for **all SNPs on the selected chromosome**.
+
+        **Inputs:**
+        - Summary statistics (must contain SNP/ID, CHR, BP columns).
+        - PLINK reference panel files (.bed/.bim/.fam).
+        - Chromosome number.
+        - Optional lead SNP + window size.
+
+        **Outputs:**
+        - LD matrix (tabular, gzipped).
+        - SNP list actually used by PLINK.
+    </help>
+</tool>

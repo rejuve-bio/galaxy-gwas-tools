@@ -1,0 +1,65 @@
+<tool id="download_normalize_1000g" name="Download and Normalize 1000G VCF" version="1.0.0">
+    <description>Downloads and normalizes a VCF for a specific chromosome</description>
+
+    <requirements>
+        <requirement type="package" version="1.15">bcftools</requirement>
+        <requirement type="package" version="1.15">htslib</requirement> <!-- tabix is part of htslib -->
+        <requirement type="package" version="1.21">wget</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        python3 "$__tool_directory__/download_and_normalize_vcf.py"
+            --chromosome "$chromosome"
+            --reference "$reference"
+            --output_vcf "$output_vcf"
+            --output_tbi "$output_tbi"
+    ]]></command>
+
+    <inputs>
+        <param name="chromosome" type="select" label="Chromosome">
+            <option value="1">chr1</option>
+            <option value="2">chr2</option>
+            <option value="3">chr3</option>
+            <option value="4">chr4</option>
+            <option value="5">chr5</option>
+            <option value="6">chr6</option>
+            <option value="7">chr7</option>
+            <option value="8">chr8</option>
+            <option value="9">chr9</option>
+            <option value="10">chr10</option>
+            <option value="11">chr11</option>
+            <option value="12">chr12</option>
+            <option value="13">chr13</option>
+            <option value="14">chr14</option>
+            <option value="15">chr15</option>
+            <option value="16">chr16</option>
+            <option value="17">chr17</option>
+            <option value="18">chr18</option>
+            <option value="19">chr19</option>
+            <option value="20">chr20</option>
+            <option value="21">chr21</option>
+            <option value="22" selected="true">chr22</option>
+        </param>
+        <param name="reference" type="data" format="fasta" label="Reference Genome (hg19/GRCh37)" help="A FASTA file for hg19, which must be indexed (a .fai file must be present in the history)."/>
+    </inputs>
+
+    <outputs>
+        <data name="output_vcf" format="vcf_bgzip" label="Normalized VCF for chr${chromosome}"/>
+        <data name="output_tbi" format="vcf_bgzip.tbi" from_work_dir="${output_vcf.name}.tbi" />
+    </outputs>
+
+    <help><![CDATA[
+**What it does**
+
+This tool automates the first step of preparing a reference panel. It downloads the specified chromosome's VCF file from the 1000 Genomes Project (hg19/GRCh37 build), normalizes it by splitting multi-allelic variants, and indexes the result.
+
+**Inputs**
+
+- **Chromosome**: The chromosome to download.
+- **Reference Genome**: An hg19/GRCh37 FASTA file. You must have an index for this file (a `.fai` dataset) in your history. You can generate one using the "samtools faidx" tool.
+
+**Outputs**
+
+- A normalized, compressed, and indexed VCF file, ready for the next step (filtering by population).
+    ]]></help>
+</tool>

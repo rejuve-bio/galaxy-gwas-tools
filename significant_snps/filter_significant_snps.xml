@@ -1,0 +1,29 @@
+<tool id="filter_significant_snps" name="Filter Significant SNPs" version="0.1.0">
+    <description>Filter SNPs with p-value below threshold (default: 5e-8)</description>
+    <command detect_errors="exit_code">
+        <![CDATA[
+        python3 $__tool_directory__/filter_significant_snps.py \
+            --input '$input_file' \
+            --output '$output_file' \
+            --pval_column '$pval_column' \
+            --pval_threshold '$pval_threshold'
+        ]]>
+    </command>
+
+    <inputs>
+        <param name="input_file" type="data" format="tabular" label="Input Summary Statistics File" />
+        <param name="pval_column" type="text" label="P-value Column Name" value="P" />
+        <param name="pval_threshold" type="float" label="P-value Threshold" value="5e-8" />
+    </inputs>
+
+    <outputs>
+        <data name="output_file" format="tabular" label="Filtered Significant SNPs" />
+    </outputs>
+
+    <help>
+        This tool filters SNPs based on a given p-value threshold.
+        The input should be a summary statistics file containing SNPs and a p-value column.
+        Default p-value threshold is 5e-8, and the default p-value column is "P".
+    </help>
+</tool>
+value

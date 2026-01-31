@@ -1,0 +1,11 @@
+<tool id="gwaslab_basic_check" name="Basic Check" version="1.0.0">
+  <command>
+    python $__tool_directory__/basic_check.py $input_file $output_file
+  </command>
+  <inputs>
+    <param name="input_file" type="data" format="tabular" label="Formatted Sumstats"/>
+  </inputs>
+  <outputs>
+    <data name="output_file" format="tabular" label="Checked Sumstats"/>
+  </outputs>
+</tool>

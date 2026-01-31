@@ -1,0 +1,93 @@
+<tool id="gwas_harmonizer" name="GWAS Harmonizer" version="1.1.15">
+    <description>Harmonize GWAS summary statistics using EBISPOT pipeline</description>
+    <requirements>
+        <requirement type="package" version="25.10.0">nextflow</requirement>
+        <requirement type="package" version="3.1.0">singularity</requirement>
+        <requirement type="package" version="1.21">htslib</requirement>
+    </requirements>
+    <command detect_errors="exit_code">
+<![CDATA[
+        python3 '$__tool_directory__/run_harmonization.py'
+        --input '$input_file'
+        --ref_path '$ref_dir'
+        --build '$genome_build'
+        --threshold '$threshold'
+        --chromlist '$chromosome_list'
+        --output 'harmonized_output.gz'
+]]>
+    </command>
+    
+    <inputs>
+        <param name="input_file" type="data" format="tsv,tabular,txt,gzip" 
+               label="GWAS Summary Statistics File" 
+               help="GWAS summary statistics file"/>
+        
+        <param name="ref_dir" type="hidden" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref"/>
+
+        
+        <param name="chromosome_list" type="select" label="Chromosomes to Process" 
+               help="Select which chromosomes to process">
+            <option value="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,">All Chromosomes (1-22)</option>
+            <option value="1,">Chromosome 1</option>
+            <option value="2,">Chromosome 2</option>
+            <option value="3,">Chromosome 3</option>
+            <option value="4,">Chromosome 4</option>
+            <option value="5,">Chromosome 5</option>
+            <option value="6,">Chromosome 6</option>
+            <option value="7,">Chromosome 7</option>
+            <option value="8,">Chromosome 8</option>
+            <option value="9,">Chromosome 9</option>
+            <option value="10,">Chromosome 10</option>
+            <option value="11,">Chromosome 11</option>
+            <option value="12,">Chromosome 12</option>
+            <option value="13,">Chromosome 13</option>
+            <option value="14,">Chromosome 14</option>
+            <option value="15,">Chromosome 15</option>
+            <option value="16,">Chromosome 16</option>
+            <option value="17,">Chromosome 17</option>
+            <option value="18,">Chromosome 18</option>
+            <option value="19,">Chromosome 19</option>
+            <option value="20,">Chromosome 20</option>
+            <option value="21,">Chromosome 21</option>
+            <option value="22," selected="true">Chromosome 22</option>
+        </param>
+        
+        <param name="genome_build" type="select" label="Target Genome Build">
+            <option value="GRCh38">GRCh38/hg38</option>
+            <option value="GRCh37" selected="true">GRCh37/hg19</option>
+        </param>
+        
+        <param name="threshold" type="float" value="0.99" min="0.1" max="0.999"
+               label="Palindromic Variant Threshold" 
+               help="Threshold for palindromic variants (default: 0.99)"/>
+    </inputs>
+    
+    <outputs>
+        <data name="harmonized_output" format="tabular" from_work_dir="harmonized_output.gz" 
+              label="${tool.name} on ${on_string}: Harmonized GWAS"/>
+    </outputs>
+    
+    <help>
+        <![CDATA[
+**GWAS Harmonizer**
+
+This tool harmonizes GWAS summary statistics using the EBISPOT/gwas-sumstats-harmoniser Nextflow pipeline.
+
+**Key Parameters:**
+- **Chromosomes to Process**: Select which chromosomes to process from the dropdown menu. 
+  Choose "All Chromosomes" for full analysis or select specific chromosomes for testing.
+
+**Input:**
+- GWAS summary statistics file
+- Reference data directory path  
+- Chromosome selection
+- Target genome build
+- Palindromic variant threshold
+
+**Output:**
+- Harmonized GWAS summary statistics in standardized format
+
+**Note:** For testing, process only 1-2 chromosomes first to verify the pipeline works.
+        ]]>
+    </help>
+</tool>

@@ -1,0 +1,55 @@
+<tool id="susie_finemap" name="SuSiE Fine-Mapping" version="0.1.1">
+    <description>Perform SuSiE fine-mapping using GWAS sumstats and LD matrix</description>
+
+    <requirements>
+        <requirement type="package" version="0.14.0">pandas</requirement>
+        <requirement type="package" version="0.14.0">numpy</requirement>
+        <requirement type="package" version="0.15.0">pysusie</requirement>
+        <requirement type="package" version="3.10">python</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code">
+        python3 $__tool_directory__/susie_finemap.py
+            --sumstats $sumstats
+            --ld_matrix $ld_matrix
+            --snp_list $snp_list
+            --L $L
+            --coverage $coverage
+            --credible_sets_out $credible_sets
+            --pips_out $pips
+    </command>
+
+    <inputs>
+        <param name="sumstats" type="data" format="tabular,tsv" label="GWAS Summary Statistics"/>
+        <param name="ld_matrix" type="data" format="tabular" label="LD Matrix from calculate_ld_matrix"/>
+        <param name="snp_list" type="data" format="tabular" label="SNP List from calculate_ld_matrix"/>
+        <param name="L" type="integer" value="-1" label="Number of components (set -1 for auto)"/>
+        <param name="coverage" type="float" value="0.95" label="Credible set coverage"/>
+    </inputs>
+
+    <outputs>
+        <data name="credible_sets" format="tabular" label="Credible sets"/>
+        <data name="pips" format="tabular" label="Region sumstats with PIPs"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="sumstats" value="test-data/example_sumstats.tsv"/>
+            <param name="ld_matrix" value="test-data/Galaxy289-[Calculate LD Matrix_ LD Matrix].tabular"/>
+            <param name="snp_list" value="test-data/Galaxy290-[Calculate LD Matrix_ SNP List].tabular"/>
+            <param name="L" value="3"/>
+            <param name="coverage" value="0.95"/>
+            <output name="credible_sets" file="expected_credible_sets.txt"/>
+            <output name="pips" file="expected_pips.txt"/>
+        </test>
+    </tests>
+
+
+    <help><![CDATA[
+Runs SuSiE fine-mapping using GWAS summary statistics and a precomputed LD matrix.
+]]></help>
+
+    <citations>
+        <citation type="doi">10.1038/s41588-019-0340-1</citation>
+    </citations>
+</tool>
