@@ -1,0 +1,33 @@
+<!-- <tool id="gwas_sumstats_tool" name="GWASLab Sumstats Loader" version="1.0.0">
+<description>Load and display a GWASLab sumstats object.</description>
+<outputs>
+<data name="output_file" format="txt" label="Sumstats Output"/>
+</outputs>
+<command>
+python $__tool_directory__/sumstats.py > $output_file
+</command>
+<help>
+This tool uses GWASLab to load a sumstats file and outputs its summary.
+</help>
+</tool> -->
+
+
+<tool id="gwas_sumstats_tool" name="GWASLab Sumstats Loader" version="1.0.0">
+  <description>Load and display a GWASLab sumstats object.</description>
+  
+  <command>
+    python $__tool_directory__/sumstats.py $input_file > $output_file
+  </command>
+  
+  <inputs>
+    <param name="input_file" type="data" format="txt,tabular,tsv,csv,gz" label="Input .glm.firth.gz file"/>
+  </inputs>
+  
+  <outputs>
+    <data name="output_file" format="txt" label="Sumstats Output"/>
+  </outputs>
+  
+  <help>
+    This tool uses GWASLab to load a .glm.firth.gz sumstats file and outputs its summary.
+  </help>
+</tool>

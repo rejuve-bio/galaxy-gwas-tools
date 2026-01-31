@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tool id="gwas_harmonizer_setup" name="GWAS Harmonizer Setup" version="0.1.0" python_template_version="3.5">
+    <description>Setup reference data for GWAS harmonization</description>
+    <requirements>
+        <requirement type="package" version="23.10.0">nextflow</requirement>
+        <requirement type="package" version="17.0.0">openjdk</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        #set $harmonizer_repo = $__tool_directory__ + '/../../gwas-sumstats-harmoniser'
+        #set $ref_dir = 'ref_data'
+        
+        mkdir -p '$ref_dir' &&
+        
+        bash '$__tool_directory__/run_harmonizer_setup.sh'
+            '$harmonizer_repo'
+            '$ref_dir'
+            '$chromlist'
+            
+        && echo "Setup completed successfully" > '$output'
+    ]]></command>
+    
+    <inputs>
+        <param name="chromlist" type="text" value="22,X,Y,MT" 
+               label="Chromosome list" help="Comma-separated list of chromosomes to process"/>
+    </inputs>
+    
+    <outputs>
+        <data name="output" format="txt" label="Harmonizer Setup Status"/>
+        <data name="ref_data" format="directory" label="Reference Data" from_work_dir="ref_data"/>
+    </outputs>
+    
+    <help><![CDATA[
+**GWAS Harmonizer Setup Tool**
+
+This tool sets up the reference data required for GWAS summary statistics harmonization.
+    ]]></help>
+</tool>

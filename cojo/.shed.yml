@@ -1,0 +1,10 @@
+name: gcta_cojo_analysis
+owner: ofge-gel_2019
+description: "Identifies independent GWAS signals using GCTA-COJO."
+long_description: >
+  This tool performs a conditional and joint analysis (COJO) using the GCTA software
+  to identify genetic variants that are independently associated with a trait. It
+  takes a list of significant SNPs and a reference panel (like 1000 Genomes) to
+  disentangle the effects of correlated variants in linkage disequilibrium (LD).
+categories:
+  - Statistics

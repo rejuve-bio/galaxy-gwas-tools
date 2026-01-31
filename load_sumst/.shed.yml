@@ -1,0 +1,11 @@
+name: sumstats_parser
+description: "Galaxy UI tool to parse and analyze GWAS summary statistics using gl.Sumstats"
+owner: ofge-gel_2019
+long_description: >
+  This Galaxy tool provides a user-friendly interface for loading and parsing 
+  GWAS summary statistics using the `gl.Sumstats` function from the GeneticsLibrary. 
+  It accepts input in PLINK2 format and supports compressed (.gz) files.
+  The tool simplifies preprocessing for downstream genomic analyses or visualization.
+categories:
+  - Statistics
+
