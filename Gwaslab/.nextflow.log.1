@@ -1,113 +1,112 @@
-Feb-04 06:44:40.361 [main] DEBUG nextflow.cli.Launcher - $> nextflow run EBISPOT/gwas-sumstats-harmoniser -r v1.1.10 --ref /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref --harm --file /mnt/hdd_1/ofgeha/test/21001_raw.gwas.imputed_v3.both_sexes.tsv.gz --terminate_error ignore -profile standard,singularity
-Feb-04 06:44:40.486 [main] DEBUG nextflow.cli.CmdRun - N E X T F L O W  ~  version 25.10.0
-Feb-04 06:44:40.497 [main] DEBUG nextflow.scm.ProviderConfig - Using SCM config path: /home/ofgeha/.nextflow/scm
-Feb-04 06:44:40.959 [main] DEBUG nextflow.scm.AssetManager - Git config: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/.git/config; branch: nextflow; remote: origin; url: https://github.com/EBISPOT/gwas-sumstats-harmoniser.git
-Feb-04 06:44:40.980 [main] DEBUG nextflow.plugin.PluginsFacade - Using Default plugin manager
-Feb-04 06:44:40.986 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
-Feb-04 06:44:40.987 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
-Feb-04 06:44:40.988 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
-Feb-04 06:44:41.001 [main] DEBUG nextflow.scm.RepositoryFactory - Found Git repository result: [RepositoryFactory]
-Feb-04 06:44:41.011 [main] DEBUG nextflow.scm.AssetManager - Git config: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/.git/config; branch: nextflow; remote: origin; url: https://github.com/EBISPOT/gwas-sumstats-harmoniser.git
-Feb-04 06:44:41.691 [main] DEBUG nextflow.config.ConfigBuilder - Found config base: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/nextflow.config
-Feb-04 06:44:41.694 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/nextflow.config
-Feb-04 06:44:41.716 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard,singularity`
-Feb-04 06:44:42.058 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [standard, gitpod, debug, shifter, test, executor, charliecloud, conda, singularity, docker, podman]
-Feb-04 06:44:42.075 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/home/ofgeha/.nextflow/plugins; core-plugins: nf-amazon@3.4.1,nf-azure@1.20.2,nf-cloudcache@0.5.0,nf-codecommit@0.5.0,nf-console@1.3.0,nf-google@1.23.3,nf-k8s@1.2.2,nf-tower@1.17.1,nf-wave@1.16.1
-Feb-04 06:44:42.077 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
-Feb-04 06:44:42.077 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
-Feb-04 06:44:42.078 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
-Feb-04 06:44:42.085 [main] DEBUG nextflow.util.RetryConfig - Missing nextflow session - using default retry config
-Feb-04 06:44:42.103 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
-Feb-04 06:44:42.103 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
-Feb-04 06:44:42.103 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
-Feb-04 06:44:42.106 [main] DEBUG n.secret.LocalSecretsProvider - Secrets store: /home/ofgeha/.nextflow/secrets/store.json
-Feb-04 06:44:42.107 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@4f114b] - activable => nextflow.secret.LocalSecretsProvider@4f114b
-Feb-04 06:44:42.109 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declaration
-Feb-04 06:44:42.109 [main] DEBUG nextflow.cli.CmdRun - Launching `https://github.com/EBISPOT/gwas-sumstats-harmoniser` [grave_austin] DSL2 - revision: 436c17a91c [v1.1.10]
-Feb-04 06:44:42.147 [main] DEBUG nextflow.Session - Session UUID: 88ca355a-375f-46d0-806f-8cf659a1d717
-Feb-04 06:44:42.147 [main] DEBUG nextflow.Session - Run name: grave_austin
-Feb-04 06:44:42.147 [main] DEBUG nextflow.Session - Executor pool size: 96
-Feb-04 06:44:42.152 [main] DEBUG nextflow.file.FilePorter - File porter settings maxRetries=3; maxTransfers=50; pollTimeout=null
-Feb-04 06:44:42.155 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=288; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
-Feb-04 06:44:42.173 [main] DEBUG nextflow.cli.CmdRun - 
+Feb-04 07:31:02.293 [main] DEBUG nextflow.cli.Launcher - $> nextflow run EBISPOT/gwas-sumstats-harmoniser -r v1.1.10 --ref /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref --harm --file /mnt/hdd_1/ofgeha/test/21001_raw.gwas.imputed_v3.both_sexes.tsv.gz --chromlist 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22, --terminate_error ignore -profile standard,singularity
+Feb-04 07:31:02.413 [main] DEBUG nextflow.cli.CmdRun - N E X T F L O W  ~  version 25.10.0
+Feb-04 07:31:02.429 [main] DEBUG nextflow.scm.ProviderConfig - Using SCM config path: /home/ofgeha/.nextflow/scm
+Feb-04 07:31:02.884 [main] DEBUG nextflow.scm.AssetManager - Git config: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/.git/config; branch: nextflow; remote: origin; url: https://github.com/EBISPOT/gwas-sumstats-harmoniser.git
+Feb-04 07:31:02.905 [main] DEBUG nextflow.plugin.PluginsFacade - Using Default plugin manager
+Feb-04 07:31:02.911 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Feb-04 07:31:02.912 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Feb-04 07:31:02.913 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
+Feb-04 07:31:02.928 [main] DEBUG nextflow.scm.RepositoryFactory - Found Git repository result: [RepositoryFactory]
+Feb-04 07:31:02.937 [main] DEBUG nextflow.scm.AssetManager - Git config: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/.git/config; branch: nextflow; remote: origin; url: https://github.com/EBISPOT/gwas-sumstats-harmoniser.git
+Feb-04 07:31:03.611 [main] DEBUG nextflow.config.ConfigBuilder - Found config base: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/nextflow.config
+Feb-04 07:31:03.614 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/nextflow.config
+Feb-04 07:31:03.631 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard,singularity`
+Feb-04 07:31:03.994 [main] DEBUG nextflow.config.ConfigBuilder - Available config profiles: [standard, gitpod, debug, shifter, test, executor, charliecloud, conda, singularity, docker, podman]
+Feb-04 07:31:04.012 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/home/ofgeha/.nextflow/plugins; core-plugins: nf-amazon@3.4.1,nf-azure@1.20.2,nf-cloudcache@0.5.0,nf-codecommit@0.5.0,nf-console@1.3.0,nf-google@1.23.3,nf-k8s@1.2.2,nf-tower@1.17.1,nf-wave@1.16.1
+Feb-04 07:31:04.015 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Feb-04 07:31:04.016 [main] INFO  o.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Feb-04 07:31:04.016 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.12.0 in 'deployment' mode
+Feb-04 07:31:04.023 [main] DEBUG nextflow.util.RetryConfig - Missing nextflow session - using default retry config
+Feb-04 07:31:04.041 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Feb-04 07:31:04.042 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Feb-04 07:31:04.042 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Feb-04 07:31:04.045 [main] DEBUG n.secret.LocalSecretsProvider - Secrets store: /home/ofgeha/.nextflow/secrets/store.json
+Feb-04 07:31:04.047 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@257f30f7] - activable => nextflow.secret.LocalSecretsProvider@257f30f7
+Feb-04 07:31:04.048 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from script declaration
+Feb-04 07:31:04.049 [main] DEBUG nextflow.cli.CmdRun - Launching `https://github.com/EBISPOT/gwas-sumstats-harmoniser` [golden_engelbart] DSL2 - revision: 436c17a91c [v1.1.10]
+Feb-04 07:31:04.081 [main] DEBUG nextflow.Session - Session UUID: d12a7777-9b78-431a-a013-e44476c29c77
+Feb-04 07:31:04.082 [main] DEBUG nextflow.Session - Run name: golden_engelbart
+Feb-04 07:31:04.082 [main] DEBUG nextflow.Session - Executor pool size: 96
+Feb-04 07:31:04.096 [main] DEBUG nextflow.file.FilePorter - File porter settings maxRetries=3; maxTransfers=50; pollTimeout=null
+Feb-04 07:31:04.100 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=288; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
+Feb-04 07:31:04.117 [main] DEBUG nextflow.cli.CmdRun - 
   Version: 25.10.0 build 10289
   Created: 22-10-2025 16:26 UTC 
   System: Linux 6.8.0-88-generic
   Runtime: Groovy 4.0.28 on OpenJDK 64-Bit Server VM 17.0.10+7
   Encoding: UTF-8 (UTF-8)
-  Process: 2235159@rejuvebio-hetzner [37.27.231.93]
-  CPUs: 96 - Mem: 251.4 GB (4 GB) - Swap: 4 GB (79.9 MB)
-Feb-04 06:44:42.184 [main] DEBUG nextflow.Session - Work-dir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work [ext2/ext3]
-Feb-04 06:44:42.205 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
-Feb-04 06:44:42.211 [main] DEBUG nextflow.Session - Observer factory (v2): LinObserverFactory
-Feb-04 06:44:42.213 [main] DEBUG nextflow.Session - Observer factory (v2): DefaultObserverFactory
-Feb-04 06:44:42.246 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
-Feb-04 06:44:42.253 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 97; maxThreads: 1000
-Feb-04 06:44:42.406 [main] DEBUG nextflow.Session - Session start
-Feb-04 06:44:42.637 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
-Feb-04 06:44:43.782 [main] INFO  nextflow.script.BaseScript - Start harmonising files
-Feb-04 06:44:43.783 [main] INFO  nextflow.script.BaseScript - Harmonizing the file /mnt/hdd_1/ofgeha/test/21001_raw.gwas.imputed_v3.both_sexes.tsv.gz
-Feb-04 06:44:43.853 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:map_to_build` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build
-Feb-04 06:44:43.863 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.863 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.869 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
-Feb-04 06:44:43.873 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=96; memory=251.4 GB; capacity=96; pollInterval=100ms; dumpInterval=5m
-Feb-04 06:44:43.874 [main] DEBUG n.processor.TaskPollingMonitor - >>> barrier register (monitor: local)
-Feb-04 06:44:43.888 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build': maxForks=0; fair=false; array=0
-Feb-04 06:44:43.924 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:ten_percent_counts` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts
-Feb-04 06:44:43.926 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.926 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.927 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts': maxForks=0; fair=false; array=0
-Feb-04 06:44:43.936 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:ten_percent_counts_sum` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum
-Feb-04 06:44:43.937 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.937 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.939 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum': maxForks=0; fair=false; array=0
-Feb-04 06:44:43.945 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:generate_strand_counts` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:generate_strand_counts
-Feb-04 06:44:43.947 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.947 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.947 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:generate_strand_counts': maxForks=0; fair=false; array=0
-Feb-04 06:44:43.953 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:summarise_strand_counts` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:summarise_strand_counts
-Feb-04 06:44:43.954 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.954 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.955 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:summarise_strand_counts': maxForks=0; fair=false; array=0
-Feb-04 06:44:43.967 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:harmonization` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization
-Feb-04 06:44:43.969 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.969 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.970 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization': maxForks=0; fair=false; array=0
-Feb-04 06:44:43.976 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:concatenate_chr_splits` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits
-Feb-04 06:44:43.977 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.977 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.978 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits': maxForks=0; fair=false; array=0
-Feb-04 06:44:43.980 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:qc` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc
-Feb-04 06:44:43.982 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.982 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.983 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc': maxForks=0; fair=false; array=0
-Feb-04 06:44:43.992 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:harmonization_log` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log
-Feb-04 06:44:43.994 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.994 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.995 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log': maxForks=0; fair=false; array=0
-Feb-04 06:44:43.997 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:update_meta_yaml` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml
-Feb-04 06:44:43.998 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
-Feb-04 06:44:43.998 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
-Feb-04 06:44:43.999 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml': maxForks=0; fair=false; array=0
-Feb-04 06:44:44.000 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: ftp_copy, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml, ten_percent_counts_sum, map_to_build, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:summarise_strand_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum, harmonization, failed_copy, harmonization_log, qc, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log, generate_strand_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization, concatenate_chr_splits, update_meta_yaml, summarise_strand_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits, ten_percent_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:generate_strand_counts, get_vcf_files
-Feb-04 06:44:44.004 [main] DEBUG nextflow.Session - Igniting dataflow network (16)
-Feb-04 06:44:44.008 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build
-Feb-04 06:44:44.009 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts
-Feb-04 06:44:44.009 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum
-Feb-04 06:44:44.009 [PathVisitor-2] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref/; pattern: *.vcf.gz; options: [:]
-Feb-04 06:44:44.009 [PathVisitor-3] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref/; pattern: *.tbi; options: [:]
-Feb-04 06:44:44.009 [PathVisitor-4] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref/; pattern: *.parquet; options: [:]
-Feb-04 06:44:44.009 [PathVisitor-5] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref/; pattern: homo_sapiens-chr*.vcf.gz; options: [:]
-Feb-04 06:44:44.010 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:generate_strand_counts
-Feb-04 06:44:44.010 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:summarise_strand_counts
-Feb-04 06:44:44.010 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization
-Feb-04 06:44:44.010 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits
-Feb-04 06:44:44.010 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc
-Feb-04 06:44:44.011 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log
-Feb-04 06:44:44.011 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml
-Feb-04 06:44:44.012 [Actor Thread 61] INFO  nextflow.script.BaseScript - no,other setting
-Feb-04 06:44:44.012 [main] DEBUG nextflow.script.ScriptRunner - Parsed script files:
+  Process: 2358759@rejuvebio-hetzner [37.27.231.93]
+  CPUs: 96 - Mem: 251.4 GB (4 GB) - Swap: 4 GB (24 KB)
+Feb-04 07:31:04.128 [main] DEBUG nextflow.Session - Work-dir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work [ext2/ext3]
+Feb-04 07:31:04.152 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Feb-04 07:31:04.158 [main] DEBUG nextflow.Session - Observer factory (v2): LinObserverFactory
+Feb-04 07:31:04.160 [main] DEBUG nextflow.Session - Observer factory (v2): DefaultObserverFactory
+Feb-04 07:31:04.194 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Feb-04 07:31:04.201 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 97; maxThreads: 1000
+Feb-04 07:31:04.395 [main] DEBUG nextflow.Session - Session start
+Feb-04 07:31:04.560 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Feb-04 07:31:05.827 [main] INFO  nextflow.script.BaseScript - Start harmonising files
+Feb-04 07:31:05.828 [main] INFO  nextflow.script.BaseScript - Harmonizing the file /mnt/hdd_1/ofgeha/test/21001_raw.gwas.imputed_v3.both_sexes.tsv.gz
+Feb-04 07:31:05.898 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:map_to_build` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build
+Feb-04 07:31:05.906 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:05.906 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:05.913 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Feb-04 07:31:05.917 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=96; memory=251.4 GB; capacity=96; pollInterval=100ms; dumpInterval=5m
+Feb-04 07:31:05.918 [main] DEBUG n.processor.TaskPollingMonitor - >>> barrier register (monitor: local)
+Feb-04 07:31:05.932 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build': maxForks=0; fair=false; array=0
+Feb-04 07:31:05.966 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:ten_percent_counts` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts
+Feb-04 07:31:05.968 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:05.968 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:05.969 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts': maxForks=0; fair=false; array=0
+Feb-04 07:31:05.977 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:ten_percent_counts_sum` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum
+Feb-04 07:31:05.978 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:05.979 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:05.980 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum': maxForks=0; fair=false; array=0
+Feb-04 07:31:05.986 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:generate_strand_counts` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:generate_strand_counts
+Feb-04 07:31:05.988 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:05.988 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:05.988 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:generate_strand_counts': maxForks=0; fair=false; array=0
+Feb-04 07:31:05.994 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:summarise_strand_counts` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:summarise_strand_counts
+Feb-04 07:31:05.995 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:05.995 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:05.996 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:summarise_strand_counts': maxForks=0; fair=false; array=0
+Feb-04 07:31:06.015 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:harmonization` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization
+Feb-04 07:31:06.018 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:06.018 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:06.018 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization': maxForks=0; fair=false; array=0
+Feb-04 07:31:06.024 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:concatenate_chr_splits` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits
+Feb-04 07:31:06.025 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:06.025 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:06.026 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits': maxForks=0; fair=false; array=0
+Feb-04 07:31:06.028 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:qc` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc
+Feb-04 07:31:06.030 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:06.030 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:06.030 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc': maxForks=0; fair=false; array=0
+Feb-04 07:31:06.038 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:harmonization_log` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log
+Feb-04 07:31:06.040 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:06.040 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:06.040 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log': maxForks=0; fair=false; array=0
+Feb-04 07:31:06.042 [main] DEBUG n.script.dsl.ProcessConfigBuilder - Config settings `withName:update_meta_yaml` matches process NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml
+Feb-04 07:31:06.043 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: local
+Feb-04 07:31:06.043 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Feb-04 07:31:06.043 [main] DEBUG nextflow.processor.TaskProcessor - Creating process 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml': maxForks=0; fair=false; array=0
+Feb-04 07:31:06.045 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: ftp_copy, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml, ten_percent_counts_sum, map_to_build, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:summarise_strand_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum, harmonization, failed_copy, harmonization_log, qc, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log, generate_strand_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization, concatenate_chr_splits, update_meta_yaml, summarise_strand_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits, ten_percent_counts, NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:generate_strand_counts, get_vcf_files
+Feb-04 07:31:06.048 [main] DEBUG nextflow.Session - Igniting dataflow network (16)
+Feb-04 07:31:06.052 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build
+Feb-04 07:31:06.052 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts
+Feb-04 07:31:06.052 [PathVisitor-4] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref/; pattern: *.parquet; options: [:]
+Feb-04 07:31:06.052 [PathVisitor-3] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref/; pattern: *.tbi; options: [:]
+Feb-04 07:31:06.052 [PathVisitor-2] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref/; pattern: *.vcf.gz; options: [:]
+Feb-04 07:31:06.053 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum
+Feb-04 07:31:06.053 [PathVisitor-5] DEBUG nextflow.file.PathVisitor - files for syntax: glob; folder: /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref/; pattern: homo_sapiens-chr*.vcf.gz; options: [:]
+Feb-04 07:31:06.053 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:generate_strand_counts
+Feb-04 07:31:06.053 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:summarise_strand_counts
+Feb-04 07:31:06.054 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization
+Feb-04 07:31:06.054 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits
+Feb-04 07:31:06.054 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc
+Feb-04 07:31:06.054 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log
+Feb-04 07:31:06.054 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml
+Feb-04 07:31:06.055 [main] DEBUG nextflow.script.ScriptRunner - Parsed script files:
   Script_390d6613c99580d9: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/subworkflows/local/check_reference.nf
   Script_de60aec7dd8a285b: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/modules/local/concatenate_chr_splits.nf
   Script_a0a3b731ca4eeff6: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/subworkflows/local/prepare_reference.nf
@@ -121,9 +120,9 @@ Feb-04 06:44:44.012 [main] DEBUG nextflow.script.ScriptRunner - Parsed script fi
   Script_9786a4c73241135e: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/modules/local/ten_percent_counts.nf
   Script_13f5bac5155c4da5: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/workflows/PREPARE_REFERENCE.nf
   Script_6395516388aef632: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/modules/local/failed_copy.nf
-  Script_23211832405c799f: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/subworkflows/local/main_harm.nf
-  Script_e464d3158be25688: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/workflows/gwascatalogharm_gwascatalog.nf
   Script_91da433509b9a6ba: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/main.nf
+  Script_e464d3158be25688: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/workflows/gwascatalogharm_gwascatalog.nf
+  Script_23211832405c799f: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/subworkflows/local/main_harm.nf
   Script_2991d3311bba2985: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/modules/local/qc.nf
   Script_9131960a19490f63: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/modules/local/summarise_strand_counts.nf
   Script_d4e1fc5edf53c08b: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/subworkflows/local/quality_control.nf
@@ -131,261 +130,236 @@ Feb-04 06:44:44.012 [main] DEBUG nextflow.script.ScriptRunner - Parsed script fi
   Script_281771908d71f854: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/modules/local/update_meta_yaml.nf
   Script_1a5c10f57b7eee92: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/modules/local/generate_strand_counts.nf
   Script_16cee517c78a9f21: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/workflows/gwascatalogharm.nf
-Feb-04 06:44:44.013 [main] DEBUG nextflow.script.ScriptRunner - > Awaiting termination 
-Feb-04 06:44:44.014 [main] DEBUG nextflow.Session - Session await
-Feb-04 06:44:44.028 [Actor Thread 96] INFO  nextflow.script.BaseScript - [chr12, chr1, chr15, chr13, chr18, chrY, chr19, chr7, chr14, chrX, chr3, chr16, chr5, chr21, chrMT, chr8, chr22, chr9, chr20, chr10, chr2, chr17, chr6, chr11, chr4,  is being harmonized]
-Feb-04 06:44:44.132 [Actor Thread 74] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=docker://ebispot/gwas-sumstats-harmoniser:latest; path=/mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/singularity/ebispot-gwas-sumstats-harmoniser-latest.img
-Feb-04 06:44:44.152 [Actor Thread 91] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/map_to_build_nf.py
-Feb-04 06:44:44.234 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:44:44.237 [Task submitter] INFO  nextflow.Session - [8a/0d4bc8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build (21001_raw)
-Feb-04 06:47:59.021 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build (21001_raw); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/8a/0d4bc8f8563b0bf95ee63170b6d2fc]
-Feb-04 06:47:59.022 [Task monitor] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'TaskFinalizer' minSize=10; maxSize=288; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
-Feb-04 06:47:59.061 [TaskFinalizer-1] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'PublishDir' minSize=10; maxSize=288; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
-Feb-04 06:47:59.119 [Actor Thread 78] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/utils.py
-Feb-04 06:47:59.120 [Actor Thread 71] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/main_pysam.py
-Feb-04 06:47:59.150 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.151 [Task submitter] INFO  nextflow.Session - [ef/232685] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr1)
-Feb-04 06:47:59.162 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.164 [Task submitter] INFO  nextflow.Session - [f8/899ac9] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr8)
-Feb-04 06:47:59.179 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.179 [Task submitter] INFO  nextflow.Session - [86/62a204] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr18)
-Feb-04 06:47:59.185 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.186 [Task submitter] INFO  nextflow.Session - [d2/682a5c] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chrX)
-Feb-04 06:47:59.192 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.193 [Task submitter] INFO  nextflow.Session - [fa/7d2133] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr22)
-Feb-04 06:47:59.196 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.196 [Task submitter] INFO  nextflow.Session - [5f/641e01] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr4)
-Feb-04 06:47:59.199 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.199 [Task submitter] INFO  nextflow.Session - [b7/6628dc] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr14)
-Feb-04 06:47:59.202 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.202 [Task submitter] INFO  nextflow.Session - [7d/184b71] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chrY)
-Feb-04 06:47:59.205 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.206 [Task submitter] INFO  nextflow.Session - [3e/582dc8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr2)
-Feb-04 06:47:59.209 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.216 [Task submitter] INFO  nextflow.Session - [05/2c4f7f] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr20)
-Feb-04 06:47:59.219 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.228 [Task submitter] INFO  nextflow.Session - [ff/59485e] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr5)
-Feb-04 06:47:59.231 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.240 [Task submitter] INFO  nextflow.Session - [f1/e3d4ed] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr7)
-Feb-04 06:47:59.243 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.252 [Task submitter] INFO  nextflow.Session - [06/af6b96] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr17)
-Feb-04 06:47:59.256 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.272 [Task submitter] INFO  nextflow.Session - [3f/8ec3d3] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chrMT)
-Feb-04 06:47:59.275 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.276 [Task submitter] INFO  nextflow.Session - [63/44e431] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr9)
-Feb-04 06:47:59.280 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.280 [Task submitter] INFO  nextflow.Session - [33/f2cc64] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr6)
-Feb-04 06:47:59.283 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.291 [Task submitter] INFO  nextflow.Session - [b9/0614c9] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr19)
-Feb-04 06:47:59.294 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.301 [Task submitter] INFO  nextflow.Session - [9a/5f7acf] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr11)
-Feb-04 06:47:59.304 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.304 [Task submitter] INFO  nextflow.Session - [db/0921e5] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr3)
-Feb-04 06:47:59.307 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.307 [Task submitter] INFO  nextflow.Session - [a2/c4874f] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr10)
-Feb-04 06:47:59.311 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.319 [Task submitter] INFO  nextflow.Session - [f7/de444b] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr16)
-Feb-04 06:47:59.322 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.328 [Task submitter] INFO  nextflow.Session - [96/efb167] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr21)
-Feb-04 06:47:59.331 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.347 [Task submitter] INFO  nextflow.Session - [f7/25d57e] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr13)
-Feb-04 06:47:59.351 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.376 [Task submitter] INFO  nextflow.Session - [f5/f964f4] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr15)
-Feb-04 06:47:59.380 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:47:59.391 [Task submitter] INFO  nextflow.Session - [99/45a1a8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr12)
-Feb-04 06:48:02.860 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 25; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chrX); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/d2/682a5c88c786869bfc7088d6af85ca]
-Feb-04 06:48:03.797 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 26; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chrY); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/7d/184b711ef6c1fed3cb8a82d1e9433d]
-Feb-04 06:48:05.343 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 24; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chrMT); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/3f/8ec3d304c9a747f0c427207193d4cd]
-Feb-04 06:49:44.026 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor local > tasks to be completed: 22 -- submitted tasks are shown below
-~> TaskHandler[id: 2; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr1); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ef/232685e89e1ce48239f6f9d548b671]
-~> TaskHandler[id: 22; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr8); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f8/899ac9418a0db2de11bfb006d77560]
-~> TaskHandler[id: 11; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr18); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/86/62a204265c473b15f74d5b6536441b]
-~> TaskHandler[id: 16; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr22); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/fa/7d21336a4a1f18207f3aa7678336f2]
-~> TaskHandler[id: 18; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr4); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/5f/641e01d055c6d062bd89a5cc5960ef]
-~> TaskHandler[id: 7; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr14); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/b7/6628dc24d0c7b8c6b147ad09640d35]
-~> TaskHandler[id: 13; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr2); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/3e/582dc814a7dc886df96a5496843c05]
-~> TaskHandler[id: 14; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr20); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/05/2c4f7f910ff44b9be54af53577827f]
-~> TaskHandler[id: 19; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr5); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ff/59485e93ad9ab0d6e2bafdeb0b9041]
-~> TaskHandler[id: 21; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr7); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f1/e3d4edf96e6fb9fb6bc02c704059c8]
+Feb-04 07:31:06.055 [main] DEBUG nextflow.script.ScriptRunner - > Awaiting termination 
+Feb-04 07:31:06.055 [main] DEBUG nextflow.Session - Session await
+Feb-04 07:31:06.055 [Actor Thread 60] INFO  nextflow.script.BaseScript - no,other setting
+Feb-04 07:31:06.069 [Actor Thread 90] INFO  nextflow.script.BaseScript - [chr12, chr1, chr14, chr15, chr3, chr9, chr13, chr10, chr18, chr19, chr7, chr2, chr5, chr21, chr22, chr16, chr20, chr17, chr8, chr6, chr11, chr4,  is being harmonized]
+Feb-04 07:31:06.174 [Actor Thread 90] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=docker://ebispot/gwas-sumstats-harmoniser:latest; path=/mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/singularity/ebispot-gwas-sumstats-harmoniser-latest.img
+Feb-04 07:31:06.192 [Actor Thread 94] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/map_to_build_nf.py
+Feb-04 07:31:06.280 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:31:06.283 [Task submitter] INFO  nextflow.Session - [ec/f9f309] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build (21001_raw)
+Feb-04 07:34:20.886 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 1; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:map_to_build (21001_raw); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ec/f9f309d833b28aa3ff6116afdabfb9]
+Feb-04 07:34:20.887 [Task monitor] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'TaskFinalizer' minSize=10; maxSize=288; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
+Feb-04 07:34:20.923 [TaskFinalizer-1] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'PublishDir' minSize=10; maxSize=288; workQueue=LinkedBlockingQueue[-1]; allowCoreThreadTimeout=false
+Feb-04 07:34:20.975 [Actor Thread 96] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/utils.py
+Feb-04 07:34:20.976 [Actor Thread 96] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/main_pysam.py
+Feb-04 07:34:21.018 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.018 [Task submitter] INFO  nextflow.Session - [45/b9eda3] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr8)
+Feb-04 07:34:21.026 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.027 [Task submitter] INFO  nextflow.Session - [3b/4968c8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr3)
+Feb-04 07:34:21.036 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.037 [Task submitter] INFO  nextflow.Session - [cc/2cb16c] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr12)
+Feb-04 07:34:21.044 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.045 [Task submitter] INFO  nextflow.Session - [6e/14900b] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr5)
+Feb-04 07:34:21.052 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.053 [Task submitter] INFO  nextflow.Session - [61/6643e5] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr11)
+Feb-04 07:34:21.059 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.059 [Task submitter] INFO  nextflow.Session - [4e/52475b] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr21)
+Feb-04 07:34:21.065 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.066 [Task submitter] INFO  nextflow.Session - [2b/9a850a] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr20)
+Feb-04 07:34:21.073 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.073 [Task submitter] INFO  nextflow.Session - [8a/b1ecfc] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr17)
+Feb-04 07:34:21.079 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.093 [Task submitter] INFO  nextflow.Session - [7a/02e601] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr7)
+Feb-04 07:34:21.099 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.104 [Task submitter] INFO  nextflow.Session - [d5/75b300] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr2)
+Feb-04 07:34:21.111 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.114 [Task submitter] INFO  nextflow.Session - [98/2d68d9] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr15)
+Feb-04 07:34:21.119 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.124 [Task submitter] INFO  nextflow.Session - [06/1c93eb] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr9)
+Feb-04 07:34:21.128 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.129 [Task submitter] INFO  nextflow.Session - [94/0182b4] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr10)
+Feb-04 07:34:21.134 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.139 [Task submitter] INFO  nextflow.Session - [55/5d72ca] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr18)
+Feb-04 07:34:21.145 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.145 [Task submitter] INFO  nextflow.Session - [62/f5824b] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr19)
+Feb-04 07:34:21.151 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.151 [Task submitter] INFO  nextflow.Session - [b6/46d618] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr13)
+Feb-04 07:34:21.156 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.172 [Task submitter] INFO  nextflow.Session - [e4/5adec8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr14)
+Feb-04 07:34:21.178 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.179 [Task submitter] INFO  nextflow.Session - [8c/bc4ffa] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr22)
+Feb-04 07:34:21.184 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.198 [Task submitter] INFO  nextflow.Session - [6b/a9d896] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr16)
+Feb-04 07:34:21.204 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.222 [Task submitter] INFO  nextflow.Session - [5d/c20277] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr1)
+Feb-04 07:34:21.226 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.242 [Task submitter] INFO  nextflow.Session - [05/a302df] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr4)
+Feb-04 07:34:21.246 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:34:21.264 [Task submitter] INFO  nextflow.Session - [23/3d3803] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr6)
+Feb-04 07:36:06.113 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor local > tasks to be completed: 22 -- submitted tasks are shown below
+~> TaskHandler[id: 22; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr8); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/45/b9eda3c5b850dc2a136f431605eb6d]
+~> TaskHandler[id: 17; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr3); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/3b/4968c883ae1a2f140bc38dc23a9329]
+~> TaskHandler[id: 5; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr12); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/cc/2cb16cd09b9e2c7a6b23ed6602fe9c]
+~> TaskHandler[id: 19; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr5); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/6e/14900b8b847365f76f782bc9f3b6c3]
+~> TaskHandler[id: 4; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr11); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/61/6643e5783b9238b12200bfc39c309e]
+~> TaskHandler[id: 15; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr21); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/4e/52475b2844f3a316ce0f609eddcf03]
+~> TaskHandler[id: 14; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr20); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/2b/9a850a72fe47ab3b824432afe4af47]
+~> TaskHandler[id: 10; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr17); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/8a/b1ecfc2f46bf369b46aa53140b600f]
+~> TaskHandler[id: 21; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr7); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/7a/02e60167a6e7de1f277bee0fdccadf]
+~> TaskHandler[id: 13; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr2); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/d5/75b300339422d3f763804cf08a7638]
 .. remaining tasks omitted.
-Feb-04 06:50:38.304 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 15; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr21); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/96/efb1670fad715f09139a9402a8dee6]
-Feb-04 06:50:59.053 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 16; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr22); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/fa/7d21336a4a1f18207f3aa7678336f2]
-Feb-04 06:52:27.281 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 12; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr19); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/b9/0614c916ce3ffa7f178959a909b67b]
-Feb-04 06:52:49.234 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 14; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr20); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/05/2c4f7f910ff44b9be54af53577827f]
-Feb-04 06:53:25.193 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 11; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr18); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/86/62a204265c473b15f74d5b6536441b]
-Feb-04 06:53:31.293 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 10; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr17); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/06/af6b96a238ff4406ac99b81bac9e52]
-Feb-04 06:53:43.848 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 8; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr15); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f5/f964f4aff37bdc135c29f92cb2139a]
-Feb-04 06:54:02.079 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr16); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f7/de444b808b4a60544a11d40e6ed650]
-Feb-04 06:54:03.609 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 7; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr14); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/b7/6628dc24d0c7b8c6b147ad09640d35]
-Feb-04 06:54:39.351 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 6; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr13); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f7/25d57efdd32035aacdd2f606fa4985]
-Feb-04 06:54:44.059 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor local > tasks to be completed: 12 -- submitted tasks are shown below
-~> TaskHandler[id: 2; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr1); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ef/232685e89e1ce48239f6f9d548b671]
-~> TaskHandler[id: 22; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr8); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f8/899ac9418a0db2de11bfb006d77560]
-~> TaskHandler[id: 18; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr4); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/5f/641e01d055c6d062bd89a5cc5960ef]
-~> TaskHandler[id: 13; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr2); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/3e/582dc814a7dc886df96a5496843c05]
-~> TaskHandler[id: 19; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr5); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ff/59485e93ad9ab0d6e2bafdeb0b9041]
-~> TaskHandler[id: 21; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr7); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f1/e3d4edf96e6fb9fb6bc02c704059c8]
-~> TaskHandler[id: 23; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr9); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/63/44e43199e1a196b5f6a482c39da37b]
-~> TaskHandler[id: 20; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr6); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/33/f2cc64db73cd7ebe1413a822abd737]
-~> TaskHandler[id: 4; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr11); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/9a/5f7acfae7ea831055e4752508c3732]
-~> TaskHandler[id: 17; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr3); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/db/0921e54a094c5e317b00e872e0738b]
+Feb-04 07:37:26.302 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 15; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr21); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/4e/52475b2844f3a316ce0f609eddcf03]
+Feb-04 07:37:34.033 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 16; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr22); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/8c/bc4ffa50e24d1d0a99d5a0855c632c]
+Feb-04 07:39:05.066 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 12; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr19); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/62/f5824bdbebb8ecd9d964b6ca67d736]
+Feb-04 07:39:08.582 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 14; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr20); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/2b/9a850a72fe47ab3b824432afe4af47]
+Feb-04 07:40:02.021 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 11; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr18); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/55/5d72ca3824fcc81b729b0231d3c299]
+Feb-04 07:40:07.008 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 8; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr15); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/98/2d68d93d9a622df7619d6184c55905]
+Feb-04 07:40:11.837 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 10; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr17); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/8a/b1ecfc2f46bf369b46aa53140b600f]
+Feb-04 07:40:25.972 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 9; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr16); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/6b/a9d896a1eefbaa45c1764186b90c1e]
+Feb-04 07:40:44.573 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 7; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr14); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/e4/5adec8fb33e6224b7e30b5db1abd5b]
+Feb-04 07:41:06.207 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor local > tasks to be completed: 13 -- submitted tasks are shown below
+~> TaskHandler[id: 22; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr8); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/45/b9eda3c5b850dc2a136f431605eb6d]
+~> TaskHandler[id: 17; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr3); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/3b/4968c883ae1a2f140bc38dc23a9329]
+~> TaskHandler[id: 5; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr12); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/cc/2cb16cd09b9e2c7a6b23ed6602fe9c]
+~> TaskHandler[id: 19; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr5); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/6e/14900b8b847365f76f782bc9f3b6c3]
+~> TaskHandler[id: 4; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr11); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/61/6643e5783b9238b12200bfc39c309e]
+~> TaskHandler[id: 21; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr7); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/7a/02e60167a6e7de1f277bee0fdccadf]
+~> TaskHandler[id: 13; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr2); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/d5/75b300339422d3f763804cf08a7638]
+~> TaskHandler[id: 23; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr9); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/06/1c93eb3f11e7f9eebe5bea3b41ac13]
+~> TaskHandler[id: 3; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr10); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/94/0182b49b3007c3ab2ae70d105b5cb6]
+~> TaskHandler[id: 6; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr13); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/b6/46d6181dd1cceabeefea4564019b78]
 .. remaining tasks omitted.
-Feb-04 06:55:55.229 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 23; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr9); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/63/44e43199e1a196b5f6a482c39da37b]
-Feb-04 06:56:29.136 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 4; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr11); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/9a/5f7acfae7ea831055e4752508c3732]
-Feb-04 06:56:31.120 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 3; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr10); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/a2/c4874ff81fbca45a22d7f5505f1d25]
-Feb-04 06:56:35.624 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr12); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/99/45a1a80ff11b2292d08809bb3916ef]
-Feb-04 06:57:19.102 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 22; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr8); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f8/899ac9418a0db2de11bfb006d77560]
-Feb-04 06:57:42.158 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 20; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr6); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/33/f2cc64db73cd7ebe1413a822abd737]
-Feb-04 06:57:47.342 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 21; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr7); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f1/e3d4edf96e6fb9fb6bc02c704059c8]
-Feb-04 06:57:50.514 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 19; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr5); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ff/59485e93ad9ab0d6e2bafdeb0b9041]
-Feb-04 06:58:11.726 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 18; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr4); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/5f/641e01d055c6d062bd89a5cc5960ef]
-Feb-04 06:58:20.072 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 17; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr3); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/db/0921e54a094c5e317b00e872e0738b]
-Feb-04 06:58:45.528 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 2; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr1); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ef/232685e89e1ce48239f6f9d548b671]
-Feb-04 06:59:05.845 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 13; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr2); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/3e/582dc814a7dc886df96a5496843c05]
-Feb-04 06:59:05.868 [Actor Thread 74] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/sum_strand_counts_10percent_nf.py
-Feb-04 06:59:05.875 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:05.875 [Task submitter] INFO  nextflow.Session - [8a/4fe803] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum (21001_raw)
-Feb-04 06:59:07.715 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 27; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum (21001_raw); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/8a/4fe8030dcad7af00cfaec115e54453]
-Feb-04 06:59:07.765 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.765 [Task submitter] INFO  nextflow.Session - [37/4eebe6] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr8)
-Feb-04 06:59:07.771 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.772 [Task submitter] INFO  nextflow.Session - [50/7c6b70] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr14)
-Feb-04 06:59:07.778 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.778 [Task submitter] INFO  nextflow.Session - [72/e681f6] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr13)
-Feb-04 06:59:07.785 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.785 [Task submitter] INFO  nextflow.Session - [1a/534d22] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr11)
-Feb-04 06:59:07.791 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.791 [Task submitter] INFO  nextflow.Session - [2f/2cd136] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr20)
-Feb-04 06:59:07.796 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.797 [Task submitter] INFO  nextflow.Session - [d9/d435bd] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr4)
-Feb-04 06:59:07.802 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.803 [Task submitter] INFO  nextflow.Session - [1c/8541dc] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chrX)
-Feb-04 06:59:07.816 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.820 [Task submitter] INFO  nextflow.Session - [db/defca7] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chrY)
-Feb-04 06:59:07.827 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.839 [Task submitter] INFO  nextflow.Session - [ae/2d1ee2] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr9)
-Feb-04 06:59:07.845 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.845 [Task submitter] INFO  nextflow.Session - [e7/24cf43] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr7)
-Feb-04 06:59:07.851 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.856 [Task submitter] INFO  nextflow.Session - [f8/d5ae31] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr21)
-Feb-04 06:59:07.861 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.866 [Task submitter] INFO  nextflow.Session - [8d/268637] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr6)
-Feb-04 06:59:07.870 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.876 [Task submitter] INFO  nextflow.Session - [2a/b55fcb] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr2)
-Feb-04 06:59:07.881 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.881 [Task submitter] INFO  nextflow.Session - [8b/e853e8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr16)
-Feb-04 06:59:07.896 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.904 [Task submitter] INFO  nextflow.Session - [5d/2938b8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr1)
-Feb-04 06:59:07.910 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.910 [Task submitter] INFO  nextflow.Session - [71/a083f1] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chrMT)
-Feb-04 06:59:07.914 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.919 [Task submitter] INFO  nextflow.Session - [20/e935b6] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr5)
-Feb-04 06:59:07.949 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.950 [Task submitter] INFO  nextflow.Session - [40/c92982] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr18)
-Feb-04 06:59:07.952 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.978 [Task submitter] INFO  nextflow.Session - [48/29165a] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr17)
-Feb-04 06:59:07.981 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:07.990 [Task submitter] INFO  nextflow.Session - [a0/7c017a] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr10)
-Feb-04 06:59:07.992 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:08.001 [Task submitter] INFO  nextflow.Session - [98/c41a66] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr22)
-Feb-04 06:59:08.003 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:08.011 [Task submitter] INFO  nextflow.Session - [fa/460b03] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr3)
-Feb-04 06:59:08.015 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:08.015 [Task submitter] INFO  nextflow.Session - [e2/61e1a8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr12)
-Feb-04 06:59:08.018 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:08.018 [Task submitter] INFO  nextflow.Session - [44/aa90ca] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr15)
-Feb-04 06:59:08.020 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
-Feb-04 06:59:08.030 [Task submitter] INFO  nextflow.Session - [af/c695db] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr19)
-Feb-04 06:59:10.384 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 51; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chrX); status: COMPLETED; exit: 1; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/1c/8541dc339f3f62ec18165e0ede7598]
-Feb-04 06:59:10.389 [TaskFinalizer-8] DEBUG nextflow.processor.TaskProcessor - Handling unexpected condition for
-  task: name=NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chrX); work-dir=/mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/1c/8541dc339f3f62ec18165e0ede7598
-  error [nextflow.exception.ProcessFailedException]: Process `NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chrX)` terminated with an error exit status (1)
-Feb-04 06:59:10.400 [TaskFinalizer-8] ERROR nextflow.processor.TaskProcessor - Error executing process > 'NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chrX)'
-
-Caused by:
-  Process `NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chrX)` terminated with an error exit status (1)
-
-
-Command executed:
-
-  coordinate_system=$(grep coordinate_system 21001_raw.gwas.imputed_v3.both_sexes.tsv.gz-meta.yaml | awk -F ":" '{print $2}' | tr -d "[:blank:]" )
-  if test -z "$coordinate_system"; then coordinate="1-based"; else coordinate=$coordinate_system; fi
-  
-  header_args=$(utils.py -f X.merged -harm_args);
-  
-  main_pysam.py     --sumstats X.merged     --vcf /mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref/homo_sapiens-chrX.vcf.gz     --hm_sumstats chrX.merged_unsorted.hm     --hm_statfile chrX.merged.log.tsv.gz     $header_args     --na_rep_in NA     --na_rep_out NA     --coordinate $coordinate     --palin_mode drop;
-  
-  chr=$(awk -v RS='	' '/chromosome/{print NR; exit}' chrX.merged_unsorted.hm)
-  pos=$(awk -v RS='	' '/base_pair_location/{print NR; exit}' chrX.merged_unsorted.hm)
-  
-  head -n1 chrX.merged_unsorted.hm > chrX.merged.hm;
-  tail -n+2 chrX.merged_unsorted.hm | sort -n -k$chr -k$pos -T$PWD >> chrX.merged.hm
-
-Command exit status:
-  1
-
-Command output:
-  (empty)
-
-Command error:
-  INFO:    /etc/singularity/ exists; cleanup by system administrator is not complete (see https://apptainer.org/docs/admin/latest/singularity_migration.html)
-  INFO:    Environment variable SINGULARITYENV_NXF_TASK_WORKDIR is set, but APPTAINERENV_NXF_TASK_WORKDIR is preferred
-  Traceback (most recent call last):
-    File "/home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/main_pysam.py", line 780, in <module>
-      main()
-    File "/home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/main_pysam.py", line 34, in main
-      out_header = SumStatsTable(sumstats_file=args.sumstats)._set_header_order()
-    File "/usr/local/lib/python3.9/site-packages/gwas_sumstats_tools/interfaces/data_table.py", line 149, in _set_header_order
-      header_order.extend([h for h in self.FIELDS_OPTIONAL if h in self.header()])
-    File "/usr/local/lib/python3.9/site-packages/gwas_sumstats_tools/interfaces/data_table.py", line 149, in <listcomp>
-      header_order.extend([h for h in self.FIELDS_OPTIONAL if h in self.header()])
-    File "/usr/local/lib/python3.9/site-packages/gwas_sumstats_tools/interfaces/data_table.py", line 187, in header
-      if self.is_table_content():
-    File "/usr/local/lib/python3.9/site-packages/gwas_sumstats_tools/interfaces/data_table.py", line 82, in is_table_content
-      return etl.nrows(self.head_table(nrows=1)) > 0
-    File "/usr/local/lib/python3.9/site-packages/petl/util/counting.py", line 22, in nrows
-      return sum(1 for _ in data(table))
-    File "/usr/local/lib/python3.9/site-packages/petl/util/counting.py", line 22, in <genexpr>
-      return sum(1 for _ in data(table))
-    File "/usr/local/lib/python3.9/site-packages/petl/transform/basics.py", line 751, in iterrowslice
-      it = iter(source)
-  TypeError: 'NoneType' object is not iterable
-
-Work dir:
-  /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/1c/8541dc339f3f62ec18165e0ede7598
-
-Container:
-  /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/singularity/ebispot-gwas-sumstats-harmoniser-latest.img
-
-Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
-Feb-04 06:59:10.404 [TaskFinalizer-8] DEBUG nextflow.Session - Session aborted -- Cause: Process `NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chrX)` terminated with an error exit status (1)
-Feb-04 06:59:10.421 [TaskFinalizer-8] DEBUG nextflow.Session - The following nodes are still active:
-[process] NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits
-  status=ACTIVE
-  port 0: (queue) OPEN  ; channel: -
-  port 1: (cntrl) -     ; channel: $
-
-[process] NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc
-  status=ACTIVE
-  port 0: (queue) OPEN  ; channel: -
-  port 1: (cntrl) -     ; channel: $
-
-[process] NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log
-  status=ACTIVE
-  port 0: (value) bound ; channel: chr
-  port 1: (queue) OPEN  ; channel: -
-  port 2: (cntrl) -     ; channel: $
-
-[process] NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml
-  status=ACTIVE
-  port 0: (queue) OPEN  ; channel: -
-  port 1: (cntrl) -     ; channel: $
-
-Feb-04 06:59:10.426 [TaskFinalizer-8] WARN  n.processor.TaskPollingMonitor - Killing running tasks (24)
-Feb-04 06:59:10.438 [Task monitor] DEBUG n.processor.TaskPollingMonitor - <<< barrier arrives (monitor: local) - terminating tasks monitor poll loop
-Feb-04 06:59:10.580 [TaskFinalizer-8] DEBUG n.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=27; failedCount=1; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=24; succeedDuration=2h 48m 39s; failedDuration=2.6s; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=25; peakCpus=25; peakMemory=250 GB; ]
-Feb-04 06:59:10.624 [main] DEBUG nextflow.Session - Session await > all processes finished
-Feb-04 06:59:10.636 [main] DEBUG nextflow.Session - Session await > all barriers passed
-Feb-04 06:59:10.646 [main] DEBUG n.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=27; failedCount=1; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=24; succeedDuration=2h 48m 39s; failedDuration=2.6s; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=25; peakCpus=25; peakMemory=250 GB; ]
-Feb-04 06:59:10.652 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
-Feb-04 06:59:10.675 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
+Feb-04 07:42:51.721 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 6; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr13); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/b6/46d6181dd1cceabeefea4564019b78]
+Feb-04 07:43:28.273 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 4; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr11); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/61/6643e5783b9238b12200bfc39c309e]
+Feb-04 07:43:30.568 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 23; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr9); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/06/1c93eb3f11e7f9eebe5bea3b41ac13]
+Feb-04 07:43:36.683 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 3; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr10); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/94/0182b49b3007c3ab2ae70d105b5cb6]
+Feb-04 07:43:49.780 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 20; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr6); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/23/3d3803c56e4aa8c1c8aefe31727e68]
+Feb-04 07:43:50.551 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 22; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr8); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/45/b9eda3c5b850dc2a136f431605eb6d]
+Feb-04 07:43:56.406 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 5; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr12); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/cc/2cb16cd09b9e2c7a6b23ed6602fe9c]
+Feb-04 07:43:58.227 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 19; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr5); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/6e/14900b8b847365f76f782bc9f3b6c3]
+Feb-04 07:43:59.151 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 18; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr4); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/05/a302df71a8ecbf71dbbc0f2ca2242e]
+Feb-04 07:44:07.476 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 17; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr3); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/3b/4968c883ae1a2f140bc38dc23a9329]
+Feb-04 07:44:15.408 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 21; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr7); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/7a/02e60167a6e7de1f277bee0fdccadf]
+Feb-04 07:44:21.321 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 13; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr2); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/d5/75b300339422d3f763804cf08a7638]
+Feb-04 07:44:23.559 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 2; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts (21001_raw_chr1); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/5d/c20277cbfbc05e04d1f9fcb236f43b]
+Feb-04 07:44:23.577 [Actor Thread 80] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/sum_strand_counts_10percent_nf.py
+Feb-04 07:44:23.602 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:23.602 [Task submitter] INFO  nextflow.Session - [96/a630e2] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum (21001_raw)
+Feb-04 07:44:25.481 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 24; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:major_direction:ten_percent_counts_sum (21001_raw); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/96/a630e2a55584feb9246d7358c33c3f]
+Feb-04 07:44:25.507 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.518 [Task submitter] INFO  nextflow.Session - [a5/8ecef4] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr18)
+Feb-04 07:44:25.521 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.564 [Task submitter] INFO  nextflow.Session - [16/6e391a] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr1)
+Feb-04 07:44:25.568 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.572 [Task submitter] INFO  nextflow.Session - [6e/597f48] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr16)
+Feb-04 07:44:25.575 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.575 [Task submitter] INFO  nextflow.Session - [f1/c722ca] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr11)
+Feb-04 07:44:25.578 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.603 [Task submitter] INFO  nextflow.Session - [39/04b7c2] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr19)
+Feb-04 07:44:25.607 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.621 [Task submitter] INFO  nextflow.Session - [f0/3cc0a3] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr2)
+Feb-04 07:44:25.635 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.635 [Task submitter] INFO  nextflow.Session - [c6/7d3b5e] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr3)
+Feb-04 07:44:25.660 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.666 [Task submitter] INFO  nextflow.Session - [13/a6cb18] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr14)
+Feb-04 07:44:25.669 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.674 [Task submitter] INFO  nextflow.Session - [6f/394153] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr20)
+Feb-04 07:44:25.677 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.701 [Task submitter] INFO  nextflow.Session - [5b/4f0957] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr22)
+Feb-04 07:44:25.712 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.721 [Task submitter] INFO  nextflow.Session - [2b/27cc51] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr21)
+Feb-04 07:44:25.729 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.729 [Task submitter] INFO  nextflow.Session - [ba/f4617c] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr10)
+Feb-04 07:44:25.736 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.737 [Task submitter] INFO  nextflow.Session - [ba/da3544] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr9)
+Feb-04 07:44:25.741 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.742 [Task submitter] INFO  nextflow.Session - [eb/f1d76a] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr12)
+Feb-04 07:44:25.745 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.745 [Task submitter] INFO  nextflow.Session - [eb/842694] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr13)
+Feb-04 07:44:25.748 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.749 [Task submitter] INFO  nextflow.Session - [5d/839f92] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr15)
+Feb-04 07:44:25.753 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.753 [Task submitter] INFO  nextflow.Session - [99/30d818] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr4)
+Feb-04 07:44:25.756 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.756 [Task submitter] INFO  nextflow.Session - [f8/14440e] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr7)
+Feb-04 07:44:25.759 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.759 [Task submitter] INFO  nextflow.Session - [ef/f39780] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr17)
+Feb-04 07:44:25.763 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.763 [Task submitter] INFO  nextflow.Session - [8b/9a42a6] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr8)
+Feb-04 07:44:25.772 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.783 [Task submitter] INFO  nextflow.Session - [02/4f914f] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr5)
+Feb-04 07:44:25.785 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 07:44:25.804 [Task submitter] INFO  nextflow.Session - [a4/edcc6d] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr6)
+Feb-04 07:46:06.238 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor local > tasks to be completed: 22 -- submitted tasks are shown below
+~> TaskHandler[id: 34; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr18); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/a5/8ecef41ade5ee372d2711d3cc8cf7e]
+~> TaskHandler[id: 25; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr1); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/16/6e391a3bae6e5505ba2bc5382548bb]
+~> TaskHandler[id: 32; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr16); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/6e/597f48900a8a1430772e74f59bbcea]
+~> TaskHandler[id: 27; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr11); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f1/c722caf2fb2f92153cc76874dd3d7d]
+~> TaskHandler[id: 35; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr19); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/39/04b7c280089d5ed85cab49bb672bc7]
+~> TaskHandler[id: 36; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr2); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f0/3cc0a3f0ea17794f6e2182e3d329ac]
+~> TaskHandler[id: 40; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr3); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/c6/7d3b5e666813e2786a38e5917f0709]
+~> TaskHandler[id: 30; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr14); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/13/a6cb182ec6523cdbfd4b60d376df4d]
+~> TaskHandler[id: 37; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr20); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/6f/3941534750d1382b5ec768fe238914]
+~> TaskHandler[id: 39; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr22); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/5b/4f0957a84bd21176f33819fd1fcb90]
+.. remaining tasks omitted.
+Feb-04 07:47:32.443 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 38; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr21); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/2b/27cc5101ba78bb7faee7a68834766f]
+Feb-04 07:47:39.036 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 39; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr22); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/5b/4f0957a84bd21176f33819fd1fcb90]
+Feb-04 07:49:24.739 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 37; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr20); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/6f/3941534750d1382b5ec768fe238914]
+Feb-04 07:50:00.586 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 35; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr19); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/39/04b7c280089d5ed85cab49bb672bc7]
+Feb-04 07:50:36.903 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 33; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr17); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ef/f39780b3550a41f5e4ddcc3071bbf0]
+Feb-04 07:50:39.234 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 34; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr18); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/a5/8ecef41ade5ee372d2711d3cc8cf7e]
+Feb-04 07:50:49.856 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 31; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr15); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/5d/839f926b3d20a93fc248b5300c524f]
+Feb-04 07:51:06.272 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor local > tasks to be completed: 15 -- submitted tasks are shown below
+~> TaskHandler[id: 25; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr1); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/16/6e391a3bae6e5505ba2bc5382548bb]
+~> TaskHandler[id: 32; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr16); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/6e/597f48900a8a1430772e74f59bbcea]
+~> TaskHandler[id: 27; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr11); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f1/c722caf2fb2f92153cc76874dd3d7d]
+~> TaskHandler[id: 36; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr2); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f0/3cc0a3f0ea17794f6e2182e3d329ac]
+~> TaskHandler[id: 40; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr3); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/c6/7d3b5e666813e2786a38e5917f0709]
+~> TaskHandler[id: 30; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr14); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/13/a6cb182ec6523cdbfd4b60d376df4d]
+~> TaskHandler[id: 26; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr10); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ba/f4617cfa9c8d6f5038a489ab2b4079]
+~> TaskHandler[id: 46; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr9); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ba/da3544f3585ebaf56b3e0847394358]
+~> TaskHandler[id: 28; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr12); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/eb/f1d76a54ba9db2bad6d54c3dfb5b74]
+~> TaskHandler[id: 29; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr13); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/eb/84269467ca2ef2ab277211ccfefb84]
+.. remaining tasks omitted.
+Feb-04 07:51:34.720 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 30; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr14); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/13/a6cb182ec6523cdbfd4b60d376df4d]
+Feb-04 07:52:17.634 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 29; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr13); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/eb/84269467ca2ef2ab277211ccfefb84]
+Feb-04 07:52:27.383 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 32; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr16); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/6e/597f48900a8a1430772e74f59bbcea]
+Feb-04 07:54:26.604 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 46; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr9); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ba/da3544f3585ebaf56b3e0847394358]
+Feb-04 07:54:52.576 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 28; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr12); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/eb/f1d76a54ba9db2bad6d54c3dfb5b74]
+Feb-04 07:55:33.104 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 27; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr11); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f1/c722caf2fb2f92153cc76874dd3d7d]
+Feb-04 07:55:45.557 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 26; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr10); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ba/f4617cfa9c8d6f5038a489ab2b4079]
+Feb-04 07:56:06.280 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor local > tasks to be completed: 8 -- submitted tasks are shown below
+~> TaskHandler[id: 25; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr1); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/16/6e391a3bae6e5505ba2bc5382548bb]
+~> TaskHandler[id: 36; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr2); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f0/3cc0a3f0ea17794f6e2182e3d329ac]
+~> TaskHandler[id: 40; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr3); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/c6/7d3b5e666813e2786a38e5917f0709]
+~> TaskHandler[id: 41; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr4); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/99/30d818bfed8043698f0af38218bc04]
+~> TaskHandler[id: 44; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr7); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f8/14440e1822d02e95278e7ac0fcdd73]
+~> TaskHandler[id: 45; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr8); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/8b/9a42a6f938a36c2f57100f9f3d2b8c]
+~> TaskHandler[id: 42; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr5); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/02/4f914fe90debdba932fd44044b4402]
+~> TaskHandler[id: 43; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr6); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/a4/edcc6da0e27a6afe9b54871b989d5e]
+Feb-04 07:57:19.762 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 45; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr8); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/8b/9a42a6f938a36c2f57100f9f3d2b8c]
+Feb-04 07:57:30.720 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 44; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr7); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f8/14440e1822d02e95278e7ac0fcdd73]
+Feb-04 07:58:44.545 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 42; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr5); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/02/4f914fe90debdba932fd44044b4402]
+Feb-04 07:58:55.512 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 43; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr6); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/a4/edcc6da0e27a6afe9b54871b989d5e]
+Feb-04 08:00:07.466 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 40; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr3); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/c6/7d3b5e666813e2786a38e5917f0709]
+Feb-04 08:00:23.204 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 41; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr4); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/99/30d818bfed8043698f0af38218bc04]
+Feb-04 08:01:05.379 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 25; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr1); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/16/6e391a3bae6e5505ba2bc5382548bb]
+Feb-04 08:01:06.380 [Task monitor] DEBUG n.processor.TaskPollingMonitor - !! executor local > tasks to be completed: 1 -- submitted tasks are shown below
+~> TaskHandler[id: 36; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr2); status: RUNNING; exit: -; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f0/3cc0a3f0ea17794f6e2182e3d329ac]
+Feb-04 08:03:00.737 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 36; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:harmonization (21001_raw_chr2); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/f0/3cc0a3f0ea17794f6e2182e3d329ac]
+Feb-04 08:03:00.760 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 08:03:00.761 [Task submitter] INFO  nextflow.Session - [e1/8486a8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits (21001_raw)
+Feb-04 08:03:02.539 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 47; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:main_harm:concatenate_chr_splits (21001_raw); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/e1/8486a8c6576100014dad9154b29f3c]
+Feb-04 08:03:02.554 [Actor Thread 90] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/basic_qc_nf.py
+Feb-04 08:03:02.561 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 08:03:02.561 [Task submitter] INFO  nextflow.Session - [e8/69e9f8] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc (21001_raw)
+Feb-04 08:05:15.788 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 48; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:qc (21001_raw); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/e8/69e9f81804f1ed0998ae0c67e4c20f]
+Feb-04 08:05:15.809 [Actor Thread 62] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/log_script.sh
+Feb-04 08:05:15.809 [Actor Thread 62] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/creat_log.py
+Feb-04 08:05:15.819 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 08:05:15.820 [Task submitter] INFO  nextflow.Session - [e1/cc5696] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log (21001_raw)
+Feb-04 08:05:50.005 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 49; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:harmonization_log (21001_raw); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/e1/cc5696d7359612ac0c23649a6b3a97]
+Feb-04 08:05:50.025 [Actor Thread 95] DEBUG nextflow.util.HashBuilder - Hash asset file sha-256: /home/ofgeha/.nextflow/assets/EBISPOT/gwas-sumstats-harmoniser/bin/gwas_metadata.py
+Feb-04 08:05:50.037 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Feb-04 08:05:50.037 [Task submitter] INFO  nextflow.Session - [ce/d80324] Submitted process > NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml (21001_raw)
+Feb-04 08:05:51.212 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 50; name: NFCORE_GWASCATALOGHARM:GWASCATALOGHARM:quality_control:update_meta_yaml (21001_raw); status: COMPLETED; exit: 0; error: -; workDir: /mnt/hdd_1/ofgeha/galaxy-gwas-tools/Gwaslab/work/ce/d80324c1aecbe2646409fdbd1a6584]
+Feb-04 08:05:51.217 [main] DEBUG nextflow.Session - Session await > all processes finished
+Feb-04 08:05:51.314 [Task monitor] DEBUG n.processor.TaskPollingMonitor - <<< barrier arrives (monitor: local) - terminating tasks monitor poll loop
+Feb-04 08:05:51.314 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Feb-04 08:05:51.318 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'TaskFinalizer' shutdown completed (hard=false)
+Feb-04 08:05:51.528 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'PublishDir' shutdown completed (hard=false)
+Feb-04 08:05:51.539 [main] DEBUG n.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=50; failedCount=0; ignoredCount=0; cachedCount=0; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=6h 38m 36s; failedDuration=0ms; cachedDuration=0ms;loadCpus=0; loadMemory=0; peakRunning=22; peakCpus=22; peakMemory=220 GB; ]
+Feb-04 08:05:51.636 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Feb-04 08:05:51.660 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'FileTransfer' shutdown completed (hard=false)
+Feb-04 08:05:51.661 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
