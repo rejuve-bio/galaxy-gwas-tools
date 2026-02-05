@@ -1,3 +1,3 @@
-Forward strand variant	760
-No VCF record found	6008
-Palindromic variant	109
+Forward strand variant	768
+No VCF record found	5984
+Palindromic variant	125
