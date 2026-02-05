@@ -1,0 +1,2 @@
+chromosome	base_pair_location	effect_allele	other_allele	beta	standard_error	effect_allele_frequency	neg_log_10_p_value	info	rsid	z_score	odds_ratio	ci_lower	ci_upper	hm_coordinate_conversion
+22	15925047	C	T	-0.1	0.2	0.7	0.4	ref_rs376238049_reverse_flipped	rs376238049	-0.5	1.4	1.25	1.67	rs

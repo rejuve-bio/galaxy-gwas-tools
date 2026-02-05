@@ -1,0 +1,4 @@
+chromosome	base_pair_location	effect_allele	other_allele	beta	standard_error	effect_allele_frequency	neg_log_10_p_value	info	rsid	z_score	odds_ratio	ci_lower	ci_upper	hm_coordinate_conversion
+1	1000013	CCCGTGGC	C	0.1	0.2	0.3	0.4	ref_rs1469404497_reverse_noflip	rs1469404497	0.5	0.7	0.6	0.8	rs
+1	758351	G	A	0.1	0.2	0.3	0.4	ref_rs12238997_forward_noflip	rs61769350	0.5	0.7	0.6	0.8	lo
+1	1000095	CGC	C	-0.1	0.2	0.7	0.4	ref_rs1014128468_forward_flipped	NA	-0.5	1.4	1.25	1.67	lo
