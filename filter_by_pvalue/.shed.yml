@@ -1,0 +1,11 @@
+name: filter_by_pvalue
+owner: ofge-gel_2019
+description: "Filters variants based on a P-value significance threshold."
+long_description: >
+  This tool filters a summary statistics file to keep only the variants that meet
+  a certain level of statistical significance. It is common to use a genome-wide
+  significance threshold of 5x10^-8 to identify the most promising variants for
+  follow-up analysis.
+categories:
+  - Statistics
+  - Variant Analysis

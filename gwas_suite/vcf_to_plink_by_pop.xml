@@ -1,0 +1,36 @@
+<tool id="vcf_to_plink_by_pop" name="VCF to PLINK by Population" version="1.0.9">
+    <description>Filters a VCF by population and converts to PLINK format</description>
+    <requirements>
+        <requirement type="package" version="1.90">plink</requirement>
+        <requirement type="package" version="1.21">wget</requirement>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        #set $output_prefix = "plink_output"
+        python3 "$__tool_directory__/vcf_to_plink_by_pop.py" --vcf "$vcf_input" --population "$population" --output_prefix "$output_prefix"
+        && mv "${output_prefix}.bed" "$output_bed"
+        && mv "${output_prefix}.bim" "$output_bim"
+        && mv "${output_prefix}.fam" "$output_fam"
+    ]]></command>
+    <inputs>
+        <param name="vcf_input" type="data" format="vcf_bgzip" label="Normalized VCF File" help="The output from the 'Download and Normalize' tool."/>
+        <param name="population" type="select" label="Super Population">
+            <option value="EUR" selected="true">European (EUR)</option>
+            <option value="AFR">African (AFR)</option>
+            <option value="EAS">East Asian (EAS)</option>
+            <option value="SAS">South Asian (SAS)</option>
+            <option value="AMR">Admixed American (AMR)</option>
+        </param>
+    </inputs>
+    <outputs>
+        <data name="output_bed" format="binary" label="PLINK BED for ${population} on ${vcf_input.name}" />
+        <data name="output_bim" format="tabular" label="PLINK BIM for ${population} on ${vcf_input.name}" />
+        <data name="output_fam" format="tabular" label="PLINK FAM for ${population} on ${vcf_input.name}" />
+    </outputs>
+    <help><![CDATA[
+**What it does**
+This tool takes a normalized VCF file and prepares it for use as a reference panel. It filters the VCF for the selected super-population and converts the data into PLINK format (`.bed`, `.bim`, `.fam`).
+**Outputs**
+This tool produces the three PLINK files as separate datasets, ready for use in downstream tools.
+    ]]></help>
+</tool>

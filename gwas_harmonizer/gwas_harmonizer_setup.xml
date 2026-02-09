@@ -1,0 +1,33 @@
+<tool id="gwas_harmonizer_setup" name="GWAS Harmonizer Setup" version="0.1.4">
+    <description>Prepare reference data for GWAS summary statistics harmonization</description>
+    <command detect_errors="exit_code">
+        <![CDATA[
+        bash '$__tool_directory__/run_harmonizer.sh'
+            '$code_repo'
+            '$ref_dir'
+            '$chromlist'
+        ]]>
+    </command>
+    <inputs>
+        <param name="code_repo" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser" label="Harmonizer code repository path"/>
+        <param name="ref_dir" type="text" value="/mnt/hdd_1/ofgeha/gwas-sumstats-harmoniser/gwas-ref" label="Reference data directory"/>
+        <param name="chromlist" type="text" value="22,X,Y,MT" label="Chromosome list"/>
+    </inputs>
+    <outputs>
+        <data name="report" format="html" label="Nextflow report">
+            <filter>ref_dir + '/logs/ref-report.html'</filter>
+        </data>
+        <data name="timeline" format="html" label="Nextflow timeline">
+            <filter>ref_dir + '/logs/ref-timeline.html'</filter>
+        </data>
+        <data name="trace" format="txt" label="Nextflow trace">
+            <filter>ref_dir + '/logs/ref-trace.txt'</filter>
+        </data>
+        <data name="dag" format="html" label="Nextflow DAG">
+            <filter>ref_dir + '/logs/ref-dag.html'</filter>
+        </data>
+        <data name="log" format="txt" label="Job Log">
+            <filter>ref_dir + '/galaxy_job.log'</filter>
+        </data>
+    </outputs>
+</tool>

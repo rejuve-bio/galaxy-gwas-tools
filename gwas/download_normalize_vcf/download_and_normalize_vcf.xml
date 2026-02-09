@@ -1,0 +1,38 @@
+<tool id="download_normalize_1000g" name="Download and Normalize 1000G VCF" version="0.1.2">
+    <description>Download and normalize a 1000 Genomes VCF for a specific chromosome</description>
+
+    <requirements>
+        <requirement type="package" version="1.17">bcftools</requirement>
+        <requirement type="package" version="1.17">htslib</requirement>
+        <requirement type="package">wget</requirement>
+        <requirement type="package">samtools</requirement>
+        <requirement type="package">python</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        python3 $__tool_directory__/download_and_normalize_vcf.py --chr '${chr}' --output_prefix 'output' --reference '${reference}' && mv output.normalized.vcf.gz '${vcf_output}' && mv output.normalized.vcf.gz.tbi '${vcf_output}.tbi'
+    ]]></command>
+
+
+
+    <inputs>
+        <param name="chr" type="text" label="Chromosome Number (e.g., 2 or 22)" />
+        <param name="reference" type="data" format="fasta" label="Reference Genome (FASTA, indexed with samtools faidx)" />
+    </inputs>
+
+    <outputs>
+        <data name="vcf_output" format="vcf_bgzip" label="Normalized VCF"/>
+    </outputs>
+
+    <help>
+This tool downloads a chromosome-specific VCF file from the 1000 Genomes Project hosted at UCSC, normalizes it using bcftools with respect to a reference genome, and compresses/indexes the output.
+
+**Requirements:**
+- The reference FASTA must be indexed (`.fai`).
+- Internet access must be enabled for downloading remote files.
+
+**Output:**
+- A normalized VCF file in bgzipped format (.vcf.gz)
+- Tabix index (.vcf.gz.tbi)
+    </help>
+</tool>

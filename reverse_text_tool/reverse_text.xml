@@ -1,0 +1,20 @@
+<tool id="reverse_text" name="Reverse Text" version="1.0.0">
+    <description>Reverses the contents of a text file</description>
+    <command>
+        <![CDATA[
+        python3 $__tool_directory__/reverse_text.py '$input' '$output'
+        ]]>
+    </command>
+
+    <inputs>
+        <param name="input" type="data" format="txt" label="Input text file" />
+    </inputs>
+
+    <outputs>
+        <data name="output" format="txt" label="Reversed output" />
+    </outputs>
+
+    <help>
+        This tool takes a text file and reverses its content character-by-character.
+    </help>
+</tool>
