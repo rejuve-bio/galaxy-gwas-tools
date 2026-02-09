@@ -1,0 +1,17 @@
+<tool id="convert_or_to_beta" name="Convert OR to BETA" version="0.1.0">
+    <description>Convert odds ratios to beta values using gwaslab</description>
+    <command detect_errors="exit_code">
+        <![CDATA[
+        python3 $__tool_directory__/convert_to_beta.py "$input" "$output"
+        ]]>
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Filtered GWAS Data"/>
+    </inputs>
+    <outputs>
+        <data name="output" format="tabular" label="GWAS Data with BETA"/>
+    </outputs>
+    <help>
+        Converts odds ratios (OR) to beta values using gwaslab's fill_data().
+    </help>
+</tool>

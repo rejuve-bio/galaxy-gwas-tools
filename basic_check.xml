@@ -1,0 +1,19 @@
+<tool id="gwas_basic_check_tool" name="GWASLab Basic Check" version="1.0.0">
+  <description>Run basic QC checks using GWASLab.</description>
+
+  <command>
+    python $__tool_directory__/basic_check.py $input_file $output_file
+  </command>
+
+  <inputs>
+    <param name="input_file" type="data" format="txt,tabular,tsv,csv,gz" label="Sumstats File (.glm.firth.gz)"/>
+  </inputs>
+
+  <outputs>
+    <data name="output_file" format="txt" label="GWASLab Basic Check Report"/>
+  </outputs>
+
+  <help>
+    This tool loads a GWAS summary statistics file and runs basic quality checks using gwaslab.Sumstats.basic_check().
+  </help>
+</tool>

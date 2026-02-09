@@ -1,0 +1,44 @@
+<tool id="vcf_to_plink_by_pop" name="VCF to PLINK by Population" version="1.0.5">
+    <description>Filters a VCF by population and converts to PLINK format</description>
+
+    <requirements>
+        <requirement type="package" version="1.90">plink</requirement>
+        <requirement type="package" version="1.21">wget</requirement>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        #set $output_prefix = "plink_output"
+        python3 "$__tool_directory__/vcf_to_plink_by_pop.py"
+            --vcf "$vcf_input"
+            --population "$population"
+            --output_prefix "$output_prefix"
+    ]]></command>
+
+    <inputs>
+        <param name="vcf_input" type="data" format="vcf_bgzip" label="Normalized VCF File" help="The output from the 'Download and Normalize' tool."/>
+        <param name="population" type="select" label="Super Population">
+            <option value="EUR" selected="true">European (EUR)</option>
+            <option value="AFR">African (AFR)</option>
+            <option value="EAS">East Asian (EAS)</option>
+            <option value="SAS">South Asian (SAS)</option>
+            <option value="AMR">Admixed American (AMR)</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <collection name="plink_files" type="list" label="PLINK files for ${population} on ${vcf_input.name}">
+            <discover_datasets pattern="plink_output\.(?P&lt;designation&gt;bed|bim|fam)" format="{designation}" visible="true" />
+        </collection>
+    </outputs>
+
+    <help><![CDATA[
+**What it does**
+
+This tool takes a normalized VCF file from the 1000 Genomes Project and prepares it for use as a reference panel. It automatically downloads the official population panel file, filters the VCF to keep only the samples from the selected super-population (e.g., European), and then converts the filtered data into PLINK format (`.bed`, `.bim`, `.fam`).
+
+**Outputs**
+
+This tool produces a **dataset collection** containing the three PLINK files, which can be used as input for the `GCTA-COJO` and `Calculate LD Matrix` tools.
+    ]]></help>
+</tool>
