@@ -1,0 +1,35 @@
+<tool id="add_snp_id" name="Add SNP ID to Sumstats" version="1.0.0">
+    <description>Adds a CHR:BP:A2:A1 identifier column</description>
+
+    <requirements>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        python3 '$__tool_directory__/add_snp_id.py'
+            --input '$input_file'
+            --output '$output_file'
+    ]]></command>
+
+    <inputs>
+        <param name="input_file" type="data" format="tsv" label="Formatted Summary Statistics" help="A TSV file, typically the output of the MungeSumstats Formatter."/>
+    </inputs>
+
+    <outputs>
+        <data name="output_file" format="tsv" label="${tool.name} on ${on_string}"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="input_file" value="add_id_input.tsv"/>
+            <output name="output_file" file="add_id_output.tsv" />
+        </test>
+    </tests>
+
+    <help><![CDATA[
+**What it does**
+
+This tool reads a formatted summary statistics file and adds a new column named `ID`.
+The ID is created by combining the chromosome, base pair position, and alleles in the format: `CHR:BP:A2:A1`.
+    ]]></help>
+</tool>

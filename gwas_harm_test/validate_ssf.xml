@@ -1,0 +1,59 @@
+<tool id="gwas_ssf_validator" name="GWAS SSF Validator" version="0.1.4">
+    <description>Validate and convert GWAS summary statistics to SSF format</description>
+    <requirements>
+        <requirement type="package" version="1.21">htslib</requirement>
+        <requirement type="package" version="3.8">python</requirement>
+    </requirements>
+    <command detect_errors="exit_code">
+<![CDATA[
+        python '$__tool_directory__/ssf_converter.py'
+        --input '$input_file'
+        --build '$genome_build'
+        --coord '$coordinate_system'
+        --output_ssf 'output.ssf.tsv.gz'
+        --output_yaml 'output.yaml'
+        --output_chromosomes 'chromosome_list.txt'
+]]>
+    </command>
+    
+    <inputs>
+        <param name="input_file" type="data" format="tsv,tabular,txt" 
+               label="GWAS Summary Statistics File" 
+               help="Input GWAS summary statistics file (Neale lab or PLINK format)"/>
+        
+        <param name="genome_build" type="select" label="Genome Build">
+            <option value="GRCh38">GRCh38/hg38</option>
+            <option value="GRCh37">GRCh37/hg19</option>
+        </param>
+        
+        <param name="coordinate_system" type="select" label="Coordinate System">
+            <option value="1-based">1-based</option>
+            <option value="0-based">0-based</option>
+        </param>
+    </inputs>
+    
+    <outputs>
+        <data name="output_ssf" format="tabular" from_work_dir="output.ssf.tsv.gz" label="${tool.name} on ${on_string}: SSF File"/>
+        <data name="output_yaml" format="yaml" from_work_dir="output.yaml" label="${tool.name} on ${on_string}: YAML Metadata"/>
+        <data name="chromosome_list" format="txt" from_work_dir="chromosome_list.txt" label="${tool.name} on ${on_string}: Chromosome List"/>
+    </outputs>
+    
+    <help>
+        <![CDATA[
+**GWAS SSF Validator**
+
+This tool validates and converts GWAS summary statistics to the SSF (Summary Statistics Format) standard.
+
+**Input Formats Supported:**
+- Neale Lab format (with 'variant' column in format chr:pos:ref:alt)
+- PLINK format (with chr, bp, a1, a2 columns)
+
+**Output:**
+1. **SSF File**: Standardized 9-column format (compressed):
+   - chromosome, base_pair_location, effect_allele, other_allele
+   - beta, standard_error, p_value, effect_allele_frequency, rsid
+2. **YAML Metadata**: Sidecar file with file metadata
+3. **Chromosome List**: Comma-separated list of chromosomes for downstream harmonization
+        ]]>
+    </help>
+</tool>

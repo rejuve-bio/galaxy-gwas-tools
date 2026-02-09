@@ -1,0 +1,21 @@
+<tool id="data_manager_gwas_harmonizer_ref" name="GWAS Harmonizer Reference Fetcher" version="1.0.0" tool_type="manage_data">
+    <description>Downloads and prepares reference data for the GWAS Harmonizer pipeline.</description>
+    <requirements>
+        <requirement type="package" version="22.10.8">nextflow</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><!}}; f = open('$output_json', 'w'); f.write(json.dumps(data_manager_json)); f.close()"
+    ]]></command>
+    <inputs>
+        <param name="build" type="select" label="Target Genome Build">
+            <option value="GRCh38" selected="true">GRCh38</option>
+            <option value="GRCh37">GRCh37</option>
+        </param>
+        <param name="name" type="text" value="GRCh38 Reference Data" label="Data Table Entry Name"/>
+    </inputs>
+    <outputs>
+        <data name="output_json" format="json" />
+    </outputs>
+    <tests>
+        </tests>
+    <help><!]></help>
+</tool>

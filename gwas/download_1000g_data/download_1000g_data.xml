@@ -1,0 +1,31 @@
+<tool id="download_1000g_data" name="Download 1000G Data" version="0.1.0">
+    <description>Download and preprocess 1000 Genomes Phase 3 VCFs</description>
+
+    <command detect_errors="exit_code">
+        python3 download_1000g_data.py --output_dir "$output_dir"
+    </command>
+
+    <inputs>
+        <param name="output_dir" type="text" label="Output Directory"
+               help="Path where all downloaded and processed files will be saved."/>
+    </inputs>
+
+    <outputs />
+
+    <requirements>
+        <requirement type="package">wget</requirement>
+        <requirement type="package">bcftools</requirement>
+        <requirement type="package">plink2</requirement>
+    </requirements>
+
+    <help><![CDATA[
+This tool downloads and processes the 1000 Genomes Phase 3 chr1 VCF file:
+
+1. Downloads chr1 VCF + index from the official 1000G FTP.
+2. Normalizes VCF using `bcftools norm`.
+3. Downloads the population panel and builds a population ID file.
+4. Converts VCF to PLINK format using `plink2`.
+
+Use the output directory to access all generated files.
+    ]]></help>
+</tool>

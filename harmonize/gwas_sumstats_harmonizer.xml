@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<tool id="gwas_sumstats_harmonizer" name="GWAS Sumstats Harmoniser" version="2.0.0">
+  <description>
+    Comprehensive harmonization of GWAS summary statistics using EBISPOT harmonizer.
+  </description>
+
+  <requirements>
+    <requirement type="package" version="3.8">python</requirement>
+    <requirement type="package">git</requirement>
+    <requirement type="package">curl</requirement>
+    <requirement type="package">tar</requirement>
+  </requirements>
+
+  <command detect_errors="exit_code"><![CDATA[
+python3 '$__tool_directory__/gwas_sumstats_harmonizer.py'
+  --input '$sumstats'
+  --to_build '$to_build'
+  --threshold '$threshold'
+  --chromosomes '$chromosomes'
+  --ref-dir '$ref_dir'
+  --repo-url '$repo_url'
+  --repo-dir '$repo_dir'
+  --workdir '.'
+  #if $min_mac:
+  --min-mac '$min_mac'
+  #end if
+  #if $info_score:
+  --info-score '$info_score'
+  #end if
+]]></command>
+
+  <inputs>
+    <!-- Input GWAS dataset -->
+    <param name="sumstats" type="data" format="txt,tsv,tabular" label="Input GWAS summary statistics"
+           help="Upload your GWAS summary statistics file (tab-delimited text)"/>
+
+    <!-- Target genome build -->
+    <param name="to_build" type="select" label="Target genome build">
+      <option value="37">GRCh37 (b37/hg19)</option>
+      <option value="38">GRCh38 (b38/hg38)</option>
+    </param>
+
+    <!-- Chromosomes to process -->
+    <param name="chromosomes" type="select" label="Chromosomes to harmonize">
+      <option value="all">All chromosomes (1-22, X, Y)</option>
+      <option value="autosomes">Autosomes only (1-22)</option>
+      <option value="1">Chromosome 1</option>
+      <option value="2">Chromosome 2</option>
+      <option value="3">Chromosome 3</option>
+      <option value="4">Chromosome 4</option>
+      <option value="5">Chromosome 5</option>
+      <option value="6">Chromosome 6</option>
+      <option value="7">Chromosome 7</option>
+      <option value="8">Chromosome 8</option>
+      <option value="9">Chromosome 9</option>
+      <option value="10">Chromosome 10</option>
+      <option value="11">Chromosome 11</option>
+      <option value="12">Chromosome 12</option>
+      <option value="13">Chromosome 13</option>
+      <option value="14">Chromosome 14</option>
+      <option value="15">Chromosome 15</option>
+      <option value="16">Chromosome 16</option>
+      <option value="17">Chromosome 17</option>
+      <option value="18">Chromosome 18</option>
+      <option value="19">Chromosome 19</option>
+      <option value="20">Chromosome 20</option>
+      <option value="21">Chromosome 21</option>
+      <option value="22">Chromosome 22</option>
+      <option value="X">Chromosome X</option>
+      <option value="Y">Chromosome Y</option>
+    </param>
+
+    <!-- Palindromic threshold -->
+    <param name="threshold" type="float" value="0.99" min="0.0" max="1.0" label="Palindromic threshold"
+           help="Threshold for handling palindromic SNPs (default 0.99)"/>
+
+    <!-- Reference directory -->
+    <param name="ref_dir" type="text" value="/mnt/hdd_1/ofgeha/gwas-ref"
+           label="Reference directory (absolute path)" help="Absolute path to reference data directory">
+      <validator type="empty_field" message="Reference directory is required"/>
+    </param>
+
+    <!-- Optional filters -->
+    <param name="min_mac" type="float" optional="true" min="0" label="Minimum minor allele count"
+           help="Optional: Filter variants by minimum minor allele count"/>
+           
+    <param name="info_score" type="float" optional="true" min="0" max="1" label="INFO score filter"
+           help="Optional: Filter variants by INFO score (0-1)"/>
+
+    <!-- Harmoniser repo settings -->
+    <param name="repo_url" type="text" value="https://github.com/EBISPOT/gwas-sumstats-harmoniser.git"
+           label="Harmoniser repository URL" help="Git repository to clone or update"/>
+
+    <param name="repo_dir" type="text" value="gwas-sumstats-harmoniser"
+           label="Local repository folder" help="Directory to clone repository or reuse existing"/>
+
+  </inputs>
+
+  <outputs>
+    <!-- Primary harmonized data output -->
+    <data name="harmonized_output" format="txt" from_work_dir="harmonized_data.txt"
+          label="Harmonized GWAS Data"/>
+    
+    <!-- Full output archive -->
+    <data name="output_archive" format="tar.gz" from_work_dir="harmonized_output.tar.gz"
+          label="Full Harmonizer Outputs (tar.gz)"/>
+    
+    <!-- Nextflow reports -->
+    <data name="nextflow_report" format="html" from_work_dir="harmonized_output/nextflow_report.html"
+          label="Nextflow Execution Report"/>
+          
+    <data name="nextflow_trace" format="txt" from_work_dir="harmonized_output/nextflow_trace.txt"
+          label="Nextflow Process Trace"/>
+          
+    <data name="nextflow_timeline" format="html" from_work_dir="harmonized_output/nextflow_timeline.html"
+          label="Nextflow Timeline Report"/>
+  </outputs>
+
+  <tests>
+    <test>
+      <param name="sumstats" value="test_gwas_data.txt" ftype="txt"/>
+      <param name="to_build" value="37"/>
+      <param name="chromosomes" value="1"/>
+      <param name="threshold" value="0.99"/>
+      <param name="ref_dir" value="/test/references"/>
+      <output name="harmonized_output" file="harmonized_data.txt" compare="sim_size"/>
+    </test>
+  </tests>
+
+  <help>
+<![CDATA[
+**GWAS Summary Statistics Harmoniser**
+
+This tool harmonizes GWAS summary statistics to a standardized format using the EBISPOT GWAS harmonizer.
+
+**Input Requirements:**
+- GWAS summary statistics in tab-delimited format
+- Must contain columns: SNP, CHR, BP, A1, A2, and either BETA/SE or OR/OR_95L/OR_95U
+- File should have a header row
+
+**Required Parameters:**
+- **Target genome build**: Specify which genome build to harmonize TO (GRCh37 or GRCh38)
+- **Chromosomes to harmonize**: Select which chromosomes to process (required by harmonizer)
+- **Palindromic threshold**: Threshold for handling palindromic SNPs (A/T, C/G)
+- **Reference directory**: Absolute path to directory containing reference data
+
+**Optional Parameters:**
+- **Minimum MAC**: Optional filter for minor allele count
+- **INFO score**: Optional filter for imputation quality
+
+**Outputs:**
+- **Harmonized GWAS Data**: Primary harmonized summary statistics file
+- **Full Harmonizer Outputs**: Complete output directory as tar.gz archive
+- **Nextflow Reports**: Execution reports, traces, and timelines for workflow monitoring
+
+**Note:** The tool uses the correct EBISPOT harmonizer parameters: --file, --to_build, --ref, --outdir
+]]>
+  </help>
+
+  <citations>
+    <citation type="doi">10.1038/s41588-020-00735-5</citation>
+  </citations>
+</tool>

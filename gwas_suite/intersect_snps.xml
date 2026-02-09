@@ -1,0 +1,31 @@
+<tool id="intersect_snps" name="Check for Overlapping SNPs" version="1.0.0">
+    <description>Finds common SNP IDs between two files</description>
+    <requirements>
+        <requirement type="package" version="2.1.0">pandas</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        python3 "$__tool_directory__/intersect_snps.py"
+            --file1 "$sumstats_file"
+            --col1 $sumstats_col
+            --file2 "$bim_file"
+            --col2 $bim_col
+            --output "$output_file"
+    ]]></command>
+    <inputs>
+        <param name="sumstats_file" type="data" format="tabular,tsv" label="Summary Statistics File" help="Your filtered summary statistics file."/>
+        <param name="sumstats_col" type="integer" value="1" label="Column with SNP IDs in Summary Statistics" help="Enter the column number (1-based) that contains the rsIDs."/>
+        
+        <param name="bim_file" type="data" format="tabular" label="BIM File" help="The .bim file from your PLINK reference panel."/>
+        <param name="bim_col" type="integer" value="2" label="Column with SNP IDs in BIM File" help="This is almost always column 2 for a standard BIM file."/>
+    </inputs>
+    <outputs>
+        <data name="output_file" format="list" label="Overlapping SNPs"/>
+    </outputs>
+    <help><![CDATA[
+**What it does**
+
+This diagnostic tool compares two files and outputs a list of identifiers (like SNP rsIDs) that are present in both. It is useful for checking why downstream tools might be failing due to a mismatch between a summary statistics file and a reference panel.
+
+If the output is empty, it means there are no common identifiers between your two files.
+    ]]></help>
+</tool>
