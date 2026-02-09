@@ -1,0 +1,11 @@
+<tool id="gwaslab_get_leads" name="Get Lead Variants" version="1.0.0">
+  <command>
+    python $__tool_directory__/get_leads.py $input_file $output_file
+  </command>
+  <inputs>
+    <param name="input_file" type="data" format="tabular" label="Checked Sumstats"/>
+  </inputs>
+  <outputs>
+    <data name="output_file" format="tabular" label="Lead Variants"/>
+  </outputs>
+</tool>

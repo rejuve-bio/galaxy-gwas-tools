@@ -1,0 +1,13 @@
+name: susie_finemap
+owner: ofge-gel_2019
+description: "Runs SuSiE fine-mapping using GWAS summary statistics and LD matrices."
+long_description: >
+  This tool wraps the R package `susieR` to perform summary-statistics-based fine-mapping.
+  It takes GWAS effect sizes (BETA, SE), a linkage disequilibrium (LD) matrix, and a
+  corresponding SNP list as input. The tool applies SuSiE (Sum of Single Effects) regression
+  to identify credible sets of causal variants and computes posterior inclusion probabilities
+  (PIPs) for each SNP. Outputs include a table of credible sets and a SNP–PIP file, suitable
+  for downstream fine-mapping and genetic architecture analyses.
+categories:
+  - Variant Analysis
+  - Statistics

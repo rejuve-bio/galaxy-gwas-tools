@@ -1,0 +1,50 @@
+<tool id="susie_finemap" name="SuSiE Fine-mapping" version="0.3.0">
+    <description>Fine-mapping using SuSiE (R version)</description>
+
+    <requirements>
+        <requirement type="package">r-susieR</requirement>
+        <requirement type="package">r-optparse</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+        Rscript $__tool_directory__/susie_finemap.R
+            --sumstats "$sumstats"
+            --ld_matrix "$ld_matrix"
+            --snp_list "$snp_list"
+            --L $L
+            --coverage $coverage
+            --n $n
+            --credible_sets_out "$credible_sets"
+            --pips_out "$pips"
+    ]]></command>
+
+    <inputs>
+        <param name="sumstats" type="data" format="tabular,tsv" label="GWAS Summary Statistics"/>
+        <param name="ld_matrix" type="data" format="tabular" label="LD Matrix"/>
+        <param name="snp_list" type="data" format="tabular" label="SNP List"/>
+        <param name="L" type="integer" value="-1" label="Number of components (-1 for auto)"/>
+        <param name="coverage" type="float" value="0.95" label="Credible set coverage"/>
+        <param name="n" type="integer" label="Sample size (required)" help="Number of individuals used in the GWAS."/>
+    </inputs>
+
+    <outputs>
+        <data name="credible_sets" format="tabular" label="Credible Sets"/>
+        <data name="pips" format="tabular" label="SNP PIPs"/>
+    </outputs>
+
+    <help>
+        This tool runs fine-mapping using the SuSiE R package.
+
+        **Inputs:**
+        - GWAS summary stats: must contain SNP, BETA, SE columns.
+        - LD Matrix: output of Calculate LD Matrix tool.
+        - SNP List: SNP order corresponding to LD matrix.
+        - Number of components: -1 (auto) or specify an integer.
+        - Credible set coverage: default 0.95.
+        - Sample size (n): number of individuals in the GWAS (required).
+
+        **Outputs:**
+        - Credible Sets
+        - SNP Posterior Inclusion Probabilities (PIPs)
+    </help>
+</tool>
