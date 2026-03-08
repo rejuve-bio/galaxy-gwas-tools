@@ -47,7 +47,7 @@ partd==1.4.2
 pexpect==4.9.0
 pillow==11.2.1
 platformdirs==4.3.8
-polars==1.31.0
+polars==1.38.1
 progressbar33==2.4
 prompt_toolkit==3.0.51
 psutil==7.0.0
