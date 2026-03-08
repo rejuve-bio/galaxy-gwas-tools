@@ -55,7 +55,7 @@ ptyprocess==0.7.0
 pure_eval==0.2.3
 pyarrow==20.0.0
 pyensembl==2.2.3
-Pygments==2.19.1
+Pygments==2.19.2
 pylint==3.3.7
 pyparsing==3.2.3
 pysam==0.22.1
