@@ -2,7 +2,7 @@ adjustText==0.8
 appdirs==1.4.4
 astroid==3.3.10
 asttokens==3.0.1
-biopython==1.85
+biopython==1.86
 certifi==2025.6.15
 charset-normalizer==3.4.2
 click==8.2.1
