@@ -50,7 +50,7 @@ platformdirs==4.3.8
 polars==1.38.1
 progressbar33==2.4
 prompt_toolkit==3.0.51
-psutil==7.0.0
+psutil==7.2.2
 ptyprocess==0.7.0
 pure_eval==0.2.3
 pyarrow==20.0.0
