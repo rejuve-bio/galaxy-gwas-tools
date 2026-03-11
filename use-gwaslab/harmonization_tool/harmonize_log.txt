@@ -1,0 +1,35 @@
+2026-01-09 21:43:38,917  === Harmonization started ===
+2026-01-09 21:45:02,270  Using your file: /home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz
+2026-01-09 22:20:23,033  Started GWAS harmonization process
+2026-01-09 22:21:38,184  Sumstats file: /home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz
+2026-01-09 22:25:29,357  Started harmonization
+2026-01-09 22:25:53,336  File: path/to/your_sumstats.txt.gz
+2026-01-09 22:26:17,448  File: /home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz
+2026-01-09 22:38:29,952  Started harmonization
+2026-01-10 13:32:23,807 Harmonization started
+2026-01-10 13:32:25,921 File: /home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz
+2026-01-10 13:32:29,941 File: /home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz
+2026-01-10 13:32:36,360 Sumstats loaded
+2026-01-10 13:32:48,638 Guessed build (from STATUS): hg19
+2026-01-10 13:32:54,640 References: seq=/home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/chr7.fasta.gz, infer=/home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/1kg_eas_hg19.chr7_126253550_128253550.vcf.gz, rsid=/home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/1kg_dbsnp151_hg19_auto_hm3_chr7_variants.txt.gz
+2026-01-10 13:33:31,308 QC done
+2026-01-10 13:33:40,891 rsIDs annotated
+2026-01-10 13:34:06,852 rsIDs annotated
+2026-01-10 13:35:42,245 Harmonization done
+2026-01-10 13:37:31,878 Results checked
+2026-01-10 13:37:44,422 Results checked
+2026-01-10 13:38:22,968 Results checked
+2026-01-10 13:42:07,410 Results checked
+2026-01-10 13:45:12,653 Harmonization started
+2026-01-10 13:45:12,663 File: /home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz
+2026-01-10 13:45:15,647 Sumstats loaded
+2026-01-10 13:45:19,901 Guessed build (from STATUS): hg19
+2026-01-10 13:45:19,912 References: seq=/home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/chr7.fasta.gz, infer=/home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/1kg_eas_hg19.chr7_126253550_128253550.vcf.gz, rsid=/home/dawit/Documents/Projects/GalaxyTools/GWASLAB/gwaslab-sample-data/1kg_dbsnp151_hg19_auto_hm3_chr7_variants.txt.gz
+2026-01-10 13:45:27,824 QC done
+2026-01-10 13:45:33,036 rsIDs annotated
+2026-01-10 13:46:03,196 Harmonization done
+2026-01-10 13:46:04,872 Results checked
+2026-01-10 15:45:04,986 Results checked
+2026-01-10 15:45:22,439 Results checked
+2026-01-10 15:46:36,254 Saved: clean_harmonized.ldsc.tsv.gz
+2026-01-10 15:46:36,255 Finished

@@ -1,0 +1,208 @@
+2026/01/09 19:18:26 Sumstats Object created.
+2026/01/09 19:18:26 GWASLab v4.0.4 https://cloufield.github.io/gwaslab/
+2026/01/09 19:18:26 (C) 2022-2026, Yunye He, Kamatani Lab, GPL-3.0 license, gwaslab@gmail.com
+2026/01/09 19:18:26 Python version: 3.12.12 | packaged by conda-forge | (main, Oct 22 2025, 23:25:55) [GCC 14.3.0]
+2026/01/09 19:18:26 Start to initialize gl.Sumstats from file :gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz
+2026/01/09 19:18:29  -Reading columns          : NEA,P,POS,CHR,SE,EAF,EA,BETA,SNPID,N
+2026/01/09 19:18:29  -Renaming columns to      : NEA,P,POS,CHR,SE,EAF,EA,BETA,SNPID,N
+2026/01/09 19:18:29  -Current Dataframe shape : 1103020  x  10
+2026/01/09 19:18:30  -Initiating a status column: STATUS ...
+2026/01/09 19:18:30 #WARNING! Version of genomic coordinates is unknown for homo sapiens (build: 99)...
+2026/01/09 19:18:30  -NEAF is specified...
+2026/01/09 19:18:30  -Checking if 0<= NEAF <=1 ...
+2026/01/09 19:18:31  -Converted NEAF to EAF.
+2026/01/09 19:18:31  -Removed 0 variants with bad NEAF.
+2026/01/09 19:18:31 Start to reorder the columns ...(v4.0.4)
+2026/01/09 19:18:31  -Reordering columns to    : SNPID,CHR,POS,EA,NEA,STATUS,EAF,BETA,SE,P,N
+2026/01/09 19:18:31 Finished reordering the columns.
+2026/01/09 19:18:31  -Trying to convert datatype for CHR: string -> Int64...Failed...
+2026/01/09 19:18:31  -Column  : SNPID  CHR    POS   EA       NEA      STATUS EAF     BETA    SE      P       N    
+2026/01/09 19:18:31  -DType   : object string int64 category category int64  float64 float64 float64 float64 int64
+2026/01/09 19:18:31  -Verified: T      F      T     T        T        T      T       T       T       T       T    
+2026/01/09 19:18:31 #WARNING! Columns with possibly incompatible dtypes: CHR
+2026/01/09 19:18:31 #WARNING! Consider using Sumstats.fix_chr() to fix CHR dtype
+2026/01/09 19:18:31  -Current Dataframe memory usage: 87.32 MB
+2026/01/09 19:18:31 Finished loading data successfully!
+2026/01/09 19:18:31 #WARNING! Version of genomic coordinates is unknown for homo sapiens (build: 99)...
+2026/01/09 19:18:31 Path component detected: ['139142129350032']
+2026/01/09 19:18:31 Creating path: ./139142129350032
+2026/01/09 19:18:31 Start to check SNPID/rsID ...(v4.0.4)
+2026/01/09 19:18:31  -Current Dataframe shape : 1103020 x 11 ; Memory usage: 87.32 MB
+2026/01/09 19:18:31  -Checking SNPID data type...
+2026/01/09 19:18:31  -Converted datatype for SNPID: object -> string
+2026/01/09 19:18:32  -Checking if SNPID contains NA strings :na,NA,Na,Nan,NaN,<NA>,null,NULL,#N/A,#VALUE!,N/A,n/a,missing,...
+2026/01/09 19:18:32  -Checking if SNPID is CHR:POS:NEA:EA...(separator: - ,: , _)
+2026/01/09 19:18:33 Finished checking SNPID/rsID.
+2026/01/09 19:18:33 Start to fix chromosome notation (CHR) ...(v4.0.4)
+2026/01/09 19:18:33  -Checking CHR data type...
+2026/01/09 19:18:33  -Variants with standardized chromosome notation: 1100517
+2026/01/09 19:18:33  -Variants with fixable chromosome notations: 2503
+2026/01/09 19:18:33  -No unrecognized chromosome notations...
+2026/01/09 19:18:33  -Identifying non-autosomal chromosomes : X, Y, and MT ...
+2026/01/09 19:18:33  -Identified 2503 variants on sex chromosomes...
+2026/01/09 19:18:33  -Standardizing first sex chromosome chromosome notations: X to 23...
+2026/01/09 19:18:34 Finished fixing chromosome notation (CHR).
+2026/01/09 19:18:34 Start to fix basepair positions (POS) ...(v4.0.4)
+2026/01/09 19:18:34  -Trying to convert datatype for POS: int64 -> Int64...
+2026/01/09 19:18:34  -Position bound:(0 , 250,000,000)
+2026/01/09 19:18:34  -No outlier variants were removed.
+2026/01/09 19:18:34 Finished fixing basepair positions (POS).
+2026/01/09 19:18:34 Start to fix alleles (EA and NEA) ...(v4.0.4)
+2026/01/09 19:18:34  -Converted all bases to string datatype and UPPERCASE
+2026/01/09 19:18:34  -All variants have valid alleles (EA and NEA are A/C/T/G, not NA, and different).
+2026/01/09 19:18:36 Finished fixing alleles (EA and NEA).
+2026/01/09 19:18:36 Start to perform sanity check for statistics ...(v4.0.4)
+2026/01/09 19:18:36  -Comparison tolerance for floats: 1e-07
+2026/01/09 19:18:36  -Checking if any columns are empty...
+2026/01/09 19:18:37  -Checking if 0 <= N <= 2147483647 : removed 0 variants.
+2026/01/09 19:18:37  -Checking if -1e-07 < EAF < 1.0000001 : removed 0 variants.
+2026/01/09 19:18:37  -Checking if -1e-07 < P < 1.0000001 : removed 0 variants.
+2026/01/09 19:18:37  -Checking if -100.0000001 < BETA < 100.0000001 : removed 0 variants.
+2026/01/09 19:18:37  -Checking if -1e-07 < SE < inf : removed 0 variants.
+2026/01/09 19:18:38  -Checking STATUS and converting STATUS to Int64....
+2026/01/09 19:18:38  -No variants were removed with bad statistics in total.
+2026/01/09 19:18:38 Finished sanity check for statistics.
+2026/01/09 19:18:38 Start to check data consistency across columns ...(v4.0.4)
+2026/01/09 19:18:38  -Tolerance: 0.001 (Relative) and 0.001 (Absolute)
+2026/01/09 19:18:38  -Checking if BETA/SE-derived-P is consistent with P...
+2026/01/09 19:18:38   -Potentially inconsistent (likely due to rounding): 380165 variant(s)
+2026/01/09 19:18:38   -Variant SNPID with max fold change: X:33592708_C_T with 1.05x
+2026/01/09 19:18:38   -Note: Minor differences are typically due to rounding.
+2026/01/09 19:18:38    -If the max difference is greater than expected, please check your original sumstats.
+2026/01/09 19:18:38 Finished checking data consistency across columns.
+2026/01/09 19:18:38 Start to normalize indels ...(v4.0.4)
+2026/01/09 19:18:38  -Number of threads/cores to use: 1
+2026/01/09 19:18:38  -No available variants to normalize..
+2026/01/09 19:18:38 Finished normalizing indels.
+2026/01/09 19:18:38 Start to sort the genome coordinates ...(v4.0.4)
+2026/01/09 19:18:38 Finished sorting coordinates.
+2026/01/09 19:18:38 Start to reorder the columns ...(v4.0.4)
+2026/01/09 19:18:38  -Reordering columns to    : SNPID,CHR,POS,EA,NEA,STATUS,EAF,BETA,SE,P,N
+2026/01/09 19:18:38 Finished reordering the columns.
+2026/01/09 19:18:39  -Genomic coordinates are based on GRCh37/hg19...
+2026/01/09 19:18:39 Start to infer genome build version using hapmap3 SNPs ...(v4.0.4)
+2026/01/09 19:18:39  -Loading Hapmap3 variants data...
+2026/01/09 19:18:46  -CHR and POS will be used for matching...
+2026/01/09 19:18:46  -Matching variants for hg19: num_hg19 =  1093200
+2026/01/09 19:18:46  -Matching variants for hg38: num_hg38 =  10807
+2026/01/09 19:18:46  -Since num_hg19 >> num_hg38, set the genome build to hg19 for the STATUS code....
+2026/01/09 19:18:47  -Genomic coordinates are based on GRCh37/hg19...
+2026/01/09 19:18:47  -Genomic coordinates are based on GRCh37/hg19...
+2026/01/09 19:18:47 Finished inferring genome build version using hapmap3 SNPs.
+2026/01/09 19:19:11 Start to assign rsID using reference file ...(v4.0.4)
+2026/01/09 19:19:11  -Number of threads/cores to use: 1
+2026/01/09 19:19:11  -1103020 rsID could be possibly fixed...
+2026/01/09 19:19:11  -Setting block size:  5000000
+2026/01/09 19:19:11  -Loading block: 0   
+2026/01/09 19:19:15  -rsID annotation for 1103020 variants needed to be fixed!
+2026/01/09 19:19:15  -Annotated 0 rsID successfully!
+2026/01/09 19:19:15  -Current Dataframe shape : 1103020 x 12 ; Memory usage: 88.38 MB
+2026/01/09 19:19:15 Finished assign rsID using reference file.
+2026/01/09 19:19:15 Start to assign rsID using reference file ...(v4.0.4)
+2026/01/09 19:19:15  -Number of threads/cores to use: 1
+2026/01/09 19:19:15  -Assigning rsID based on CHR:POS and REF:ALT/ALT:REF...
+2026/01/09 19:19:59  -rsID annotation for 1100554 variants need to be fixed!
+2026/01/09 19:19:59  -Annotated 2466 rsID successfully!
+2026/01/09 19:19:59 Finished assign rsID using reference file.
+2026/01/09 19:23:13 Start to check if NEA is aligned with reference sequence ...(v4.0.4)
+2026/01/09 19:23:13  -Reference genome FASTA file: gwaslab-sample-data/chr7.fasta.gz
+2026/01/09 19:23:14    -Loading and building numpy fasta records:
+2026/01/09 19:23:15  -Variants allele on given reference sequence :  0
+2026/01/09 19:23:15  -Variants flipped :  0
+2026/01/09 19:23:15   -Raw Matching rate :  0.00%
+2026/01/09 19:23:15 #WARNING! Matching rate is low, please check if the right reference genome is used.
+2026/01/09 19:23:15  -Variants inferred reverse_complement :  0
+2026/01/09 19:23:15  -Variants inferred reverse_complement_flipped :  0
+2026/01/09 19:23:15  -Both allele on genome + unable to distinguish :  0
+2026/01/09 19:23:15  -Variants not on given reference sequence :  0
+2026/01/09 19:23:15 Finished checking if NEA is aligned with reference sequence.
+2026/01/09 19:23:15 Start to adjust statistics based on STATUS code ...(v4.0.4)
+2026/01/09 19:23:16  -No statistics have been changed.
+2026/01/09 19:23:16 Finished adjusting statistics based on STATUS code.
+2026/01/09 19:23:17 Start to infer strand for palindromic SNPs/align indistinguishable indels ...(v4.0.4)
+2026/01/09 19:23:17  -Number of threads/cores to use: 3
+2026/01/09 19:23:17  -Field for alternative allele frequency in VCF INFO: AF
+2026/01/09 19:23:18  -Identified  1431  palindromic SNPs...
+2026/01/09 19:23:18  -After filtering by MAF<= 0.4 , 0 palindromic SNPs with unknown strand will be inferred...
+2026/01/09 19:23:18 #WARNING! No palindromic variants available for checking.
+2026/01/09 19:23:18   -Non-palindromic :  1100575
+2026/01/09 19:23:18   -Palindromic SNPs on + strand:  0
+2026/01/09 19:23:18   -Palindromic SNPs on - strand and needed to be flipped: 0
+2026/01/09 19:23:18   -Palindromic SNPs with MAF not available to infer :  96
+2026/01/09 19:23:19   -Palindromic SNPs lacking reference matches, or with reference ALT unavailable or above MAF threshold for inference :  0
+2026/01/09 19:23:19  -Identified  0  indistinguishable Indels...
+2026/01/09 19:23:19 #WARNING! No indistinguishable indels available for checking.
+2026/01/09 19:23:19 Finished inferring strand for palindromic SNPs/align indistinguishable indels.
+2026/01/09 19:23:19 Start to adjust statistics based on STATUS code ...(v4.0.4)
+2026/01/09 19:23:19  -No statistics have been changed.
+2026/01/09 19:23:19 Finished adjusting statistics based on STATUS code.
+2026/01/09 19:23:19 Start to sort the genome coordinates ...(v4.0.4)
+2026/01/09 19:23:20 Finished sorting coordinates.
+2026/01/09 19:23:20 Start to reorder the columns ...(v4.0.4)
+2026/01/09 19:23:20  -Reordering columns to    : SNPID,rsID,CHR,POS,EA,NEA,STATUS,EAF,BETA,SE,P,N
+2026/01/09 19:23:20 Finished reordering the columns.
+2026/01/09 19:44:18 Start to check if NEA is aligned with reference sequence ...(v4.0.4)
+2026/01/09 19:44:18  -Reference genome FASTA file: gwaslab-sample-data/chr7.fasta.gz
+2026/01/09 19:44:19    -Loading and building numpy fasta records:
+2026/01/09 19:44:21  -Variants allele on given reference sequence :  0
+2026/01/09 19:44:21  -Variants flipped :  0
+2026/01/09 19:44:21   -Raw Matching rate :  0.00%
+2026/01/09 19:44:21 #WARNING! Matching rate is low, please check if the right reference genome is used.
+2026/01/09 19:44:21  -Variants inferred reverse_complement :  0
+2026/01/09 19:44:21  -Variants inferred reverse_complement_flipped :  0
+2026/01/09 19:44:21  -Both allele on genome + unable to distinguish :  0
+2026/01/09 19:44:21  -Variants not on given reference sequence :  0
+2026/01/09 19:44:21 Finished checking if NEA is aligned with reference sequence.
+2026/01/09 19:44:21 Start to adjust statistics based on STATUS code ...(v4.0.4)
+2026/01/09 19:44:21  -No statistics have been changed.
+2026/01/09 19:44:21 Finished adjusting statistics based on STATUS code.
+2026/01/09 19:44:23 Start to infer strand for palindromic SNPs/align indistinguishable indels ...(v4.0.4)
+2026/01/09 19:44:23  -Number of threads/cores to use: 3
+2026/01/09 19:44:23  -Field for alternative allele frequency in VCF INFO: AF
+2026/01/09 19:44:23  -Identified  1431  palindromic SNPs...
+2026/01/09 19:44:23  -After filtering by MAF<= 0.4 , 0 palindromic SNPs with unknown strand will be inferred...
+2026/01/09 19:44:23 #WARNING! No palindromic variants available for checking.
+2026/01/09 19:44:23   -Non-palindromic :  1100575
+2026/01/09 19:44:24   -Palindromic SNPs on + strand:  0
+2026/01/09 19:44:24   -Palindromic SNPs on - strand and needed to be flipped: 0
+2026/01/09 19:44:24   -Palindromic SNPs with MAF not available to infer :  96
+2026/01/09 19:44:24   -Palindromic SNPs lacking reference matches, or with reference ALT unavailable or above MAF threshold for inference :  0
+2026/01/09 19:44:24  -Identified  0  indistinguishable Indels...
+2026/01/09 19:44:24 #WARNING! No indistinguishable indels available for checking.
+2026/01/09 19:44:24 Finished inferring strand for palindromic SNPs/align indistinguishable indels.
+2026/01/09 19:44:24 Start to adjust statistics based on STATUS code ...(v4.0.4)
+2026/01/09 19:44:24  -No statistics have been changed.
+2026/01/09 19:44:24 Finished adjusting statistics based on STATUS code.
+2026/01/09 19:44:24 Start to sort the genome coordinates ...(v4.0.4)
+2026/01/09 19:44:25 Finished sorting coordinates.
+2026/01/09 19:44:25 Start to reorder the columns ...(v4.0.4)
+2026/01/09 19:44:25  -Reordering columns to    : SNPID,rsID,CHR,POS,EA,NEA,STATUS,EAF,BETA,SE,P,N,ALLELE_FLIPPED
+2026/01/09 19:44:25 Finished reordering the columns.
+2026/01/09 19:49:23 Start to convert the output sumstats in:  ssf  format
+2026/01/09 19:49:23  -Formatting statistics ...
+2026/01/09 19:49:27  -Float statistics formats:
+2026/01/09 19:49:27   - Columns       : ['EAF', 'BETA', 'SE', 'P']
+2026/01/09 19:49:27   - Output formats: ['{:.4g}', '{:.4f}', '{:.4f}', '{:.4e}']
+2026/01/09 19:49:27  -Replacing SNPID separator from ":" to "_"...
+2026/01/09 19:49:27  -Start outputting sumstats in ssf format...
+2026/01/09 19:49:27  -ssf format will be loaded...
+2026/01/09 19:49:27  -ssf format meta info:
+2026/01/09 19:49:27   - format_name  : ssf
+2026/01/09 19:49:27   - format_source  : https://www.biorxiv.org/content/10.1101/2022.07.15.500230v1.full
+2026/01/09 19:49:27   - format_cite_name  : GWAS-SSF v0.1
+2026/01/09 19:49:27   - format_separator  : \t
+2026/01/09 19:49:27   - format_na  : #NA
+2026/01/09 19:49:27   - format_col_order  : chromosome,base_pair_location,effect_allele,other_allele,beta,odds_ratio,hazard_ratio,standard_error,effect_allele_frequency,p_value,neg_log_10_p_value,ci_upper,ci_lower,rsid,variant_id,info,ref_allele,n
+2026/01/09 19:49:27   - format_version  :  20230328
+2026/01/09 19:49:27  -gwaslab to ssf format dictionary:
+2026/01/09 19:49:27   - gwaslab keys: SNPID,rsID,CHR,POS,NEA,EA,EAF,N,BETA,SE,P,MLOG10P,INFO,OR,HR,OR_95L,OR_95U
+2026/01/09 19:49:27   - ssf values: variant_id,rsid,chromosome,base_pair_location,other_allele,effect_allele,effect_allele_frequency,n,beta,standard_error,p_value,neg_log_10_p_value,info,odds_ratio,hazard_ratio,ci_lower,ci_upper
+2026/01/09 19:49:27  -Output path: clean_sumstats.ssf.tsv.gz
+2026/01/09 19:49:28  -Output columns: chromosome,base_pair_location,effect_allele,other_allele,beta,standard_error,effect_allele_frequency,p_value,rsid,variant_id,n
+2026/01/09 19:49:28  -Writing sumstats to: clean_sumstats.ssf.tsv.gz...
+2026/01/09 19:49:49  -md5sum hashing for the file: clean_sumstats.ssf.tsv.gz
+2026/01/09 19:49:49  -md5sum path: clean_sumstats.ssf.tsv.gz.md5sum
+2026/01/09 19:49:49  -md5sum: 2b9455da45dd2d3315c45bb4f2a6f264
+2026/01/09 19:49:49  -Exporting SSF-style meta data to clean_sumstats.ssf.tsv.gz.ssf.tsv-meta.yaml
+2026/01/09 19:49:49  -Saving log file to: clean_sumstats.ssf.log
+2026/01/09 19:49:49 Finished outputting successfully!

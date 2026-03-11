@@ -1,0 +1,87 @@
+<tool id="gwaslab_harmonization" name="GWASLab Harmonization" version="1.3.1">
+    <description>Harmonize GWAS summary statistics using GWASLab (references by upload)</description>
+    <requirements>
+        <requirement type="pip" version="4.0.4">gwaslab</requirement>
+        <requirement type="package" version="3.12">python</requirement>
+    </requirements>
+<command detect_errors="exit_code"><![CDATA[
+python '$__tool_directory__/harmonize_gwas.py'
+--input '$input'
+--format '$format.format_selector'
+#if $format.format_selector == "custom"
+--format '$format.format_custom'
+#end if
+#if $format.format_selector == "manual"
+--snpid '$format.snpid'
+--chrom '$format.chrom'
+--pos '$format.pos'
+--ea '$format.ea'
+--nea '$format.nea'
+--eaf '$format.eaf'
+--beta '$format.beta'
+--se '$format.se'
+--p '$format.p'
+--n '$format.n'
+#end if
+--ref_seq '$references.ref_seq'
+--ref_infer '$references.ref_infer'
+#if $references.ref_rsid_tsv
+--ref_rsid_tsv '$references.ref_rsid_tsv'
+#end if
+--output '$output'
+--log '$log'
+]]></command>
+
+    <inputs>
+        <param name="input" type="data" format="txt,tsv,csv,gz" label="GWAS Summary Statistics File" help="Tab-separated or gzipped" />
+
+        <section name="format" title="Format &amp; Column Specification" expanded="true">
+            <conditional name="format">
+                <param name="format_selector" type="select" label="Format / Column Specification">
+                    <option value="auto" selected="true">Auto-detect (default)</option>
+                    <option value="custom">Use format keyword from formatbook</option>
+                    <option value="manual">Manually specify column names</option>
+                </param>
+                <when value="auto" />
+                <when value="custom">
+                    <param name="format_custom" type="text" label="Format keyword" help="e.g., plink2, saige, metal" />
+                </when>
+                <when value="manual">
+                    <param name="snpid" type="text" optional="true" label="SNPID column" />
+                    <param name="chrom" type="text" optional="true" label="CHR column" />
+                    <param name="pos" type="text" optional="true" label="POS column" />
+                    <param name="ea" type="text" optional="true" label="EA column" />
+                    <param name="nea" type="text" optional="true" label="NEA column" />
+                    <param name="eaf" type="text" optional="true" label="EAF column" />
+                    <param name="beta" type="text" optional="true" label="BETA column" />
+                    <param name="se" type="text" optional="true" label="SE column" />
+                    <param name="p" type="text" optional="true" label="P column" />
+                    <param name="n" type="text" optional="true" label="N column" />
+                </when>
+            </conditional>
+        </section>
+
+        <section name="references" title="Reference Files (Required)" expanded="true">
+            <param name="ref_seq" type="data" format="fasta,gz" label="Reference Genome FASTA (required)" help="Upload ucsc_genome_hg19.fasta.gz or hg38" />
+            <param name="ref_infer" type="data" format="vcf,gz" label="Inference VCF with AF (required)" help="Upload 1kg_pan_hg19.vcf.gz or similar (must have AF in INFO)" />
+            <param name="ref_rsid_tsv" type="data" format="txt,tsv,gz" label="rsID TSV (optional)" help="Upload e.g., 1kg_dbsnp151_hg19_auto.txt.gz — leave blank to skip" optional="true" />
+        </section>
+    </inputs>
+    <outputs>
+        <data name="output" format="gz" label="Harmonized GWAS (LDSC format)" />
+        <data name="log" format="txt" label="Harmonization Log" />
+    </outputs>
+    <help><![CDATA[
+**GWASLab Harmonization Tool**
+
+Harmonizes GWAS summary statistics using GWASLab v4.0.4.
+
+**Important**:
+- Reference FASTA (ref_seq) and Inference VCF (ref_infer) are **required** — upload files from local or history.
+- rsID TSV is optional (leave blank to skip).
+- Format: Auto-detect, keyword, or manual column names.
+- Output: Clean LDSC file + log.
+
+Designed for large datasets with multi-threading.
+    ]]></help>
+</tool>

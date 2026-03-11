@@ -1,0 +1,604 @@
+coordinate_system: 1-based
+data_file_md5sum: 2b9455da45dd2d3315c45bb4f2a6f264
+data_file_name: clean_sumstats.ssf.tsv.gz
+date_last_modified: 2026-01-09-19:49:49
+file_type: GWAS-SSF v0.1
+genome_assembly: Unknown
+genotyping_technology: Unknown
+gwas_id: Unknown
+gwaslab:
+  basic_check: &id015
+    last_executed: '2026-01-09 19:18:38'
+    parameters_used:
+      consistency_check_kwargs: &id007 {}
+      fix_allele_kwargs: &id005 {}
+      fix_chr_kwargs: &id006 {}
+      fix_id_kwargs: &id008 {}
+      fix_pos_kwargs: &id010 {}
+      normalize: true
+      normalize_allele_kwargs: &id009 {}
+      remove: false
+      remove_dup: false
+      remove_dup_kwargs: &id011 {}
+      sanity_check_stats_kwargs: &id012 {}
+      threads: 1
+      verbose: true
+    performed: true
+  genome_build: '19'
+  gwaslab_object: gwaslab.Sumstats
+  gwaslab_version: 4.0.4
+  harmonize: &id016
+    last_executed: '2026-01-09 19:44:25'
+    parameters_used:
+      assign_rsid_kwargs: {}
+      basic_check: false
+      check_ref_kwargs: &id001 {}
+      fix_allele_kwargs: {}
+      fix_chr_kwargs: {}
+      fix_id_kwargs: {}
+      fix_pos_kwargs: {}
+      flip_allele_stats_kwargs: &id002 {}
+      infer_strand_kwargs: &id003 {}
+      liftover_kwargs: &id004 {}
+      maf_threshold: 0.4
+      normalize_allele_kwargs: {}
+      ref_alt_freq: AF
+      ref_infer: gwaslab-sample-data/1kg_eas_hg19.chr7_126253550_128253550.vcf.gz
+      ref_maf_threshold: 0.4
+      ref_rsid_tsv: null
+      ref_rsid_vcf: null
+      ref_seq: gwaslab-sample-data/chr7.fasta.gz
+      remove: false
+      remove_dup_kwargs: {}
+      sanity_check_stats_kwargs: {}
+      sweep_mode: false
+      threads: 3
+      verbose: true
+    performed: true
+  inferred_ancestry: Unknown
+  population_prevalence: Unknown
+  qc_and_harmonization_status: &id017
+    harmonize:
+      assign_rsid:
+        last_executed: '2026-01-09 19:44:06'
+        parameters_used:
+          chrom: CHR
+          convert_to_bcf: false
+          ea: EA
+          lookup_path: null
+          nea: NEA
+          overwrite: all
+          path: gwaslab-sample-data/b157_2564.vcf.gz
+          pos: POS
+          rsid: rsID
+          strip_info: true
+          threads: 6
+          tsv_path: null
+          vcf_path: null
+        performed: true
+      check_ref:
+        last_executed: '2026-01-09 19:44:25'
+        parameters_used: *id001
+        performed: true
+      flip_allele_stats:
+        last_executed: '2026-01-09 19:44:25'
+        parameters_used: *id002
+        performed: true
+      infer_strand:
+        last_executed: '2026-01-09 19:44:25'
+        parameters_used: *id003
+        performed: true
+      liftover:
+        last_executed: ''
+        parameters_used: *id004
+        performed: false
+    qc:
+      allele:
+        last_executed: '2026-01-09 19:18:38'
+        parameters_used: *id005
+        performed: true
+      chr:
+        last_executed: '2026-01-09 19:18:38'
+        parameters_used: *id006
+        performed: true
+      consistency:
+        last_executed: '2026-01-09 19:18:38'
+        parameters_used: *id007
+        performed: true
+      id:
+        last_executed: '2026-01-09 19:18:38'
+        parameters_used: *id008
+        performed: true
+      normalize:
+        last_executed: '2026-01-09 19:18:38'
+        parameters_used: *id009
+        performed: true
+      pos:
+        last_executed: '2026-01-09 19:18:38'
+        parameters_used: *id010
+        performed: true
+      remove_dup:
+        last_executed: ''
+        parameters_used: *id011
+        performed: false
+      sanity:
+        last_executed: '2026-01-09 19:18:38'
+        parameters_used: *id012
+        performed: true
+      sort_column:
+        last_executed: '2026-01-09 19:44:25'
+        parameters_used:
+          order:
+          - SNPID
+          - rsID
+          - CHR
+          - POS
+          - EA
+          - NEA
+          - STATUS
+          - REF
+          - ALT
+          - EAF
+          - RAF
+          - NEAF
+          - MAF
+          - DAF
+          - INFO
+          - BETA
+          - SE
+          - BETA_95U
+          - BETA_95L
+          - OR
+          - OR_95U
+          - OR_95L
+          - HR
+          - HR_95U
+          - HR_95L
+          - CHISQ
+          - Z
+          - T
+          - F
+          - P
+          - P_MANTISSA
+          - P_EXPONENT
+          - MLOG10P
+          - SNPR2
+          - DOF
+          - P_HET
+          - I2_HET
+          - I2
+          - DIRECTION
+          - DENSITY
+          - N
+          - N_CASE
+          - N_CONTROL
+          - N_EFF
+          - GENENAME
+          - CIS/TRANS
+          - DISTANCE_TO_KNOWN
+          - LOCATION_OF_KNOWN
+          - KNOWN_ID
+          - KNOWN_PUBMED_ID
+          - KNOWN_AUTHOR
+          - KNOWN_SET_VARIANT
+          - KNOWN_VARIANT
+          - KNOWN_SET
+          - NOVEL
+          - PIP
+          - CREDIBLE_SET_INDEX
+          - N_SNP
+          - LOCUS
+          - STUDY
+          - TEST
+          - BETA_RANDOM
+          - SE_RANDOM
+          - Z_RANDOM
+          - P_RANDOM
+        performed: true
+      sort_coord:
+        last_executed: '2026-01-09 19:44:25'
+        parameters_used:
+          chrom: CHR
+          pos: POS
+          reindex: true
+        performed: true
+  references:
+    ref_infer: Unknown
+    ref_infer_af: Unknown
+    ref_infer_daf: Unknown
+    ref_rsid_to_chrpos_tsv: Unknown
+    ref_rsid_to_chrpos_vcf: Unknown
+    ref_rsid_tsv: gwaslab-sample-data/1kg_dbsnp151_hg19_auto_hm3_chr7_variants.txt.gz
+    ref_rsid_vcf: gwaslab-sample-data/b157_2564.vcf.gz, gwaslab-sample-data/b157_2564.vcf.gz
+    ref_seq: Unknown
+  sample_prevalence: Unknown
+  samples:
+    sample_size: Unknown
+    sample_size_case: Unknown
+    sample_size_control: Unknown
+    sample_size_median: Unknown
+    sample_size_min: Unknown
+  species: homo sapiens
+  study_name: Study_1
+  study_type: Unknown
+  summary:
+    MAF:
+      Common (MAF>=0.05): !!python/object/apply:numpy.core.multiarray.scalar
+      - &id013 !!python/object/apply:numpy.dtype
+        args:
+        - i8
+        - false
+        - true
+        state: !!python/tuple
+        - 3
+        - <
+        - null
+        - null
+        - null
+        - -1
+        - -1
+        - 0
+      - !!binary |
+        PY8OAAAAAAA=
+      Common (MAF>=0.05) percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - &id014 !!python/object/apply:numpy.dtype
+        args:
+        - f8
+        - false
+        - true
+        state: !!python/tuple
+        - 3
+        - <
+        - null
+        - null
+        - null
+        - -1
+        - -1
+        - 0
+      - !!binary |
+        Jb5H44eu6z8=
+      Low_frequency (0.01<MAF<=0.05): !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        85wBAAAAAAA=
+      Low_frequency (0.01<MAF<=0.05) percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        jvx5KBCJuD8=
+      Rare (0.001<MAF<=0.01): !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        KKUAAAAAAAA=
+      Rare (0.001<MAF<=0.01) percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        II0TNCOgoz8=
+      Ultra Rare (MAF<=0.001): !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        6gMAAAAAAAA=
+      Ultra Rare (MAF<=0.001) percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        cJvihlbETT8=
+    beta_for_significant_variants:
+      P<5e-8 with ABS(BETA)>0.05: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        twQAAAAAAAA=
+      P<5e-8 with ABS(BETA)>0.05 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        2dC60LHtUT8=
+      P<5e-8 with ABS(BETA)>0.1: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        MwEAAAAAAAA=
+      P<5e-8 with ABS(BETA)>0.1 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        rkQSZow9Mj8=
+      P<5e-8 with ABS(BETA)>0.2: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        JwAAAAAAAAA=
+      P<5e-8 with ABS(BETA)>0.2 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        eVGWhpmJAj8=
+      P<5e-8 with ABS(BETA)>0.3: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        BAAAAAAAAAA=
+      P<5e-8 with ABS(BETA)>0.3 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        L1E4m6Zrzj4=
+      P<5e-8 with ABS(BETA)>0.5: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        AgAAAAAAAAA=
+      P<5e-8 with ABS(BETA)>0.5 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        L1E4m6Zrvj4=
+      P<5e-8 with ABS(BETA)>1: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        AAAAAAAAAAA=
+      P<5e-8 with ABS(BETA)>1 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        AAAAAAAAAAA=
+      P<5e-8 with ABS(BETA)>10: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        AAAAAAAAAAA=
+      P<5e-8 with ABS(BETA)>10 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        AAAAAAAAAAA=
+      P<5e-8 with ABS(BETA)>3: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        AAAAAAAAAAA=
+      P<5e-8 with ABS(BETA)>3 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        AAAAAAAAAAA=
+    chromosomes:
+      Chromosomes_notations:
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          AQAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          AgAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          AwAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          BAAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          BQAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          BgAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          BwAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          CAAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          CQAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          CgAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          CwAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          DAAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          DQAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          DgAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          DwAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          EAAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          EQAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          EgAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          EwAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          FAAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          FQAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          FgAAAAAAAAA=
+      - !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          FwAAAAAAAAA=
+      Chromosomes_numbers: 23
+      Chromosomes_numbers percentage: 2.0851843121611576e-05
+      chr1: 90289
+      chr1 percentage: 0.08185617667857337
+      chr10: 58505
+      chr10 percentage: 0.05304074268825588
+      chr11: 56095
+      chr11 percentage: 0.05085583216986093
+      chr12: 54555
+      chr12 percentage: 0.04945966528258781
+      chr13: 41586
+      chr13 percentage: 0.037701945567623435
+      chr14: 36288
+      chr14 percentage: 0.03289876883465395
+      chr15: 33251
+      chr15 percentage: 0.03014541894072637
+      chr16: 33267
+      chr16 percentage: 0.03015992457072401
+      chr17: 29331
+      chr17 percentage: 0.026591539591303875
+      chr18: 32457
+      chr18 percentage: 0.029425577052093345
+      chr19: 20605
+      chr19 percentage: 0.018680531631339415
+      chr2: 91402
+      chr2 percentage: 0.0828652245652844
+      chr20: 28211
+      chr20 percentage: 0.025576145491468878
+      chr21: 15692
+      chr21 percentage: 0.01422639662018821
+      chr22: 15728
+      chr22 percentage: 0.014259034287682907
+      chr23: 2503
+      chr23 percentage: 0.002269224492756251
+      chr3: 76594
+      chr3 percentage: 0.06944026400246596
+      chr4: 68760
+      chr4 percentage: 0.06233794491487008
+      chr5: 69045
+      chr5 percentage: 0.0625963264492031
+      chr6: 69431
+      chr6 percentage: 0.06294627477289623
+      chr7: 68775
+      chr7 percentage: 0.062351543942992874
+      chr8: 59570
+      chr8 percentage: 0.05400627368497398
+      chr9: 51080
+      chr9 percentage: 0.046309223767474754
+    missing_values:
+      Missing_rsID: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        CssQAAAAAAA=
+      Missing_rsID percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        uMxRcK/t7z8=
+      Missing_total: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        CssQAAAAAAA=
+      Missing_total percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        uMxRcK/t7z8=
+    overview:
+      Column_names: SNPID,rsID,CHR,POS,EA,NEA,STATUS,EAF,BETA,SE,P,N,ALLELE_FLIPPED
+      Column_num: '13'
+      Last_checked_time: Fri Jan  9 19:46:45 2026
+      QC and Harmonization:
+        basic_check: *id015
+        harmonize: *id016
+        qc_and_harmonization_status: *id017
+      Row_num: '1103020'
+    p_values:
+      Minimum: 4.05e-153
+      P<5e-6: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        5AkAAAAAAAA=
+      P<5e-6 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        L5BzvQvOYj8=
+      P<5e-8: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id013
+      - !!binary |
+        9wQAAAAAAAA=
+      P<5e-8 percentage: !!python/object/apply:numpy.core.multiarray.scalar
+      - *id014
+      - !!binary |
+        YpOUBQ/hUj8=
+    samples:
+      sample_size: 191764
+      sample_size_median: 191764.0
+      sample_size_min: 150186
+    variant_status:
+      '1960090':
+        count: !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          H8sQAAAAAAA=
+        explanation:
+          Align: Unchecked
+          CHR&POS: CHR valid & POS valid
+          Genome_Build: hg19
+          Panlidromic_SNP&Indel: Not_palindromic_SNPs
+          Stadardize&Normalize: standardized SNP
+          rsID&SNPID: rsid unknown & SNPID valid
+      '1960097':
+        count: !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          YAAAAAAAAAA=
+        explanation:
+          Align: Unchecked
+          CHR&POS: CHR valid & POS valid
+          Genome_Build: hg19
+          Panlidromic_SNP&Indel: Indistinguishable
+          Stadardize&Normalize: standardized SNP
+          rsID&SNPID: rsid unknown & SNPID valid
+      '1960099':
+        count: !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          NwUAAAAAAAA=
+        explanation:
+          Align: Unchecked
+          CHR&POS: CHR valid & POS valid
+          Genome_Build: hg19
+          Panlidromic_SNP&Indel: Unchecked
+          Stadardize&Normalize: standardized SNP
+          rsID&SNPID: rsid unknown & SNPID valid
+      '1960399':
+        count: !!python/object/apply:numpy.core.multiarray.scalar
+        - *id013
+        - !!binary |
+          9gMAAAAAAAA=
+        explanation:
+          Align: Unchecked
+          CHR&POS: CHR valid & POS valid
+          Genome_Build: hg19
+          Panlidromic_SNP&Indel: Unchecked
+          Stadardize&Normalize: standardized & normalized indel
+          rsID&SNPID: rsid unknown & SNPID valid
+    variants:
+      min_P: 4.05e-153
+      min_minor_allele_freq: 0.0009999871253967285
+      variant_number: 1103020
+  variants:
+    min_P: Unknown
+    number_of_chromosomes: Unknown
+    variant_number: 1103020
+is_harmonised: true
+is_sorted: true
+minor_allele_freq_lower_limit: Unknown
+samples:
+  ancestry_method: self-reported|genetically determined
+  sample_ancestry: Unknown
+  sample_size: Unknown
+sex: M|F|combined
+trait_description: Unknown

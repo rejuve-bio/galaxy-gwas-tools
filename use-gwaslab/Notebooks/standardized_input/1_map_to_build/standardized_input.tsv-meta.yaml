@@ -1,0 +1,13 @@
+
+# Study meta-data
+date_metadata_last_modified: 2023-01-01
+# Genotyping Information
+genome_assembly: GRCh37
+coordinate_system: 1-based
+# Summary Statistic information
+data_file_name: standardized_input.tsv
+file_type: GWAS-SSF v0.1
+data_file_md5sum: 00000000000000000000000000000000
+# Harmonization status
+is_harmonised: false
+is_sorted: false
