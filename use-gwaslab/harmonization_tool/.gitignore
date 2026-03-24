@@ -4,7 +4,9 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .coverage
+.venv/
 
+tests/output/
 logs/debug/
 logs/runs/
 logs/errors/

@@ -1,0 +1,2 @@
+gwaslab>=4.0.4
+PyYAML>=6.0

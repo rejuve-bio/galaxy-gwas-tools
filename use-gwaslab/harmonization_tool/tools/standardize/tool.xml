@@ -71,7 +71,7 @@ python '$__tool_directory__/run_standardize.py'
             planemo test tools/standardize/tool.xml
         -->
         <test expect_num_outputs="3">
-            <param name="input" value="../../test-data/standardize_case.tsv" />
+            <param name="input" value="../../../gwaslab-sample-data/standardize_case.tsv" />
             <param name="input_format" value="gwaslab" />
             <param name="remove_dup" value="true" />
             <param name="remove_bad" value="false" />
