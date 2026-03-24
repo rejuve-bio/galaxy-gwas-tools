@@ -1,0 +1,414 @@
+<tool id="gwaslab_load_sumstats" name="GWASLab Load Sumstats" version="0.1.0">
+    <description>Load GWAS summary statistics into a standardized GWASLab table</description>
+    <requirements>
+        <requirement type="pip" version="4.0.4">gwaslab</requirement>
+        <requirement type="package" version="3.12">python</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+#if str($mode_selector.load_mode) == "chromsplit"
+cat /dev/null > chrom_manifest.tsv
+#for $element in $mode_selector.chrom_files
+echo '${element.element_identifier}\t${element}' >> chrom_manifest.tsv
+#end for
+#end if
+python '$__tool_directory__/run_load_sumstats.py'
+--mode '$mode_selector.load_mode'
+#if str($mode_selector.load_mode) == "columns"
+--input '$mode_selector.input'
+--sep '$shared.sep'
+--skiprows '$shared.skiprows'
+#if str($shared.nrows)
+--nrows '$shared.nrows'
+#end if
+#if str($shared.na_values)
+--na-values '$shared.na_values'
+#end if
+#if str($shared.build) != "unset"
+--build '$shared.build'
+#end if
+#if $shared.verbose
+--verbose
+#end if
+#for $flag, $value in [
+    ("snpid", $mode_selector.snpid),
+    ("rsid", $mode_selector.rsid),
+    ("chrom", $mode_selector.chrom),
+    ("pos", $mode_selector.pos),
+    ("ea", $mode_selector.ea),
+    ("nea", $mode_selector.nea),
+    ("ref", $mode_selector.ref),
+    ("alt", $mode_selector.alt),
+    ("eaf", $mode_selector.eaf),
+    ("neaf", $mode_selector.neaf),
+    ("n", $mode_selector.n),
+    ("beta", $mode_selector.beta),
+    ("se", $mode_selector.se),
+    ("chisq", $mode_selector.chisq),
+    ("z", $mode_selector.z),
+    ("p", $mode_selector.p),
+    ("mlog10p", $mode_selector.mlog10p),
+    ("info", $mode_selector.info),
+    ("direction", $mode_selector.direction),
+    ("ncontrol", $mode_selector.ncontrol),
+    ("ncase", $mode_selector.ncase),
+    ("maf", $mode_selector.maf),
+    ("status", $mode_selector.status),
+    ("or-column", $mode_selector.or_column),
+    ("or-95l", $mode_selector.or_95l),
+    ("or-95u", $mode_selector.or_95u),
+    ("hr-column", $mode_selector.hr_column),
+    ("hr-95l", $mode_selector.hr_95l),
+    ("hr-95u", $mode_selector.hr_95u),
+    ("beta-95l", $mode_selector.beta_95l),
+    ("beta-95u", $mode_selector.beta_95u),
+    ("i2", $mode_selector.i2),
+    ("phet", $mode_selector.phet),
+    ("dof", $mode_selector.dof),
+    ("snpr2", $mode_selector.snpr2),
+    ("f", $mode_selector.f),
+    ("other", $mode_selector.other)
+]
+#if str($value)
+--$flag '$value'
+#end if
+#end for
+#elif str($mode_selector.load_mode) == "format"
+--input '$mode_selector.input'
+--format-name '$mode_selector.format_name'
+--sep '$shared.sep'
+--skiprows '$shared.skiprows'
+#if str($shared.nrows)
+--nrows '$shared.nrows'
+#end if
+#if str($shared.na_values)
+--na-values '$shared.na_values'
+#end if
+#if str($shared.build) != "unset"
+--build '$shared.build'
+#end if
+#if $shared.verbose
+--verbose
+#end if
+#elif str($mode_selector.load_mode) == "auto"
+--input '$mode_selector.input'
+--sep '$shared.sep'
+--skiprows '$shared.skiprows'
+#if str($shared.nrows)
+--nrows '$shared.nrows'
+#end if
+#if str($shared.na_values)
+--na-values '$shared.na_values'
+#end if
+#if str($shared.build) != "unset"
+--build '$shared.build'
+#end if
+#if $shared.verbose
+--verbose
+#end if
+#elif str($mode_selector.load_mode) == "chromsplit"
+--chrom-manifest 'chrom_manifest.tsv'
+--chrom-format-mode '$mode_selector.chrom_format_mode'
+--sep '$shared.sep'
+--skiprows '$shared.skiprows'
+#if str($shared.nrows)
+--nrows '$shared.nrows'
+#end if
+#if str($shared.na_values)
+--na-values '$shared.na_values'
+#end if
+#if str($shared.build) != "unset"
+--build '$shared.build'
+#end if
+#if $shared.verbose
+--verbose
+#end if
+#if str($mode_selector.chrom_format_mode) == "format"
+--format-name '$mode_selector.format_name'
+#elif str($mode_selector.chrom_format_mode) == "columns"
+#for $flag, $value in [
+    ("snpid", $mode_selector.snpid),
+    ("rsid", $mode_selector.rsid),
+    ("chrom", $mode_selector.chrom),
+    ("pos", $mode_selector.pos),
+    ("ea", $mode_selector.ea),
+    ("nea", $mode_selector.nea),
+    ("ref", $mode_selector.ref),
+    ("alt", $mode_selector.alt),
+    ("eaf", $mode_selector.eaf),
+    ("neaf", $mode_selector.neaf),
+    ("n", $mode_selector.n),
+    ("beta", $mode_selector.beta),
+    ("se", $mode_selector.se),
+    ("chisq", $mode_selector.chisq),
+    ("z", $mode_selector.z),
+    ("p", $mode_selector.p),
+    ("mlog10p", $mode_selector.mlog10p),
+    ("info", $mode_selector.info),
+    ("direction", $mode_selector.direction),
+    ("ncontrol", $mode_selector.ncontrol),
+    ("ncase", $mode_selector.ncase),
+    ("maf", $mode_selector.maf),
+    ("status", $mode_selector.status),
+    ("or-column", $mode_selector.or_column),
+    ("or-95l", $mode_selector.or_95l),
+    ("or-95u", $mode_selector.or_95u),
+    ("hr-column", $mode_selector.hr_column),
+    ("hr-95l", $mode_selector.hr_95l),
+    ("hr-95u", $mode_selector.hr_95u),
+    ("beta-95l", $mode_selector.beta_95l),
+    ("beta-95u", $mode_selector.beta_95u),
+    ("i2", $mode_selector.i2),
+    ("phet", $mode_selector.phet),
+    ("dof", $mode_selector.dof),
+    ("snpr2", $mode_selector.snpr2),
+    ("f", $mode_selector.f),
+    ("other", $mode_selector.other)
+]
+#if str($value)
+--$flag '$value'
+#end if
+#end for
+#end if
+#end if
+--output-tsv '$output_tsv'
+--output-meta '$output_meta'
+--log '$log'
+]]></command>
+    <inputs>
+        <conditional name="mode_selector">
+            <param name="load_mode" type="select" label="Load mode">
+                <option value="columns" selected="true">Load by specifying columns</option>
+                <option value="format">Load by specifying formats</option>
+                <option value="auto">Load sumstats with auto mode</option>
+                <option value="chromsplit">Load sumstats from chromosome-separated files</option>
+            </param>
+            <when value="columns">
+                <param name="input" type="data" format="txt,tabular,tsv,csv,gz" label="Input summary statistics file" />
+                <param name="snpid" type="text" optional="true" label="SNPID column" />
+                <param name="rsid" type="text" optional="true" label="rsID column" />
+                <param name="chrom" type="text" optional="true" label="CHR column" />
+                <param name="pos" type="text" optional="true" label="POS column" />
+                <param name="ea" type="text" optional="true" label="Effect allele column" />
+                <param name="nea" type="text" optional="true" label="Non-effect allele column" />
+                <param name="ref" type="text" optional="true" label="Reference allele column" />
+                <param name="alt" type="text" optional="true" label="Alternative allele column" />
+                <param name="eaf" type="text" optional="true" label="Effect allele frequency column" />
+                <param name="neaf" type="text" optional="true" label="Non-effect allele frequency column" />
+                <param name="n" type="text" optional="true" label="Sample size column or scalar" />
+                <param name="beta" type="text" optional="true" label="BETA column" />
+                <param name="se" type="text" optional="true" label="SE column" />
+                <param name="chisq" type="text" optional="true" label="CHISQ column" />
+                <param name="z" type="text" optional="true" label="Z column" />
+                <param name="p" type="text" optional="true" label="P column" />
+                <param name="mlog10p" type="text" optional="true" label="-log10(P) column" />
+                <param name="info" type="text" optional="true" label="INFO column" />
+                <param name="direction" type="text" optional="true" label="DIRECTION column" />
+                <param name="ncontrol" type="text" optional="true" label="Control sample size column or scalar" />
+                <param name="ncase" type="text" optional="true" label="Case sample size column or scalar" />
+                <param name="maf" type="text" optional="true" label="MAF column" />
+                <param name="status" type="text" optional="true" label="STATUS column" />
+                <param name="or_column" type="text" optional="true" label="OR column" />
+                <param name="or_95l" type="text" optional="true" label="OR 95% lower column" />
+                <param name="or_95u" type="text" optional="true" label="OR 95% upper column" />
+                <param name="hr_column" type="text" optional="true" label="HR column" />
+                <param name="hr_95l" type="text" optional="true" label="HR 95% lower column" />
+                <param name="hr_95u" type="text" optional="true" label="HR 95% upper column" />
+                <param name="beta_95l" type="text" optional="true" label="BETA 95% lower column" />
+                <param name="beta_95u" type="text" optional="true" label="BETA 95% upper column" />
+                <param name="i2" type="text" optional="true" label="I2 column" />
+                <param name="phet" type="text" optional="true" label="P_HET column" />
+                <param name="dof" type="text" optional="true" label="DOF column or scalar" />
+                <param name="snpr2" type="text" optional="true" label="SNPR2 column" />
+                <param name="f" type="text" optional="true" label="F-statistic column" />
+                <param name="other" type="text" optional="true" label="Other columns to keep" help="Comma-separated list" />
+            </when>
+            <when value="format">
+                <param name="input" type="data" format="txt,tabular,tsv,csv,gz" label="Input summary statistics file" />
+                <param name="format_name" type="select" label="GWASLab format keyword">
+                    <option value="ssf">ssf</option>
+                    <option value="gwascatalog">gwascatalog</option>
+                    <option value="pgscatalog">pgscatalog</option>
+                    <option value="plink">plink</option>
+                    <option value="plink2">plink2</option>
+                    <option value="saige">saige</option>
+                    <option value="regenie">regenie</option>
+                    <option value="fastgwa">fastgwa</option>
+                    <option value="metal">metal</option>
+                    <option value="mrmega">mrmega</option>
+                    <option value="fuma">fuma</option>
+                    <option value="ldsc">ldsc</option>
+                    <option value="vcf">vcf</option>
+                    <option value="bolt_lmm">bolt_lmm</option>
+                    <option value="mtag">mtag</option>
+                    <option value="pheweb">pheweb</option>
+                    <option value="template">template</option>
+                    <option value="gwaslab">gwaslab</option>
+                </param>
+            </when>
+            <when value="auto">
+                <param name="input" type="data" format="txt,tabular,tsv,csv,gz" label="Input summary statistics file" />
+            </when>
+            <when value="chromsplit">
+                <param name="chrom_files" type="data_collection" collection_type="list" format="txt,tabular,tsv,csv,gz" label="Chromosome-separated input files" help="Collection element identifiers should be chromosome labels such as 1, 2, ..., 22, X, Y." />
+                <param name="chrom_format_mode" type="select" label="How should chromosome-separated files be interpreted?">
+                    <option value="format" selected="true">Use a GWASLab format keyword</option>
+                    <option value="auto">Use auto mode</option>
+                    <option value="columns">Specify columns manually</option>
+                </param>
+                <param name="format_name" type="select" label="GWASLab format keyword" optional="true">
+                    <option value="ssf">ssf</option>
+                    <option value="gwascatalog">gwascatalog</option>
+                    <option value="pgscatalog">pgscatalog</option>
+                    <option value="plink">plink</option>
+                    <option value="plink2">plink2</option>
+                    <option value="saige">saige</option>
+                    <option value="regenie">regenie</option>
+                    <option value="fastgwa">fastgwa</option>
+                    <option value="metal">metal</option>
+                    <option value="mrmega">mrmega</option>
+                    <option value="fuma">fuma</option>
+                    <option value="ldsc">ldsc</option>
+                    <option value="vcf">vcf</option>
+                    <option value="bolt_lmm">bolt_lmm</option>
+                    <option value="mtag">mtag</option>
+                    <option value="pheweb">pheweb</option>
+                    <option value="template">template</option>
+                    <option value="gwaslab">gwaslab</option>
+                </param>
+                <param name="snpid" type="text" optional="true" label="SNPID column" />
+                <param name="rsid" type="text" optional="true" label="rsID column" />
+                <param name="chrom" type="text" optional="true" label="CHR column" />
+                <param name="pos" type="text" optional="true" label="POS column" />
+                <param name="ea" type="text" optional="true" label="Effect allele column" />
+                <param name="nea" type="text" optional="true" label="Non-effect allele column" />
+                <param name="ref" type="text" optional="true" label="Reference allele column" />
+                <param name="alt" type="text" optional="true" label="Alternative allele column" />
+                <param name="eaf" type="text" optional="true" label="Effect allele frequency column" />
+                <param name="neaf" type="text" optional="true" label="Non-effect allele frequency column" />
+                <param name="n" type="text" optional="true" label="Sample size column or scalar" />
+                <param name="beta" type="text" optional="true" label="BETA column" />
+                <param name="se" type="text" optional="true" label="SE column" />
+                <param name="chisq" type="text" optional="true" label="CHISQ column" />
+                <param name="z" type="text" optional="true" label="Z column" />
+                <param name="p" type="text" optional="true" label="P column" />
+                <param name="mlog10p" type="text" optional="true" label="-log10(P) column" />
+                <param name="info" type="text" optional="true" label="INFO column" />
+                <param name="direction" type="text" optional="true" label="DIRECTION column" />
+                <param name="ncontrol" type="text" optional="true" label="Control sample size column or scalar" />
+                <param name="ncase" type="text" optional="true" label="Case sample size column or scalar" />
+                <param name="maf" type="text" optional="true" label="MAF column" />
+                <param name="status" type="text" optional="true" label="STATUS column" />
+                <param name="or_column" type="text" optional="true" label="OR column" />
+                <param name="or_95l" type="text" optional="true" label="OR 95% lower column" />
+                <param name="or_95u" type="text" optional="true" label="OR 95% upper column" />
+                <param name="hr_column" type="text" optional="true" label="HR column" />
+                <param name="hr_95l" type="text" optional="true" label="HR 95% lower column" />
+                <param name="hr_95u" type="text" optional="true" label="HR 95% upper column" />
+                <param name="beta_95l" type="text" optional="true" label="BETA 95% lower column" />
+                <param name="beta_95u" type="text" optional="true" label="BETA 95% upper column" />
+                <param name="i2" type="text" optional="true" label="I2 column" />
+                <param name="phet" type="text" optional="true" label="P_HET column" />
+                <param name="dof" type="text" optional="true" label="DOF column or scalar" />
+                <param name="snpr2" type="text" optional="true" label="SNPR2 column" />
+                <param name="f" type="text" optional="true" label="F-statistic column" />
+                <param name="other" type="text" optional="true" label="Other columns to keep" help="Comma-separated list" />
+            </when>
+        </conditional>
+        <section name="shared" title="Advanced reader options" expanded="false">
+            <param name="sep" type="text" value="&#009;" label="Field separator" help="Default is tab." />
+            <param name="skiprows" type="integer" value="0" min="0" label="Rows to skip before header" />
+            <param name="nrows" type="integer" optional="true" label="Maximum rows to load" />
+            <param name="na_values" type="text" optional="true" label="Custom NA values" help="Comma-separated values passed to pandas." />
+            <param name="build" type="select" label="Genome build hint" optional="false">
+                <option value="unset" selected="true">Leave unset</option>
+                <option value="19">hg19 / GRCh37</option>
+                <option value="38">hg38 / GRCh38</option>
+                <option value="99">Unknown</option>
+            </param>
+            <param name="verbose" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Enable verbose GWASLab logging" />
+        </section>
+    </inputs>
+    <outputs>
+        <data name="output_tsv" format="tabular" label="${tool.name} on ${on_string}: standardized table" />
+        <data name="output_meta" format="json" label="${tool.name} on ${on_string}: metadata" />
+        <data name="log" format="txt" label="${tool.name} on ${on_string}: log" />
+    </outputs>
+    <tests>
+        <!--
+        This test exercises the manual column-mapping mode.
+        Run it with:
+            planemo test tools/load_sumstats/tool.xml
+        -->
+        <test expect_num_outputs="3">
+            <conditional name="mode_selector">
+                <param name="load_mode" value="columns" />
+                <param name="input" value="../../../gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz" />
+                <param name="snpid" value="SNPID" />
+                <param name="chrom" value="CHR" />
+                <param name="pos" value="POS" />
+                <param name="ea" value="EA" />
+                <param name="nea" value="NEA" />
+                <param name="eaf" value="EAF" />
+                <param name="beta" value="BETA" />
+                <param name="se" value="SE" />
+                <param name="p" value="P" />
+                <param name="n" value="N" />
+            </conditional>
+            <output name="output_tsv">
+                <assert_contents>
+                    <has_text text="SNPID" />
+                    <has_text text="CHR" />
+                    <has_text text="1:752566_G_A" />
+                </assert_contents>
+            </output>
+            <output name="output_meta">
+                <assert_contents>
+                    <has_text text='"mode": "columns"' />
+                </assert_contents>
+            </output>
+        </test>
+
+        <!--
+        This test checks the format-keyword mode using a GWASLab-shaped input table.
+        It keeps the assertions intentionally small so the test remains stable even if
+        GWASLab changes non-essential metadata fields in future releases.
+        -->
+        <test expect_num_outputs="3">
+            <conditional name="mode_selector">
+                <param name="load_mode" value="format" />
+                <param name="input" value="../../../gwaslab-sample-data/bbj_t2d_hm3_chr7_variants.txt.gz" />
+                <param name="format_name" value="gwaslab" />
+            </conditional>
+            <output name="output_tsv">
+                <assert_contents>
+                    <has_text text="EA" />
+                    <has_text text="NEA" />
+                    <has_text text="rs3094315" />
+                </assert_contents>
+            </output>
+            <output name="output_meta">
+                <assert_contents>
+                    <has_text text='"mode": "format"' />
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+This tool wraps `gl.Sumstats()` and exposes the four GWASLab loading modes documented in the Sumstats Object guide:
+
+- Load by specifying columns
+- Load by specifying formats
+- Load sumstats with auto mode
+- Load sumstats from chromosome-separated files
+
+The main output is a normalized tabular dataset generated from `mysumstats.data`, plus JSON metadata and the GWASLab log.
+
+For chromosome-separated files, provide a Galaxy dataset collection where each element identifier is the chromosome label.
+
+Testing locally:
+
+```bash
+planemo test tools/load_sumstats/tool.xml
+```
+]]></help>
+</tool>
