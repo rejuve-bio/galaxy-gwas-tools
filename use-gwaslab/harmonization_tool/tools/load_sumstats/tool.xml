@@ -315,7 +315,12 @@ python '$__tool_directory__/run_load_sumstats.py'
             </when>
         </conditional>
         <section name="shared" title="Advanced reader options" expanded="false">
-            <param name="sep" type="text" value="&#009;" label="Field separator" help="Default is tab." />
+            <param name="sep" type="select" label="Field separator">
+                <option value="\t" selected="true">Tab</option>
+                <option value=",">Comma</option>
+                <option value=";">Semicolon</option>
+                <option value=" ">Single space</option>
+            </param>
             <param name="skiprows" type="integer" value="0" min="0" label="Rows to skip before header" />
             <param name="nrows" type="integer" optional="true" label="Maximum rows to load" />
             <param name="na_values" type="text" optional="true" label="Custom NA values" help="Comma-separated values passed to pandas." />

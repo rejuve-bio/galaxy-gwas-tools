@@ -4,7 +4,7 @@
 What this does:
 - runs the Python entry point directly in format mode and manual-column mode
 - uses the shared gwaslab-sample-data directory as the input source
-- writes outputs under tests/output/load_sumstats/
+- writes outputs under your system temp directory
 - checks the metadata JSON so failures are easier to spot quickly
 
 How to run:
@@ -18,12 +18,13 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 RUNNER = PROJECT_ROOT / 'tools' / 'load_sumstats' / 'run_load_sumstats.py'
 SAMPLE = PROJECT_ROOT.parent / 'gwaslab-sample-data' / 'bbj_t2d_hm3_chr7_variants.txt.gz'
-OUTPUT_ROOT = PROJECT_ROOT / 'tests' / 'output' / 'load_sumstats'
+OUTPUT_ROOT = Path(tempfile.gettempdir()) / 'gwaslab_harmonization_tool_tests' / 'load_sumstats'
 
 
 def ensure_runtime_dependencies() -> None:

@@ -4,7 +4,7 @@
 What this does:
 - runs the Python standardize entry point directly
 - uses the shared gwaslab-sample-data directory as the input source
-- writes outputs under tests/output/standardize/
+- writes outputs under your system temp directory
 - asserts that duplicate rows are removed and metadata matches the expectation
 
 How to run:
@@ -18,12 +18,13 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 RUNNER = PROJECT_ROOT / 'tools' / 'standardize' / 'run_standardize.py'
 SAMPLE = PROJECT_ROOT.parent / 'gwaslab-sample-data' / 'standardize_case.tsv'
-OUTPUT_ROOT = PROJECT_ROOT / 'tests' / 'output' / 'standardize'
+OUTPUT_ROOT = Path(tempfile.gettempdir()) / 'gwaslab_harmonization_tool_tests' / 'standardize'
 
 
 def ensure_runtime_dependencies() -> None:

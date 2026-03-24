@@ -1,18 +1,10 @@
 from __future__ import annotations
 
 import argparse
-import os
 from pathlib import Path
 import sys
-import tempfile
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-RUNTIME_TMP = PROJECT_ROOT / "tmp"
-RUNTIME_TMP.mkdir(parents=True, exist_ok=True)
-os.environ.setdefault("MPLCONFIGDIR", str(RUNTIME_TMP / "mplconfig"))
-os.environ.setdefault("XDG_CACHE_HOME", str(RUNTIME_TMP / "xdg-cache"))
-
-import gwaslab as gl
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -26,6 +18,13 @@ from scripts.io.sumstats_io import (
     write_dataframe,
     write_metadata,
 )
+from scripts.utils.gwaslab_runtime import (
+    configure_runtime_environment,
+    import_gwaslab_with_py310_compat,
+)
+
+RUNTIME_TMP = configure_runtime_environment()
+gl = import_gwaslab_with_py310_compat()
 
 
 def parse_args() -> argparse.Namespace:
@@ -92,7 +91,7 @@ def parse_args() -> argparse.Namespace:
 
 def build_reader_kwargs(args: argparse.Namespace) -> dict[str, object]:
     kwargs: dict[str, object] = {
-        "sep": args.sep,
+        "sep": normalize_separator(args.sep),
         "skiprows": args.skiprows,
     }
     if args.nrows is not None:
@@ -104,6 +103,24 @@ def build_reader_kwargs(args: argparse.Namespace) -> dict[str, object]:
     if args.verbose:
         kwargs["verbose"] = True
     return kwargs
+
+
+def normalize_separator(raw_value: str) -> str:
+    """Normalize Galaxy/UI separator values to actual pandas separators."""
+
+    normalized = raw_value.strip()
+    separator_map = {
+        r"\t": "\t",
+        "tab": "\t",
+        "TAB": "\t",
+        "&#009;": "\t",
+        "&#x9;": "\t",
+        r"\s+": r"\s+",
+        "space": " ",
+        "comma": ",",
+        "semicolon": ";",
+    }
+    return separator_map.get(normalized, raw_value)
 
 
 def build_sumstats_kwargs(args: argparse.Namespace) -> dict[str, object]:
