@@ -1,0 +1,108 @@
+<tool id="gwaslab_standardize" name="GWASLab Standardize" version="0.1.0">
+    <description>Run GWASLab basic standardization and normalization checks</description>
+    <requirements>
+        <requirement type="pip" version="4.0.4">gwaslab</requirement>
+        <requirement type="package" version="3.12">python</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+python '$__tool_directory__/run_standardize.py'
+--input '$input'
+--input-format '$input_format'
+#if str($build) != "unset"
+--build '$build'
+#end if
+#if $remove_bad
+--remove-bad
+#end if
+#if $remove_dup
+--remove-dup
+#end if
+#if $normalize
+--normalize
+#end if
+#if $fixchrpos
+--fixchrpos
+#end if
+#if $fixid
+--fixid
+#end if
+#if $fixsep
+--fixsep
+#end if
+#if $forcefixid
+--forcefixid
+#end if
+--threads '$threads'
+--output-tsv '$output_tsv'
+--output-meta '$output_meta'
+--log '$log'
+]]></command>
+    <inputs>
+        <param name="input" type="data" format="tabular,txt,tsv,csv,gz" label="Input summary statistics table" />
+        <param name="input_format" type="select" label="Input format">
+            <option value="gwaslab" selected="true">GWASLab standardized table</option>
+            <option value="auto">Auto-detect</option>
+        </param>
+        <param name="build" type="select" label="Genome build hint">
+            <option value="unset" selected="true">Leave unset</option>
+            <option value="19">hg19 / GRCh37</option>
+            <option value="38">hg38 / GRCh38</option>
+            <option value="99">Unknown</option>
+        </param>
+        <param name="remove_bad" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Remove invalid CHR, POS, and allele values" />
+        <param name="remove_dup" type="boolean" truevalue="true" falsevalue="false" checked="true" label="Remove duplicate variants" />
+        <param name="normalize" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Normalize indels" />
+        <param name="fixchrpos" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Extract CHR and POS from SNPID before standardization" />
+        <param name="fixid" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Rebuild SNPID from coordinates and alleles before standardization" />
+        <param name="fixsep" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Standardize SNPID separators before standardization" />
+        <param name="forcefixid" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Force SNPID reconstruction without alignment checks" />
+        <param name="threads" type="integer" value="1" min="1" label="Threads for GWASLab basic_check" />
+    </inputs>
+    <outputs>
+        <data name="output_tsv" format="tabular" label="${tool.name} on ${on_string}: standardized table" />
+        <data name="output_meta" format="json" label="${tool.name} on ${on_string}: metadata" />
+        <data name="log" format="txt" label="${tool.name} on ${on_string}: log" />
+    </outputs>
+    <tests>
+        <!--
+        This test checks that duplicate variants are removed and that GWASLab adds
+        the STATUS column during basic standardization.
+        Run it with:
+            planemo test tools/standardize/tool.xml
+        -->
+        <test expect_num_outputs="3">
+            <param name="input" value="../../test-data/standardize_case.tsv" />
+            <param name="input_format" value="gwaslab" />
+            <param name="remove_dup" value="true" />
+            <param name="remove_bad" value="false" />
+            <param name="normalize" value="false" />
+            <param name="threads" value="1" />
+            <output name="output_tsv">
+                <assert_contents>
+                    <has_text text="STATUS" />
+                    <has_text text="rs1" />
+                    <has_n_lines n="2" />
+                </assert_contents>
+            </output>
+            <output name="output_meta">
+                <assert_contents>
+                    <has_text text='"mode": "standardize"' />
+                    <has_text text='"input_rows": 2' />
+                    <has_text text='"output_rows": 1' />
+                    <has_text text='"remove_dup": true' />
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+This tool wraps GWASLab standardization around `basic_check()`, which the GWASLab documentation recommends as the standard entry point for normalizing IDs, coordinates, alleles, sorting, and sanity checks.
+
+Use the optional `fix_id()` flags when you need to extract or reconstruct IDs before `basic_check()` runs.
+
+Testing locally:
+
+```bash
+planemo test tools/standardize/tool.xml
+```
+]]></help>
+</tool>
