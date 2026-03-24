@@ -1,40 +1,15 @@
-# GWASLab Harmonization Galaxy Tool
+# GWASLab Harmonization Galaxy Tools
 
-This folder contains the Galaxy wrapper and the Python driver script used to
-harmonize GWAS summary statistics with GWASLab.
+This directory contains the Galaxy-facing implementation for a modular GWAS summary statistics harmonization suite based on GWASLab.
 
-## What It Does
-- Detects or accepts a known input format.
-- Optionally uses manual column mappings.
-- Runs GWASLab `basic_check` and harmonization against reference files.
-- Writes LDSC-ready output with HapMap3 SNPs and HLA exclusion.
-- Produces a structured log for provenance.
+## Current Layout
+- `tool.xml` and `harmonize_gwas.py`: existing harmonization prototype
+- `tools/`: modular Galaxy wrappers being added step by step
+- `scripts/`: reusable Python helpers shared by wrappers
+- `config/`: logging and workflow defaults
+- `workflows/`: reserved for Galaxy workflow definitions
+- `logs/`, `tmp/`, `outputs/`: local development artifacts only
 
-## Files
-- `harmonize_gwas.py`: Galaxy-invoked Python entry point.
-- `tool.xml`: Galaxy tool definition and UI parameters.
-
-## Inputs (Galaxy UI)
-- GWAS summary stats: `txt`, `tsv`, `csv`, or `gz`.
-- Reference FASTA: required.
-- Inference VCF with `AF` in INFO: required.
-- rsID TSV: optional.
-
-## Outputs
-- Harmonized LDSC format (gz).
-- Log file (txt).
-
-## Local Smoke Test (Optional)
-```bash
-python harmonize_gwas.py \
-  --input example.tsv.gz \
-  --format auto \
-  --ref_seq ucsc_genome_hg19.fasta.gz \
-  --ref_infer 1kg_pan_hg19.vcf.gz \
-  --output harmonized.sumstats.gz \
-  --log harmonize.log
-```
-
-## Notes
-- The script expects Galaxy to supply a writable output path.
-- The tool uses GWASLab v4.0.4 as declared in `tool.xml`.
+## Next Tools In Progress
+- `load_sumstats`
+- `standardize`

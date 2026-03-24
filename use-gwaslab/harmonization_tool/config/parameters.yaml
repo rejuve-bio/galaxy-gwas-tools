@@ -1,0 +1,12 @@
+runtime:
+  threads: 4
+  log_level: "INFO"
+  report_format: "json"
+
+load_sumstats:
+  format: "auto"
+  infer_build: false
+
+standardize:
+  remove_duplicates: true
+  normalize: false

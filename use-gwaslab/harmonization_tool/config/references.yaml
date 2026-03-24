@@ -1,0 +1,12 @@
+references:
+  genome_builds:
+    hg19:
+      label: "GRCh37 / hg19"
+      fasta: ""
+      vcf_af: ""
+      dbsnp_tsv: ""
+    hg38:
+      label: "GRCh38 / hg38"
+      fasta: ""
+      vcf_af: ""
+      dbsnp_tsv: ""
