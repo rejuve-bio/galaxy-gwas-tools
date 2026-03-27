@@ -1,0 +1,33 @@
+<tool id="magma_gene_analysis" name="MAGMA Gene Analysis" version="1.0.0">
+  <description>Perform gene-based association analysis</description>
+  <requirements>
+    <requirement type="package" version="1.09">magma</requirement>
+  </requirements>
+  <command detect_errors="exit_code"><![CDATA[
+    python '$__tool_directory__/magma_gene_analysis.py'
+      --bfile '$bfile'
+      --pval_file '$pval_file'
+      --N '$N'
+      --genes_annot '$genes_annot'
+      --genes_raw_out '$outputs.genes_raw'
+      --genes_out_out '$outputs.genes_out'
+  ]]></command>
+  <inputs>
+    <param name="bfile" type="text" value="/home/dawit/tools/MAGMA/reference/g1000_eas/g1000_eas" label="Reference Bfile Prefix (e.g., g1000_eas)" />
+    <param name="pval_file" type="data" format="txt" label="P-Value File (from Format Tool)" />
+    <param name="N" type="integer" min="1" label="GWAS Sample Size (N)" help="Required: Effective sample size from GWAS (e.g., 162255 for BBJ HDLC)." />
+    <param name="genes_annot" type="data" format="txt" label="Genes Annotation File (from Annotate Tool)" />
+  </inputs>
+  <outputs>
+    <collection name="outputs" type="list" label="Gene Analysis Outputs">
+      <data name="genes_raw" format="txt" label="Genes Raw File" from_work_dir="genes.raw" />
+      <data name="genes_out" format="txt" label="Genes Out File" from_work_dir="genes.out" />
+    </collection>
+  </outputs>
+  <citations>
+    <citation type="doi">10.1371/journal.pcbi.1004219</citation>
+  </citations>
+  <help><![CDATA[
+**What it does**: Runs MAGMA gene-level analysis using p-values and annotations. Provide N from your GWAS study.
+  ]]></help>
+</tool>
