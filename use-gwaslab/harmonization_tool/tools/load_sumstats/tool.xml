@@ -1,7 +1,7 @@
-<tool id="gwaslab_load_sumstats" name="GWASLab Load Sumstats" version="0.1.0">
+<tool id="gwaslab_load_sumstats" name="GWASLab Load Sumstats" version="0.1.0" profile="24.0">
     <description>Load GWAS summary statistics into a standardized GWASLab table</description>
     <requirements>
-        <requirement type="pip" version="4.0.4">gwaslab</requirement>
+        <requirement type="package" version="4.0.4">gwaslab</requirement>
         <requirement type="package" version="3.12">python</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
@@ -416,4 +416,7 @@ Testing locally:
 planemo test tools/load_sumstats/tool.xml
 ```
 ]]></help>
+    <citations>
+        <citation type="doi">10.51094/jxiv.370</citation>
+    </citations>
 </tool>
