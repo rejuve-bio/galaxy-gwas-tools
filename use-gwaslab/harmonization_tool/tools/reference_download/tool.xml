@@ -122,7 +122,21 @@ python '$__tool_directory__/run_reference_download.py'
         </test>
     </tests>
     <help><![CDATA[
-This tool prepares Galaxy-managed reference bundles for later harmonization and rsID tools.
+This tool prepares Galaxy-managed reference bundles for later harmonization and rsID tools. It is meant to solve a practical Galaxy problem: GWASLab can download and register references in its own data directory, but Galaxy workflows need visible, reproducible outputs that can be passed from one tool to the next.
+
+What the tool does:
+
+- downloads curated GWASLab references into a temporary working directory
+- copies the selected files into a Galaxy output bundle instead of leaving them in a hidden user cache
+- writes a JSON manifest describing each reference and its intended downstream role
+- writes a tabular inventory so you can quickly inspect the bundle in Galaxy history
+
+What the outputs mean:
+
+- `reference bundle`: a tar.gz archive containing the packaged FASTA, VCF, TSV, and index files
+- `manifest`: machine-readable JSON for later tools to interpret
+- `inventory`: a flat table listing each bundled resource, its role, and original filename
+- `log`: a human-readable execution summary
 
 Why bundle references instead of only downloading them to disk:
 
@@ -132,15 +146,22 @@ Why bundle references instead of only downloading them to disk:
 
 Modes:
 
-- preset: download a curated bundle for harmonization or rsID workflows
-- keywords: download an explicit list of GWASLab reference keywords
-- local: package existing FASTA/VCF/TSV files that are already in Galaxy history
+- `preset`: download a curated bundle for harmonization or rsID workflows
+- `keywords`: download an explicit list of GWASLab reference keywords
+- `local`: package existing FASTA/VCF/TSV files that are already in Galaxy history
 
 Preset design choices:
 
 - lightweight rsID bundles include the smaller `1kg_dbsnp151_*_auto` table
 - full rsID bundles also include a dbSNP VCF for broader variant coverage
 - harmonization bundles include a reference FASTA and a population-specific 1KG VCF
+
+Typical usage:
+
+- use `harmonization` when you are preparing for allele checking and strand inference
+- use `assign_rsid_light` when you mainly need CHR/POS to rsID mapping and want a smaller bundle
+- use `assign_rsid_full` when you want broader rsID coverage from dbSNP VCF resources
+- use `local` when the reference files already exist in Galaxy history and you just want them bundled with a manifest
 
 Testing locally:
 

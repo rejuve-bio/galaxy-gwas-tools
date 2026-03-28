@@ -102,10 +102,34 @@ def copy_into_staging(staging_root: Path, source_path: Path, label: str) -> Path
     return target_path
 
 
+def set_gwaslab_download_directory(directory: Path) -> None:
+    """Set the active GWASLab download directory across supported versions."""
+
+    if hasattr(gl, "set_default_directory"):
+        gl.set_default_directory(str(directory))
+        return
+
+    try:
+        from gwaslab.bd.bd_download import set_default_directory as set_directory_impl
+
+        set_directory_impl(str(directory))
+        return
+    except Exception:
+        pass
+
+    if hasattr(gl, "options") and hasattr(gl.options, "set_option"):
+        gl.options.set_option("data_directory", str(directory))
+        return
+
+    raise AttributeError(
+        "The installed GWASLab version does not expose a supported way to set the download directory."
+    )
+
+
 def bundle_downloaded_keywords(args: argparse.Namespace, logger) -> list[dict[str, object]]:
     download_dir = Path(tempfile.mkdtemp(prefix="gwaslab_refs_", dir=RUNTIME_TMP))
     logger.info("Using temporary GWASLab download directory %s", download_dir)
-    gl.set_default_directory(str(download_dir))
+    set_gwaslab_download_directory(download_dir)
 
     available_refs = gl.check_available_ref(show_all=True, verbose=False)
     keywords = (
