@@ -68,4 +68,5 @@ if __name__ == '__main__':
     if metadata['output_rows'] != 1:
         raise AssertionError(f'Expected 1 output row, got {metadata["output_rows"]}')
 
+    print(f'standardize outputs written under: {OUTPUT_ROOT}')
     print('standardize smoke test passed')

@@ -89,4 +89,5 @@ if __name__ == '__main__':
             '--n', 'N',
         ],
     )
+    print(f'load_sumstats outputs written under: {OUTPUT_ROOT}')
     print('load_sumstats smoke tests passed')
