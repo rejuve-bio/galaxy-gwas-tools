@@ -56,6 +56,24 @@ Outputs:
 - JSON QC report
 - GWASLab log file
 
+## `liftover`
+
+Purpose:
+- convert coordinates between genome builds such as `hg19 -> hg38` or `hg38 -> hg19`
+- keep mapped and unmapped variants as separate Galaxy outputs so downstream workflow steps can decide what to do next
+
+Inputs:
+- a summary statistics table with genomic coordinates
+- source and target genome builds
+- either a built-in GWASLab chain file choice or a custom UCSC chain file
+- optional STATUS-based filtering and coordinate-base settings
+
+Outputs:
+- mapped variants table
+- unmapped variants table
+- JSON metadata summarizing mapped and unmapped row counts
+- GWASLab log file
+
 ## Testing
 
 Galaxy wrapper tests:
@@ -64,6 +82,7 @@ Galaxy wrapper tests:
 planemo test tools/load_sumstats/tool.xml
 planemo test tools/standardize/tool.xml
 planemo test tools/qc_check/tool.xml
+planemo test tools/liftover/tool.xml
 ```
 
 Direct Python smoke tests:
@@ -72,4 +91,5 @@ Direct Python smoke tests:
 python tests/run_load_sumstats_smoke.py
 python tests/run_standardize_smoke.py
 python tests/run_qc_check_smoke.py
+python tests/run_liftover_smoke.py
 ```
