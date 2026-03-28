@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 import sys
+import tempfile
+
+import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -131,6 +135,83 @@ def build_sumstats_kwargs(args: argparse.Namespace) -> dict[str, object]:
     return kwargs
 
 
+def collect_requested_columns(args: argparse.Namespace) -> list[str]:
+    return [
+        value
+        for key, value in vars(args).items()
+        if key in {"snpid", "rsid", "chrom", "pos", "ea", "nea", "ref", "alt", "eaf", "neaf", "n", "beta", "se", "chisq", "z", "p", "mlog10p", "info", "direction", "ncontrol", "ncase", "maf", "status"}
+        and value
+    ]
+
+
+def read_header_columns(input_path: str, reader_kwargs: dict[str, object]) -> list[str]:
+    return list(
+        pd.read_table(
+            input_path,
+            sep=reader_kwargs["sep"],
+            skiprows=reader_kwargs["skiprows"],
+            nrows=0,
+            engine="python",
+        ).columns
+    )
+
+
+def maybe_autodetect_tab_separator(
+    args: argparse.Namespace,
+    reader_kwargs: dict[str, object],
+    requested_columns: list[str],
+) -> tuple[dict[str, object], list[str]]:
+    detected_columns = read_header_columns(args.input, reader_kwargs)
+    if len(detected_columns) != 1 or "\t" not in detected_columns[0]:
+        return reader_kwargs, detected_columns
+
+    tab_reader_kwargs = dict(reader_kwargs)
+    tab_reader_kwargs["sep"] = "\t"
+    tab_detected_columns = read_header_columns(args.input, tab_reader_kwargs)
+    missing_columns = [column for column in requested_columns if column not in tab_detected_columns]
+    if missing_columns:
+        return reader_kwargs, detected_columns
+    return tab_reader_kwargs, tab_detected_columns
+
+
+def validate_manual_columns_input(
+    args: argparse.Namespace,
+    reader_kwargs: dict[str, object],
+) -> tuple[dict[str, object], list[str]]:
+    """Validate the selected input/header before handing off to GWASLab.
+
+    This gives a friendlier error than the raw pandas/usecols traceback when the
+    user accidentally selects a log file or mismatched dataset in Galaxy.
+    """
+
+    requested_columns = collect_requested_columns(args)
+    if not requested_columns:
+        return reader_kwargs, []
+
+    effective_reader_kwargs, detected_columns = maybe_autodetect_tab_separator(
+        args,
+        reader_kwargs,
+        requested_columns,
+    )
+    missing_columns = [column for column in requested_columns if column not in detected_columns]
+    if not missing_columns:
+        return effective_reader_kwargs, detected_columns
+
+    hint = ""
+    joined_header = " | ".join(detected_columns[:3])
+    if "Sumstats Object created." in joined_header or "GWASLab v" in joined_header:
+        hint = (
+            " The selected input looks like a GWASLab log/history text file, "
+            "not a raw summary-statistics table."
+        )
+
+    raise ValueError(
+        "The selected input file does not contain the requested manual columns. "
+        f"Missing columns: {missing_columns}. "
+        f"Detected header columns: {detected_columns[:20]}.{hint}"
+    )
+
+
 def create_pattern_from_collection(manifest_path: str) -> str:
     entries = read_chromosome_manifest(manifest_path)
     suffix = detect_collection_suffix(path for _, path in entries)
@@ -149,7 +230,8 @@ def load_sumstats(args: argparse.Namespace):
     if args.mode == "columns":
         if not args.input:
             raise ValueError("--input is required for column-based loading.")
-        return gl.Sumstats(args.input, **reader_kwargs, **load_kwargs)
+        effective_reader_kwargs, _ = validate_manual_columns_input(args, reader_kwargs)
+        return gl.Sumstats(args.input, **effective_reader_kwargs, **load_kwargs)
 
     if args.mode == "format":
         if not args.input or not args.format_name:
