@@ -74,6 +74,22 @@ Outputs:
 - JSON metadata summarizing mapped and unmapped row counts
 - GWASLab log file
 
+## `reference_download`
+
+Purpose:
+- prepare reproducible reference bundles for later harmonization and rsID tools
+- support both online GWASLab downloads and offline packaging of existing local reference files
+
+Inputs:
+- either a preset bundle definition, a list of GWASLab keywords, or existing local reference datasets
+- optional build, population, and dbSNP version controls for curated presets
+
+Outputs:
+- tar.gz bundle containing the selected references
+- JSON manifest describing each resource and its intended role
+- tabular inventory for quick inspection in Galaxy
+- plain-text run log
+
 ## Testing
 
 Galaxy wrapper tests:
@@ -83,6 +99,7 @@ planemo test tools/load_sumstats/tool.xml
 planemo test tools/standardize/tool.xml
 planemo test tools/qc_check/tool.xml
 planemo test tools/liftover/tool.xml
+planemo test tools/reference_download/tool.xml
 ```
 
 Direct Python smoke tests:
@@ -92,4 +109,5 @@ python tests/run_load_sumstats_smoke.py
 python tests/run_standardize_smoke.py
 python tests/run_qc_check_smoke.py
 python tests/run_liftover_smoke.py
+python tests/run_reference_download_smoke.py
 ```

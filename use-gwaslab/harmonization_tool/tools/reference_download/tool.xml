@@ -1,0 +1,154 @@
+<tool id="gwaslab_reference_download" name="GWASLab Reference Download" version="0.1.0" profile="24.0">
+    <description>Prepare Galaxy-managed reference bundles for harmonization and rsID workflows</description>
+    <requirements>
+        <requirement type="package" version="4.0.4">gwaslab</requirement>
+        <requirement type="package" version="3.12">python</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+python '$__tool_directory__/run_reference_download.py'
+--mode '$mode_selector.mode'
+#if str($mode_selector.mode) == "preset"
+--preset-name '$mode_selector.preset_name'
+--build '$mode_selector.build'
+--population '$mode_selector.population'
+--dbsnp-version '$mode_selector.dbsnp_version'
+#elif str($mode_selector.mode) == "keywords"
+--keywords '$mode_selector.keywords'
+#elif str($mode_selector.mode) == "local"
+--local-primary '$mode_selector.local_primary'
+--local-primary-label '$mode_selector.local_primary_label'
+#if $mode_selector.local_secondary
+--local-secondary '$mode_selector.local_secondary'
+--local-secondary-label '$mode_selector.local_secondary_label'
+#end if
+#if $mode_selector.local_tertiary
+--local-tertiary '$mode_selector.local_tertiary'
+--local-tertiary-label '$mode_selector.local_tertiary_label'
+#end if
+#if $mode_selector.local_quaternary
+--local-quaternary '$mode_selector.local_quaternary'
+--local-quaternary-label '$mode_selector.local_quaternary_label'
+#end if
+#end if
+--output-bundle '$output_bundle'
+--output-manifest '$output_manifest'
+--output-inventory '$output_inventory'
+--log '$log'
+]]></command>
+    <inputs>
+        <conditional name="mode_selector">
+            <param name="mode" type="select" label="Reference acquisition mode">
+                <option value="preset" selected="true">Download a preset workflow bundle</option>
+                <option value="keywords">Download specific GWASLab keywords</option>
+                <option value="local">Package existing local reference files</option>
+            </param>
+            <when value="preset">
+                <param name="preset_name" type="select" label="Preset bundle">
+                    <option value="harmonization" selected="true">Harmonization bundle</option>
+                    <option value="assign_rsid_light">Assign rsID bundle (lightweight)</option>
+                    <option value="assign_rsid_full">Assign rsID bundle (full dbSNP)</option>
+                    <option value="full_light">Full bundle (lightweight)</option>
+                    <option value="full_full">Full bundle (full dbSNP)</option>
+                </param>
+                <param name="build" type="select" label="Genome build">
+                    <option value="19" selected="true">hg19 / GRCh37</option>
+                    <option value="38">hg38 / GRCh38</option>
+                </param>
+                <param name="population" type="select" label="Population panel for harmonization references">
+                    <option value="pan" selected="true">Pan-ancestry</option>
+                    <option value="eas">East Asian</option>
+                    <option value="eur">European</option>
+                    <option value="afr">African</option>
+                    <option value="amr">Admixed American</option>
+                    <option value="sas">South Asian</option>
+                </param>
+                <param name="dbsnp_version" type="select" label="dbSNP version for full rsID bundles">
+                    <option value="157" selected="true">dbSNP v157</option>
+                    <option value="151">dbSNP v151</option>
+                </param>
+            </when>
+            <when value="keywords">
+                <param name="keywords" type="text" label="GWASLab reference keywords" help="Comma-separated list such as ucsc_genome_hg19,1kg_eas_hg19,1kg_dbsnp151_hg19_auto" />
+            </when>
+            <when value="local">
+                <param name="local_primary" type="data" format="data" label="Primary local reference file" />
+                <param name="local_primary_label" type="text" value="primary_reference" label="Primary label inside the bundle" />
+                <param name="local_secondary" type="data" optional="true" format="data" label="Secondary local reference file" />
+                <param name="local_secondary_label" type="text" value="secondary_reference" label="Secondary label inside the bundle" />
+                <param name="local_tertiary" type="data" optional="true" format="data" label="Tertiary local reference file" />
+                <param name="local_tertiary_label" type="text" value="tertiary_reference" label="Tertiary label inside the bundle" />
+                <param name="local_quaternary" type="data" optional="true" format="data" label="Quaternary local reference file" />
+                <param name="local_quaternary_label" type="text" value="quaternary_reference" label="Quaternary label inside the bundle" />
+            </when>
+        </conditional>
+    </inputs>
+    <outputs>
+        <data name="output_bundle" format="tar.gz" label="${tool.name} on ${on_string}: reference bundle" />
+        <data name="output_manifest" format="json" label="${tool.name} on ${on_string}: manifest" />
+        <data name="output_inventory" format="tabular" label="${tool.name} on ${on_string}: inventory" />
+        <data name="log" format="txt" label="${tool.name} on ${on_string}: log" />
+    </outputs>
+    <tests>
+        <!--
+        This test uses local packaging mode so it stays fully offline while still
+        exercising the Galaxy wrapper and bundle manifest outputs.
+        Run it with:
+            planemo test tools/reference_download/tool.xml
+        -->
+        <test expect_num_outputs="4">
+            <conditional name="mode_selector">
+                <param name="mode" value="local" />
+                <param name="local_primary" value="../../../gwaslab-sample-data/chr7.fasta.gz" />
+                <param name="local_primary_label" value="ref_seq" />
+                <param name="local_secondary" value="../../../gwaslab-sample-data/1kg_eas_hg19.chr7_126253550_128253550.vcf.gz" />
+                <param name="local_secondary_label" value="ref_infer_vcf" />
+                <param name="local_tertiary" value="../../../gwaslab-sample-data/1kg_eas_hg19.chr7_126253550_128253550.vcf.gz.tbi" />
+                <param name="local_tertiary_label" value="ref_infer_vcf_tbi" />
+            </conditional>
+            <output name="output_manifest">
+                <assert_contents>
+                    <has_text text='"mode": "local"' />
+                    <has_text text='"name": "ref_seq"' />
+                    <has_text text='"name": "ref_infer_vcf"' />
+                </assert_contents>
+            </output>
+            <output name="output_inventory">
+                <assert_contents>
+                    <has_text text="ref_seq" />
+                    <has_text text="ref_infer_vcf" />
+                    <has_text text="ref_infer_vcf_tbi" />
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+This tool prepares Galaxy-managed reference bundles for later harmonization and rsID tools.
+
+Why bundle references instead of only downloading them to disk:
+
+- Galaxy tracks the bundle as an output dataset, which is easier to reproduce
+- we avoid depending on a hidden per-user GWASLab download directory
+- downstream tools can consume a documented manifest instead of guessing file roles
+
+Modes:
+
+- preset: download a curated bundle for harmonization or rsID workflows
+- keywords: download an explicit list of GWASLab reference keywords
+- local: package existing FASTA/VCF/TSV files that are already in Galaxy history
+
+Preset design choices:
+
+- lightweight rsID bundles include the smaller `1kg_dbsnp151_*_auto` table
+- full rsID bundles also include a dbSNP VCF for broader variant coverage
+- harmonization bundles include a reference FASTA and a population-specific 1KG VCF
+
+Testing locally:
+
+```bash
+planemo test tools/reference_download/tool.xml
+```
+]]></help>
+    <citations>
+        <citation type="doi">10.51094/jxiv.370</citation>
+    </citations>
+</tool>
