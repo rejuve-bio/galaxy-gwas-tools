@@ -20,6 +20,7 @@ python tests/run_load_sumstats_smoke.py
 python tests/run_standardize_smoke.py
 python tests/run_qc_check_smoke.py
 python tests/run_liftover_smoke.py
+python tests/run_reference_download_smoke.py
 ```
 
 The scripts write outputs under your system temp directory, inside `gwaslab_harmonization_tool_tests/`.
