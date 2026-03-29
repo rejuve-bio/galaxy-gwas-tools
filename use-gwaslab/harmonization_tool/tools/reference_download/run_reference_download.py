@@ -102,6 +102,18 @@ def copy_into_staging(staging_root: Path, source_path: Path, label: str) -> Path
     return target_path
 
 
+def require_nonempty_file(path_value: str | Path | bool, label: str) -> Path:
+    if not path_value or path_value is False:
+        raise FileNotFoundError(f"{label} was not produced or could not be resolved by GWASLab.")
+
+    path = Path(path_value)
+    if not path.exists():
+        raise FileNotFoundError(f"{label} does not exist at expected path: {path}")
+    if path.stat().st_size <= 0:
+        raise ValueError(f"{label} exists but is empty: {path}")
+    return path
+
+
 def set_gwaslab_download_directory(directory: Path) -> None:
     """Set the active GWASLab download directory across supported versions."""
 
@@ -149,7 +161,7 @@ def bundle_downloaded_keywords(args: argparse.Namespace, logger) -> list[dict[st
 
         logger.info("Downloading reference keyword %s", keyword)
         gl.download_ref(keyword, directory=str(download_dir))
-        local_path = Path(gl.get_path(keyword, verbose=False))
+        local_path = require_nonempty_file(gl.get_path(keyword, verbose=False), f"Reference {keyword}")
         staged_main = copy_into_staging(staging_root, local_path, keyword)
 
         entry = {
@@ -165,6 +177,7 @@ def bundle_downloaded_keywords(args: argparse.Namespace, logger) -> list[dict[st
 
         tbi_path = Path(f"{local_path}.tbi")
         if tbi_path.exists():
+            require_nonempty_file(tbi_path, f"Index for {keyword}")
             staged_tbi = copy_into_staging(staging_root, tbi_path, keyword)
             entry["index_bundle_path"] = str(staged_tbi.relative_to(staging_root))
             entry["_index_staged_path"] = str(staged_tbi)
@@ -188,7 +201,7 @@ def bundle_local_references(args: argparse.Namespace) -> list[dict[str, object]]
     staging_root = Path(tempfile.mkdtemp(prefix="gwaslab_ref_bundle_", dir=RUNTIME_TMP))
     manifest_entries: list[dict[str, object]] = []
     for label, raw_path in provided_pairs:
-        source_path = Path(raw_path)
+        source_path = require_nonempty_file(raw_path, f"Local reference {label}")
         staged_path = copy_into_staging(staging_root, source_path, label)
         manifest_entries.append(
             {
@@ -245,6 +258,11 @@ def save_log_text(log_path: str, message: str) -> None:
     Path(log_path).write_text(message, encoding="utf-8")
 
 
+def validate_final_outputs(output_paths: list[tuple[str, str]]) -> None:
+    for label, output_path in output_paths:
+        require_nonempty_file(output_path, label)
+
+
 def main() -> int:
     args = parse_args()
     configure_logging(PROJECT_ROOT / "config" / "logging.yaml")
@@ -278,6 +296,14 @@ def main() -> int:
         "Reference bundle prepared successfully.\n"
         f"Mode: {args.mode}\n"
         f"Resources: {', '.join(entry['name'] for entry in entries)}\n",
+    )
+    validate_final_outputs(
+        [
+            ("reference bundle", args.output_bundle),
+            ("manifest", args.output_manifest),
+            ("inventory", args.output_inventory),
+            ("log", args.log),
+        ]
     )
     logger.info("Prepared reference bundle with %s resource(s)", len(entries))
     return 0
