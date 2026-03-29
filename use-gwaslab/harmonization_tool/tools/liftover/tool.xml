@@ -1,0 +1,116 @@
+<tool id="gwaslab_liftover" name="GWASLab Liftover" version="0.1.0" profile="24.0">
+    <description>Convert GWAS summary-statistics coordinates between genome builds</description>
+    <requirements>
+        <requirement type="package" version="4.0.4">gwaslab</requirement>
+        <requirement type="package" version="3.12">python</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+python '$__tool_directory__/run_liftover.py'
+--input '$input'
+--input-format '$input_format'
+--from-build '$from_build'
+--to-build '$to_build'
+--chain-source '$chain_selector.chain_source'
+#if str($chain_selector.chain_source) == "custom"
+--chain-file '$chain_selector.chain_file'
+#end if
+#if $filter_by_status
+--filter-by-status
+#end if
+#if $zero_based_input
+--zero-based-input
+#end if
+#if $zero_based_output
+--zero-based-output
+#end if
+--output-mapped '$output_mapped'
+--output-unmapped '$output_unmapped'
+--output-meta '$output_meta'
+--log '$log'
+]]></command>
+    <inputs>
+        <param name="input" type="data" format="tabular,txt,tsv,csv,gz" label="Input summary statistics table" />
+        <param name="input_format" type="select" label="Input format">
+            <option value="gwaslab" selected="true">GWASLab standardized table</option>
+            <option value="auto">Auto-detect</option>
+        </param>
+        <param name="from_build" type="select" label="Source genome build">
+            <option value="19" selected="true">hg19 / GRCh37</option>
+            <option value="38">hg38 / GRCh38</option>
+        </param>
+        <param name="to_build" type="select" label="Target genome build">
+            <option value="38" selected="true">hg38 / GRCh38</option>
+            <option value="19">hg19 / GRCh37</option>
+        </param>
+        <conditional name="chain_selector">
+            <param name="chain_source" type="select" label="Chain file source">
+                <option value="builtin" selected="true">Use GWASLab built-in chain file</option>
+                <option value="custom">Use a custom chain file</option>
+            </param>
+            <when value="builtin" />
+            <when value="custom">
+                <param name="chain_file" type="data" format="txt,gz" label="Custom UCSC chain file" />
+            </when>
+        </conditional>
+        <param name="filter_by_status" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Only liftover variants eligible by GWASLab STATUS code" />
+        <param name="zero_based_input" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Treat input positions as 0-based" />
+        <param name="zero_based_output" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Write lifted output positions as 0-based" />
+    </inputs>
+    <outputs>
+        <data name="output_mapped" format="tabular" label="${tool.name} on ${on_string}: mapped variants" />
+        <data name="output_unmapped" format="tabular" label="${tool.name} on ${on_string}: unmapped variants" />
+        <data name="output_meta" format="json" label="${tool.name} on ${on_string}: metadata" />
+        <data name="log" format="txt" label="${tool.name} on ${on_string}: log" />
+    </outputs>
+    <tests>
+        <!--
+        This test uses a tiny hg19 fixture from the shared sample-data directory and
+        checks that built-in GWASLab chain files can map the coordinates to hg38.
+        Run it with:
+            planemo test tools/liftover/tool.xml
+        -->
+        <test expect_num_outputs="4">
+            <param name="input" value="../../../gwaslab-sample-data/liftover_case.tsv" />
+            <param name="input_format" value="gwaslab" />
+            <param name="from_build" value="19" />
+            <param name="to_build" value="38" />
+            <conditional name="chain_selector">
+                <param name="chain_source" value="builtin" />
+            </conditional>
+            <param name="filter_by_status" value="false" />
+            <param name="zero_based_input" value="false" />
+            <param name="zero_based_output" value="false" />
+            <output name="output_mapped">
+                <assert_contents>
+                    <has_text text="SNPID" />
+                    <has_text text="rs3094315" />
+                </assert_contents>
+            </output>
+            <output name="output_meta">
+                <assert_contents>
+                    <has_text text='"mode": "liftover"' />
+                    <has_text text='"from_build": "19"' />
+                    <has_text text='"to_build": "38"' />
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+This tool wraps GWASLab liftover for coordinate conversion between genome builds, with Galaxy-friendly outputs for mapped and unmapped variants.
+
+Behavior:
+
+- uses built-in GWASLab chain files for `hg19 -> hg38` and `hg38 -> hg19` by default
+- can also accept a custom UCSC chain file
+- keeps unmapped variants in a separate output dataset instead of silently dropping them
+
+Testing locally:
+
+```bash
+planemo test tools/liftover/tool.xml
+```
+]]></help>
+    <citations>
+        <citation type="doi">10.51094/jxiv.370</citation>
+    </citations>
+</tool>

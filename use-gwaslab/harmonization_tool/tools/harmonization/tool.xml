@@ -1,0 +1,161 @@
+<tool id="gwaslab_harmonization_1" name="GWASLab Harmonization" version="0.2.0" profile="24.0">
+    <description>Align GWAS summary statistics to reference resources and update harmonization status</description>
+    <requirements>
+        <requirement type="package" version="4.0.4">gwaslab</requirement>
+        <requirement type="package" version="3.12">python</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+python '$__tool_directory__/run_harmonization.py'
+--input '$input'
+#if str($build) != "unset"
+--build '$build'
+#end if
+--reference-mode '$reference_selector.reference_mode'
+#if str($reference_selector.reference_mode) == "direct"
+#if $reference_selector.ref_seq
+--ref-seq '$reference_selector.ref_seq'
+#end if
+#if $reference_selector.ref_infer
+--ref-infer '$reference_selector.ref_infer'
+#end if
+#if $reference_selector.ref_rsid_tsv
+--ref-rsid-tsv '$reference_selector.ref_rsid_tsv'
+#end if
+#if $reference_selector.ref_rsid_vcf
+--ref-rsid-vcf '$reference_selector.ref_rsid_vcf'
+#end if
+#else
+--reference-bundle '$reference_selector.reference_bundle'
+--reference-manifest '$reference_selector.reference_manifest'
+#end if
+--ref-alt-freq '$ref_alt_freq'
+--ref-maf-threshold '$ref_maf_threshold'
+--maf-threshold '$maf_threshold'
+--threads '$threads'
+#if $remove
+--remove
+#end if
+--output-tsv '$output_tsv'
+--output-meta '$output_meta'
+--log '$log'
+]]></command>
+    <inputs>
+        <param name="input" type="data" format="tabular,txt,tsv,csv,gz" label="Input GWASLab intermediate table" help="Use the standardized table produced by earlier GWASLab Galaxy tools such as load_sumstats, standardize, qc_check, liftover, or assign_rsid." />
+        <param name="build" type="select" label="Genome build hint">
+            <option value="unset" selected="true">Leave unset</option>
+            <option value="19">hg19 / GRCh37</option>
+            <option value="38">hg38 / GRCh38</option>
+            <option value="99">Unknown</option>
+        </param>
+        <conditional name="reference_selector">
+            <param name="reference_mode" type="select" label="Reference input mode">
+                <option value="direct" selected="true">Use direct reference files uploaded in Galaxy</option>
+                <option value="bundle">Use a reference bundle and manifest</option>
+            </param>
+            <when value="direct">
+                <param name="ref_seq" type="data" optional="true" format="data" label="Reference FASTA for allele checking" />
+                <param name="ref_infer" type="data" optional="true" format="data" label="Reference VCF for strand inference" />
+                <param name="ref_rsid_tsv" type="data" optional="true" format="data" label="Reference TSV for rsID assignment" />
+                <param name="ref_rsid_vcf" type="data" optional="true" format="data" label="Reference VCF for rsID assignment" />
+            </when>
+            <when value="bundle">
+                <param name="reference_bundle" type="data" format="tar.gz" label="Reference bundle produced earlier" />
+                <param name="reference_manifest" type="data" format="json" label="Reference manifest produced earlier" />
+            </when>
+        </conditional>
+        <param name="ref_alt_freq" type="text" value="AF" label="VCF INFO field used for reference allele frequency" />
+        <param name="ref_maf_threshold" type="float" value="0.4" min="0" max="0.5" label="Reference MAF threshold for strand inference" />
+        <param name="maf_threshold" type="float" value="0.4" min="0" max="0.5" label="Summary-statistics MAF threshold for strand inference" />
+        <param name="threads" type="integer" value="1" min="1" label="Threads" />
+        <param name="remove" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Remove problematic variants during harmonization" />
+    </inputs>
+    <outputs>
+        <data name="output_tsv" format="tabular" label="${tool.name} on ${on_string}: harmonized table" />
+        <data name="output_meta" format="json" label="${tool.name} on ${on_string}: metadata" />
+        <data name="log" format="txt" label="${tool.name} on ${on_string}: log" />
+    </outputs>
+    <tests>
+        <!--
+        This test exercises direct-reference mode using a tiny chr7 fixture that
+        matches the bundled example FASTA and VCF resources.
+        Run it with:
+            planemo test tools/harmonization/tool.xml
+        -->
+        <test expect_num_outputs="3">
+            <param name="input" value="../../../gwaslab-sample-data/harmonization_case.tsv" />
+            <param name="build" value="19" />
+            <conditional name="reference_selector">
+                <param name="reference_mode" value="direct" />
+                <param name="ref_seq" value="../../../gwaslab-sample-data/chr7.fasta.gz" />
+                <param name="ref_infer" value="../../../gwaslab-sample-data/1kg_eas_hg19.chr7_126253550_128253550.vcf.gz" />
+            </conditional>
+            <param name="ref_alt_freq" value="AF" />
+            <param name="ref_maf_threshold" value="0.4" />
+            <param name="maf_threshold" value="0.4" />
+            <param name="threads" value="1" />
+            <param name="remove" value="false" />
+            <output name="output_tsv">
+                <assert_contents>
+                    <has_text text="STATUS" />
+                    <has_text text="rs" />
+                </assert_contents>
+            </output>
+            <output name="output_meta">
+                <assert_contents>
+                    <has_text text='"mode": "harmonization"' />
+                    <has_text text='"reference_mode": "direct"' />
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+This tool wraps GWASLab harmonization and is intended to run on GWASLab intermediate tables produced by earlier tools in this suite.
+
+Input summary:
+
+- one GWASLab intermediate table from an earlier step in the workflow
+- either direct reference files or a previously prepared reference bundle plus manifest
+
+What this tool does not do:
+
+- it does not parse raw vendor-specific summary-statistics files
+- it does not ask for manual column mapping
+- it does not use formatbook/format-keyword loading modes
+
+Those responsibilities belong in `load_sumstats`. Internally, the runner reconstructs a GWASLab `Sumstats` object from the intermediate table using the fixed `gwaslab` format contract, because Galaxy passes files between tools rather than Python objects.
+
+Reference roles:
+
+- `ref_seq`: FASTA used for allele checking against the reference genome
+- `ref_infer`: VCF used for strand inference and allele-frequency-aware harmonization
+- `ref_rsid_tsv`: lightweight rsID lookup table
+- `ref_rsid_vcf`: broader rsID lookup VCF
+
+Output summary:
+
+- `harmonized table`: the updated summary-statistics table after GWASLab harmonization
+- `metadata`: JSON summary of row counts, reference mode, and which reference roles were used
+- `log`: the GWASLab harmonization log
+
+Galaxy usage plan:
+
+- direct mode: upload or select FASTA/VCF/TSV references from history
+- bundle mode: select the `reference bundle` and `manifest` produced by the reference-download tool
+- in bundle mode, the runner extracts the archive, resolves files by manifest role, and passes the real paths to GWASLab
+
+Why there is no format selector here:
+
+- the intermediate output from earlier GWASLab tools already has a stable column contract
+- downstream tools always rehydrate that file as a `gwaslab` table
+- this keeps raw input handling isolated in `load_sumstats` and keeps harmonization focused on harmonization only
+
+Testing locally:
+
+```bash
+planemo test tools/harmonization/tool.xml
+```
+]]></help>
+    <citations>
+        <citation type="doi">10.51094/jxiv.370</citation>
+    </citations>
+</tool>
