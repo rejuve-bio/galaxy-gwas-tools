@@ -1,4 +1,4 @@
-<tool id="gwaslab_harmonization" name="GWASLab Harmonization" version="0.1.0" profile="24.0">
+<tool id="gwaslab_harmonization_1" name="GWASLab Harmonization" version="0.2.0" profile="24.0">
     <description>Align GWAS summary statistics to reference resources and update harmonization status</description>
     <requirements>
         <requirement type="package" version="4.0.4">gwaslab</requirement>
@@ -7,7 +7,6 @@
     <command detect_errors="exit_code"><![CDATA[
 python '$__tool_directory__/run_harmonization.py'
 --input '$input'
---input-format '$input_format'
 #if str($build) != "unset"
 --build '$build'
 #end if
@@ -41,11 +40,7 @@ python '$__tool_directory__/run_harmonization.py'
 --log '$log'
 ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular,txt,tsv,csv,gz" label="Input summary statistics table" />
-        <param name="input_format" type="select" label="Input format">
-            <option value="gwaslab" selected="true">GWASLab standardized table</option>
-            <option value="auto">Auto-detect</option>
-        </param>
+        <param name="input" type="data" format="tabular,txt,tsv,csv,gz" label="Input GWASLab intermediate table" help="Use the standardized table produced by earlier GWASLab Galaxy tools such as load_sumstats, standardize, qc_check, liftover, or assign_rsid." />
         <param name="build" type="select" label="Genome build hint">
             <option value="unset" selected="true">Leave unset</option>
             <option value="19">hg19 / GRCh37</option>
@@ -88,7 +83,6 @@ python '$__tool_directory__/run_harmonization.py'
         -->
         <test expect_num_outputs="3">
             <param name="input" value="../../../gwaslab-sample-data/harmonization_case.tsv" />
-            <param name="input_format" value="gwaslab" />
             <param name="build" value="19" />
             <conditional name="reference_selector">
                 <param name="reference_mode" value="direct" />
@@ -115,12 +109,20 @@ python '$__tool_directory__/run_harmonization.py'
         </test>
     </tests>
     <help><![CDATA[
-This tool wraps GWASLab harmonization and makes the reference inputs explicit for Galaxy use.
+This tool wraps GWASLab harmonization and is intended to run on GWASLab intermediate tables produced by earlier tools in this suite.
 
 Input summary:
 
-- one GWAS summary-statistics table, ideally after load/standardize/QC
+- one GWASLab intermediate table from an earlier step in the workflow
 - either direct reference files or a previously prepared reference bundle plus manifest
+
+What this tool does not do:
+
+- it does not parse raw vendor-specific summary-statistics files
+- it does not ask for manual column mapping
+- it does not use formatbook/format-keyword loading modes
+
+Those responsibilities belong in `load_sumstats`. Internally, the runner reconstructs a GWASLab `Sumstats` object from the intermediate table using the fixed `gwaslab` format contract, because Galaxy passes files between tools rather than Python objects.
 
 Reference roles:
 
@@ -140,6 +142,12 @@ Galaxy usage plan:
 - direct mode: upload or select FASTA/VCF/TSV references from history
 - bundle mode: select the `reference bundle` and `manifest` produced by the reference-download tool
 - in bundle mode, the runner extracts the archive, resolves files by manifest role, and passes the real paths to GWASLab
+
+Why there is no format selector here:
+
+- the intermediate output from earlier GWASLab tools already has a stable column contract
+- downstream tools always rehydrate that file as a `gwaslab` table
+- this keeps raw input handling isolated in `load_sumstats` and keeps harmonization focused on harmonization only
 
 Testing locally:
 
