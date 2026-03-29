@@ -25,7 +25,6 @@ gl = import_gwaslab_with_py310_compat()
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Harmonize GWAS summary statistics using GWASLab references.")
     parser.add_argument("--input", required=True)
-    parser.add_argument("--input-format", default="gwaslab")
     parser.add_argument("--build", choices=("19", "38", "99"))
     parser.add_argument("--reference-mode", choices=("direct", "bundle"), required=True)
     parser.add_argument("--ref-seq")
@@ -77,6 +76,7 @@ def resolve_references(args: argparse.Namespace) -> dict[str, str | None]:
 def summarize(args: argparse.Namespace, input_rows: int, ss, references: dict[str, str | None]) -> dict[str, object]:
     return {
         "mode": "harmonization",
+        "input_contract": "gwaslab_intermediate_table",
         "reference_mode": args.reference_mode,
         "input_rows": input_rows,
         "output_rows": int(len(ss.data)),
@@ -95,7 +95,7 @@ def main() -> int:
     configure_logging(PROJECT_ROOT / "config" / "logging.yaml")
     logger = get_logger("harmonization")
 
-    reader_kwargs: dict[str, object] = {"fmt": args.input_format}
+    reader_kwargs: dict[str, object] = {"fmt": "gwaslab"}
     if args.build:
         reader_kwargs["build"] = args.build
 
