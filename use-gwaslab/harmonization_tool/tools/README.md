@@ -90,6 +90,22 @@ Outputs:
 - tabular inventory for quick inspection in Galaxy
 - plain-text run log
 
+## `harmonization`
+
+Purpose:
+- align summary statistics to reference resources for allele checking, strand inference, and optional rsID assignment
+- support either direct Galaxy-uploaded references or a prepared reference bundle plus manifest
+
+Inputs:
+- one summary statistics table
+- direct reference files or a reference bundle and manifest
+- harmonization thresholds for allele-frequency-based strand inference
+
+Outputs:
+- harmonized tabular dataset
+- JSON metadata summarizing which reference roles were used and how many rows remained
+- GWASLab log file
+
 ## Testing
 
 Galaxy wrapper tests:
@@ -100,6 +116,7 @@ planemo test tools/standardize/tool.xml
 planemo test tools/qc_check/tool.xml
 planemo test tools/liftover/tool.xml
 planemo test tools/reference_download/tool.xml
+planemo test tools/harmonization/tool.xml
 ```
 
 Direct Python smoke tests:
@@ -110,4 +127,5 @@ python tests/run_standardize_smoke.py
 python tests/run_qc_check_smoke.py
 python tests/run_liftover_smoke.py
 python tests/run_reference_download_smoke.py
+python tests/run_harmonization_smoke.py
 ```
