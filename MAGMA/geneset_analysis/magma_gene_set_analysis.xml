@@ -1,0 +1,25 @@
+<tool id="magma_gene_set_analysis" name="MAGMA Gene Set Analysis" version="1.0.0">
+  <description>Perform gene-set (pathway) enrichment</description>
+  <requirements>
+    <requirement type="package" version="1.09">magma</requirement>
+  </requirements>
+  <command detect_errors="exit_code"><![CDATA[
+    python '$__tool_directory__/magma_gene_set_analysis.py'
+      --genes_raw '$genes_raw'
+      --set_annot '$set_annot'
+      --output '$output'
+  ]]></command>
+  <inputs>
+    <param name="genes_raw" type="data" format="txt" label="Genes Raw File (from Gene Analysis Tool)" />
+    <param name="set_annot" type="data" format="txt" label="Gene Set File (GMT, e.g., MSigDB c5.go.bp)" help="Choose your reference gene-set file." />
+  </inputs>
+  <outputs>
+    <data name="output" format="txt" label="Gene Set Results File" />
+  </outputs>
+  <citations>
+    <citation type="doi">10.1371/journal.pcbi.1004219</citation>
+  </citations>
+  <help><![CDATA[
+**What it does**: Runs MAGMA gene-set analysis for pathway enrichment. Provide a GMT file (e.g., from MSigDB).
+  ]]></help>
+</tool>
